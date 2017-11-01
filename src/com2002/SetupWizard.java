@@ -22,6 +22,11 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
+import com2002.models.Doctor;
+import com2002.models.Role;
+import com2002.models.Secretary;
+import com2002.models.Staff;
+
 public class SetupWizard {
 	
 	final private static String[] EMPLOYEE_LABELS = {"Employees", "First Name", "Last Name", "Username", "Password", "Role"};
@@ -119,6 +124,25 @@ public class SetupWizard {
 	      @Override
 	      public void actionPerformed(ActionEvent arg0) {
 	        //Take you to next panel and hide this one
+	    	  int index = 0;
+	    	  for (int i = 0; i < 3; i++) {
+	    		  String firstName = ((JTextField) employeesTextFields.get(index)).getText();
+	    		  index++;
+	    		  String lastName = ((JTextField) employeesTextFields.get(index)).getText();
+	    		  index++;
+	    		  String username = ((JTextField) employeesTextFields.get(index)).getText();
+	    		  index++;
+	    		  String password = String.valueOf(((JPasswordField) employeesTextFields.get(index)).getPassword());
+	    		  index++;
+	    		  String role = (String) employeesRolesLists.get(i).getSelectedValue();
+	    		  Staff employee;
+	    		  if (role.equals("Secretary")) {
+	    			  employee = new Secretary(firstName, lastName, username, password);
+	    		  } else {
+	    			  Role r = role.equals("Dentist") ? Role.DENTIST : Role.HYGIENIST;
+	    			  employee = new Doctor(firstName, lastName, username, password, r);
+	    		  }
+	    	  }
 	    	frame.setDisplayedPanel(treatmentsScreen);
 	    	frame.repaint();
 	      }
