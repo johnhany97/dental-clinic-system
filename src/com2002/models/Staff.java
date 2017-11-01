@@ -24,7 +24,6 @@ public abstract class Staff {
 			ResultSet rs = execQuery("SELECT * FROM Employees WHERE username = '" 
 					+ userN + "' AND password = '" + pass + "'", conn);
 			if(rs.next()) {
-				System.out.println("HAS NEXT");
 				firstName = rs.getString("FirstName");
 				lastName = rs.getString("LastName");
 				username = userN;
@@ -32,7 +31,6 @@ public abstract class Staff {
 			}
 			conn.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
