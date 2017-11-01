@@ -37,8 +37,8 @@ public abstract class Staff {
 	
 	public Staff(String fName, String lName, String userN, String pass, Role r) {
 		if(!dbHasUsername(userN)) {
-			execUpdate("INSERT INTO Employees (" + fName + ", " + lName + ", " 
-					+ userN + ", " + pass + ", " + getRoleString(r));
+			execUpdate("INSERT INTO Employees VALUES ('" + fName + "', '" + lName + "', '" 
+					+ userN + "', '" + pass + "', '" + getRoleString(r) + "')");
 			firstName = fName;
 			lastName = lName;
 			username = userN;

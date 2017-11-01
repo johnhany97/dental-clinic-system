@@ -20,8 +20,8 @@ public class DatabaseTables {
 				"	PRIMARY KEY(`Name`)\r\n" + 
 				")";
 		String appointmentsTable = "CREATE TABLE `Appointments` (\r\n" + 
-				"	`StartDate`	DATE NOT NULL,\r\n" + 
-				"	`EndDate`	DATE NOT NULL,\r\n" + 
+				"	`StartDate`	DATETIME NOT NULL,\r\n" +  //YYYY-MM-DD HH:MM:SS
+				"	`EndDate`	DATETIME NOT NULL,\r\n" + 
 				"	`Username`	VARCHAR(15) NOT NULL,\r\n" + 
 				"	`PatientID`	INTEGER NOT NULL,\r\n" + 
 				"	`Notes`	VARCHAR(1000),\r\n" + 
@@ -32,7 +32,7 @@ public class DatabaseTables {
 				"	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID)\r\n" + 
 				")";
 		String appointmentTreatmentTable = "CREATE TABLE `AppointmentTreatment` (\r\n" +
-				"   `StartDate`     DATE NOT NULL,\r\n" +
+				"   `StartDate`     DATETIME NOT NULL,\r\n" +
 				"   `Username`      VARCHAR(15) NOT NULL,\r\n" +
 				"   `TreatmentName` VARCHAR(30) NOT NULL,\r\n" +
 				"   FOREIGN KEY(`StartDate`, `Username`) References Appointments(StartDate, Username),\r\n" +

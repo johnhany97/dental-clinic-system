@@ -22,6 +22,11 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
+import com2002.models.Doctor;
+import com2002.models.Role;
+import com2002.models.Secretary;
+import com2002.models.Staff;
+
 public class SetupWizard {
 	
 	final private static String[] EMPLOYEE_LABELS = {"Employees", "First Name", "Last Name", "Username", "Password", "Role"};
@@ -46,8 +51,8 @@ public class SetupWizard {
 	private JButton employeesButton;
 	//TreatmentsScreen
 	private JPanel treatmentsScreen;
-	private JLabel[] treatmentsLabels;
-	private JButton[] treatmentsButtons;
+	private List<JLabel> treatmentsLabels;
+	private List<JButton> treatmentsButtons;
 	//HealthPlansScreen
 	private JPanel healthPlansScreen;
 	private JLabel[] healthPlansLabels;
@@ -70,7 +75,7 @@ public class SetupWizard {
 	private void initPanels() {
 		initializeWelcome();
 		initializeEmployees();
-//		initializeTreatments();
+		initializeTreatments();
 //		initializeHealthPlans();
 //		initializeThanks();
 	}
@@ -84,7 +89,30 @@ public class SetupWizard {
 	}
 
 	private void initializeTreatments() {
+		this.treatmentsScreen = new JPanel();
+		this.treatmentsScreen.setLayout(new BorderLayout());
+		//Title
+		this.treatmentsLabels = new ArrayList<JLabel>();
+		this.treatmentsLabels.add(new JLabel(TREATMENTS_LABELS[0], SwingConstants.CENTER));
+		this.treatmentsLabels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE));
+		this.treatmentsScreen.add(this.treatmentsLabels.get(0), BorderLayout.NORTH);
+		// Treatments labels and text fields
 		
+		//add Button
+	    this.treatmentsButtons = new ArrayList<JButton>();
+	    JPanel southPanel = new JPanel();
+	    southPanel.setLayout(new FlowLayout());
+	    this.treatmentsButtons.add(new JButton(ADD_MORE_BUTTON_LABEL));
+	    this.treatmentsButtons.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
+	            DisplayFrame.FONT_SIZE));
+	    southPanel.add(this.treatmentsButtons.get(0));
+		//next button
+	    this.treatmentsButtons.add(new JButton(NEXT_BUTTON_LABEL));
+	    southPanel.add(this.treatmentsButtons.get(1));
+	    this.treatmentsButtons.get(1).setFont(new Font("Sans Serif", Font.PLAIN,
+	            DisplayFrame.FONT_SIZE));
+	    this.treatmentsScreen.add(southPanel, BorderLayout.SOUTH);
 	}
 
 	private void initializeEmployees() {
@@ -99,7 +127,7 @@ public class SetupWizard {
 		//Texts and inputs
 		//We need three sets (For secretary, doctor & Hygienist)
 		this.employeesPanels = new ArrayList<JPanel>();
-	    this.employeesTextFields = new ArrayList<Object>();
+	    this.employeesTextFields = new ArrayList<Object>(); 
 	    this.employeesRolesLists = new ArrayList<JList>();
 	    for (int i = 0; i < 3; i++) {
 	    	addSetOfTextFieldsAndLabels();
@@ -119,6 +147,25 @@ public class SetupWizard {
 	      @Override
 	      public void actionPerformed(ActionEvent arg0) {
 	        //Take you to next panel and hide this one
+	    	  int index = 0;
+	    	  for (int i = 0; i < 3; i++) {
+	    		  String firstName = ((JTextField) employeesTextFields.get(index)).getText();
+	    		  index++;
+	    		  String lastName = ((JTextField) employeesTextFields.get(index)).getText();
+	    		  index++;
+	    		  String username = ((JTextField) employeesTextFields.get(index)).getText();
+	    		  index++;
+	    		  String password = String.valueOf(((JPasswordField) employeesTextFields.get(index)).getPassword());
+	    		  index++;
+	    		  String role = (String) employeesRolesLists.get(i).getSelectedValue();
+	    		  Staff employee;
+	    		  if (role.equals("Secretary")) {
+	    			  employee = new Secretary(firstName, lastName, username, password);
+	    		  } else {
+	    			  Role r = role.equals("Dentist") ? Role.DENTIST : Role.HYGIENIST;
+	    			  employee = new Doctor(firstName, lastName, username, password, r);
+	    		  }
+	    	  }
 	    	frame.setDisplayedPanel(treatmentsScreen);
 	    	frame.repaint();
 	      }
