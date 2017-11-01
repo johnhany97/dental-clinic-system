@@ -14,10 +14,10 @@ public class DatabaseTables {
 	public static void createTables() throws SQLException {
 		Connection conn = Database.getConnection();
 
-		String treatmentsTable = "CREATE TABLE `Treatments` (" + 
-				"	`Name` VARCHAR(30) NOT NULL," + 
-				"	`Price` DOUBLE," + 
-				"	PRIMARY KEY(`Name`)" + 
+		String treatmentsTable = "CREATE TABLE `Treatments` (\r\n" + 
+				"	`Name` VARCHAR(30) NOT NULL,\r\n" + 
+				"	`Price` DOUBLE,\r\n" + 
+				"	PRIMARY KEY(`Name`)\r\n" + 
 				")";
 		String appointmentsTable = "CREATE TABLE `Appointments` (\r\n" + 
 				"	`StartDate`	DATE NOT NULL,\r\n" + 
@@ -25,13 +25,18 @@ public class DatabaseTables {
 				"	`Username`	VARCHAR(15) NOT NULL,\r\n" + 
 				"	`PatientID`	INTEGER NOT NULL,\r\n" + 
 				"	`Notes`	VARCHAR(1000),\r\n" + 
-				"	`TreatmentName`	VARCHAR(30) NOT NULL,\r\n" + 
 				"	`TotalAppointments`	INTEGER,\r\n" + 
 				"	`CurrentAppointment`	INTEGER,\r\n" + 
 				"	PRIMARY KEY(`StartDate`,`Username`),\r\n" + 
 				"	FOREIGN KEY(`Username`) REFERENCES Employees(Username),\r\n" + 
-				"	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID),\r\n" + 
-				"	FOREIGN KEY(`TreatmentName`) REFERENCES Treatments(Name)\r\n" + 
+				"	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID)\r\n" + 
+				")";
+		String appointmentTreatmentTable = "CREATE TABLE `AppointmentTreatment` (\r\n" +
+				"   `StartDate`     DATE NOT NULL,\r\n" +
+				"   `Username`      VARCHAR(15) NOT NULL,\r\n" +
+				"   `TreatmentName` VARCHAR(30) NOT NULL,\r\n" +
+				"   FOREIGN KEY(`StartDate`, `Username`) References Appointments(StartDate, Username),\r\n" +
+				"   FOREIGN KEY(`TreatmentName`) References Treatments(Name)\r\n" +
 				")";
 		String employeesTable = "CREATE TABLE `Employees` (\r\n" + 
 				"	`FirstName`	VARCHAR(30) NOT NULL,\r\n" + 
@@ -108,6 +113,7 @@ public class DatabaseTables {
             stmt.executeUpdate(sqlString);
         } catch(SQLException e) {
             System.out.println(e.toString());
+            System.out.println("this");
         } finally {
             Database.closeDb(conn);
         }

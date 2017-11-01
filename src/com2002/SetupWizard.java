@@ -140,7 +140,7 @@ public class SetupWizard {
 				this.employeesTextFields.add(passwordField);
 				passwordField.setEchoChar('#');
 			} else if (EMPLOYEE_LABELS[i].equals("Role")) {
-				DefaultListModel employeeRoles = new DefaultListModel();
+				DefaultListModel<String> employeeRoles = new DefaultListModel<String>();
 				employeeRoles.addElement("Secretary");
 				employeeRoles.addElement("Dentist");
 				employeeRoles.addElement("Hygienist");
@@ -171,7 +171,6 @@ public class SetupWizard {
 		this.welcomeLabel = new JLabel(WELCOME_TITLE, SwingConstants.CENTER);
 	    this.welcomeLabel.setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE * 2));
-	    System.out.println(DisplayFrame.FONT_SIZE * 2);
 	    this.welcomeScreen.add(this.welcomeLabel, BorderLayout.NORTH);
 	    //Button
 	    this.welcomeButton = new JButton(CONTINUE_BUTTON_LABEL);
