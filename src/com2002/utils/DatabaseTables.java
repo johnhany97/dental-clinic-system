@@ -30,7 +30,8 @@ public class DatabaseTables {
 				"	`CurrentAppointment`	INTEGER,\r\n" + 
 				"	PRIMARY KEY(`StartDate`,`Username`),\r\n" + 
 				"	FOREIGN KEY(`Username`) REFERENCES Employees(Username),\r\n" + 
-				"	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID)\r\n" + 
+				"	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID),\r\n" + 
+				"   FOREIGN KEY(`Type`) REFERENCES AppointmentTypes(Name)" +
 				")";
 		String appointmentTreatmentTable = "CREATE TABLE `AppointmentTreatment` (\r\n" +
 				"   `StartDate`     DATETIME NOT NULL,\r\n" +
@@ -38,6 +39,11 @@ public class DatabaseTables {
 				"   `TreatmentName` VARCHAR(30) NOT NULL,\r\n" +
 				"   FOREIGN KEY(`StartDate`, `Username`) References Appointments(StartDate, Username),\r\n" +
 				"   FOREIGN KEY(`TreatmentName`) References Treatments(Name)\r\n" +
+				")";
+		String appointmentTypesTable = "CREATE TABLE `AppointmentTypes` (\r\n" +
+				"   `Name`      VARCHAR(30) NOT NULL,\r\n" +
+				"   `Price`     DOUBLE,\r\n" +
+				"   PRIMARY KEY(`Name`)\r\n" +
 				")";
 		String employeesTable = "CREATE TABLE `Employees` (\r\n" + 
 				"	`FirstName`	VARCHAR(30) NOT NULL,\r\n" + 
@@ -88,6 +94,7 @@ public class DatabaseTables {
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(treatmentsTable);
+			stmt.executeUpdate(appointmentTypesTable);
 			stmt.executeUpdate(employeesTable);
 			stmt.executeUpdate(addressTable);
 			stmt.executeUpdate(healthPlansTable);
@@ -111,7 +118,7 @@ public class DatabaseTables {
 		Statement stmt = conn.createStatement();;
 
 		try {
-			String sqlString = "DROP TABLE IF EXISTS AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, Treatments";
+			String sqlString = "DROP TABLE IF EXISTS AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, AppointmentTypes, Treatments";
             stmt.executeUpdate(sqlString);
         } catch(SQLException e) {
             System.out.println(e.toString());
