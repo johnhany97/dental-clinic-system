@@ -59,6 +59,23 @@ public class Appointment {
 		currentAppointment = currA;
 	}
 	
+	protected void removeAppointment() {
+		try {
+			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
+		} catch (SQLException e) {
+			System.out.println("Failed to delete appointment. Make sure appointment is properly initialised.");
+			return;
+		}
+		startTime = null;
+		endTime = null;
+		username = null;
+		patientID = -1;
+		notes = null;
+		appointmentType = "";
+		totalAppointments = -1;
+		currentAppointment = -1;
+	}
+	
 	protected Float calculateCost() {
 		float cost = 0;
 		try {
