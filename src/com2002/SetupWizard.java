@@ -18,9 +18,11 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import com2002.models.Doctor;
 import com2002.models.Role;
@@ -53,6 +55,8 @@ public class SetupWizard {
 	private JPanel treatmentsScreen;
 	private List<JLabel> treatmentsLabels;
 	private List<JButton> treatmentsButtons;
+	private List<JPanel> treatmentsPanels;
+	private List<JTextField> treatmentsFields;
 	//HealthPlansScreen
 	private JPanel healthPlansScreen;
 	private JLabel[] healthPlansLabels;
@@ -69,7 +73,7 @@ public class SetupWizard {
 	}
 	
 	public JPanel initialPanel() {
-		return this.welcomeScreen;
+		return this.treatmentsScreen;
 	}
 	
 	private void initPanels() {
@@ -98,7 +102,35 @@ public class SetupWizard {
 				DisplayFrame.FONT_SIZE));
 		this.treatmentsScreen.add(this.treatmentsLabels.get(0), BorderLayout.NORTH);
 		// Treatments labels and text fields
-		
+		this.treatmentsPanels = new ArrayList<JPanel>();
+		this.treatmentsPanels.add(new JPanel());
+		this.treatmentsPanels.get(0).setLayout(new BorderLayout());
+		//West panel
+		this.treatmentsPanels.add(new JPanel());
+		this.treatmentsPanels.get(1).setLayout(new BoxLayout(this.treatmentsPanels.get(1), BoxLayout.PAGE_AXIS));
+		this.treatmentsPanels.get(0).add(this.treatmentsPanels.get(1), BorderLayout.WEST);
+		this.treatmentsPanels.get(1).setBorder(new EmptyBorder(30, 30, 30, 30));
+		//East panel
+		this.treatmentsPanels.add(new JPanel());
+		this.treatmentsPanels.get(2).setLayout(new BoxLayout(this.treatmentsPanels.get(2), BoxLayout.PAGE_AXIS));
+		this.treatmentsPanels.get(0).add(this.treatmentsPanels.get(2), BorderLayout.EAST);
+		this.treatmentsPanels.get(2).setBorder(new EmptyBorder(30, 30, 30, 30));
+		//labels
+		for (int i = 1; i < TREATMENTS_LABELS.length; i++) {
+			this.treatmentsLabels.add(new JLabel(TREATMENTS_LABELS[i], SwingConstants.CENTER));
+			int index = this.treatmentsLabels.size() - 1;
+			this.treatmentsLabels.get(index).setFont(new Font("Sans Serif", Font.PLAIN,
+					DisplayFrame.FONT_SIZE / 2));
+			if (i == 1) { 
+				this.treatmentsPanels.get(1).add(this.treatmentsLabels.get(i));
+			} else {
+				this.treatmentsPanels.get(2).add(this.treatmentsLabels.get(i));
+			}
+		}
+		this.treatmentsScreen.add(this.treatmentsPanels.get(0), BorderLayout.CENTER);
+		//add textfields
+		this.treatmentsFields = new ArrayList<JTextField>();
+		addTextFieldsTreatments();
 		//add Button
 	    this.treatmentsButtons = new ArrayList<JButton>();
 	    JPanel southPanel = new JPanel();
@@ -106,6 +138,13 @@ public class SetupWizard {
 	    this.treatmentsButtons.add(new JButton(ADD_MORE_BUTTON_LABEL));
 	    this.treatmentsButtons.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE));
+	    this.treatmentsButtons.get(0).addActionListener(new ActionListener() {
+		      @Override
+		      public void actionPerformed(ActionEvent arg0) {
+		    	  addTextFieldsTreatments();
+		    	  frame.revalidate();
+		      }
+	    });
 	    southPanel.add(this.treatmentsButtons.get(0));
 		//next button
 	    this.treatmentsButtons.add(new JButton(NEXT_BUTTON_LABEL));
@@ -113,6 +152,19 @@ public class SetupWizard {
 	    this.treatmentsButtons.get(1).setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE));
 	    this.treatmentsScreen.add(southPanel, BorderLayout.SOUTH);
+	}
+
+	private void addTextFieldsTreatments() {
+		for (int i = 1; i < TREATMENTS_LABELS.length; i++) {
+			this.treatmentsFields.add(new JTextField(20));
+			int index = this.treatmentsFields.size() - 1;
+			this.treatmentsFields.get(index).setMaximumSize(this.treatmentsFields.get(index).getPreferredSize());
+			if (i == 1) {
+				this.treatmentsPanels.get(1).add(this.treatmentsFields.get(index));
+			} else {
+				this.treatmentsPanels.get(2).add(this.treatmentsFields.get(index));
+			}
+		}
 	}
 
 	private void initializeEmployees() {
