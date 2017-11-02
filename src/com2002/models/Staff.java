@@ -59,6 +59,69 @@ public abstract class Staff {
 		
 	}
 	
+	protected String getFirstName() {
+		return firstName;
+	}
+	
+	protected void setFirstName(String firstN) {
+		try {
+			DBQueries.execUpdate("UPDATE Employees SET FirstName = '" + firstN 
+					+ "' WHERE Username = '" + username + "'");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			printError("first name");
+			return;
+		}
+		firstName = firstN;
+	}
+	
+	protected String getLastName() {
+		return lastName;
+	}
+	
+	protected void setLastName(String lastN) {
+		try {
+			DBQueries.execUpdate("UPDATE Employees SET LastName = '" + lastN 
+					+ "' WHERE Username = '" + username + "'");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			printError("last name");
+			return;
+		}
+		lastName = lastN;
+	}
+	
+	protected String getUsername() {
+		return username;
+	}
+	
+	protected void setUsername(String userN) {
+		try {
+			DBQueries.execUpdate("UPDATE Employees SET Username = '" + userN 
+					+ "' WHERE Username = '" + username + "'");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			printError("username");
+			return;
+		}
+		username = userN;
+	}
+	
+	protected String getRole() {
+		return role;
+	}
+	
+	protected void setRole(Role r) {
+		try {
+			DBQueries.execUpdate("UPDATE Employees SET Role = '" + getRoleString(r) 
+					+ "' WHERE Username = '" + username + "'");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			printError("role");
+			return;
+		}
+		role = getRoleString(r);
+	}
 	
 	protected String getRoleString(Role r) {
 		if(r == Role.HYGIENIST) {
@@ -69,27 +132,16 @@ public abstract class Staff {
 		return "Dentist";
 	}
 	
+	private void printError(String method) {
+		System.out.println("Something went wrong with updating the " + method + ". "
+				+ "The staff member may have not been initialised properly "
+				+ "(some instance variables might be null).");
+	}
 	
 	public static void main(String[] args) {
 		Staff arthur = new Secretary("Arthur", "Granacher", "ayjee", "password");
-		System.out.println(arthur.getFirstName() + " " + arthur.getLastName() + " with username " + arthur.getUsername() + " is a " + arthur.getRole());
-		
-	}
-	
-	protected String getFirstName() {
-		return firstName;
-	}
-	
-	protected String getLastName() {
-		return lastName;
-	}
-	
-	protected String getUsername() {
-		return username;
-	}
-	
-	protected String getRole() {
-		return role;
+		System.out.println(arthur.getFirstName() + " " + arthur.getLastName() + " with username " 
+		+ arthur.getUsername() + " is a " + arthur.getRole());
 	}
 	
 }

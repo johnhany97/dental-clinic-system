@@ -41,15 +41,28 @@ public class Appointment {
 		float cost = 0;
 		try {
 			Connection conn = Database.getConnection();
-			ResultSet treatmentRS = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = " 
-					+ startTime + " AND Username = '" + username + "'", conn);
-			while(treatmentRS.next()) {
-				String treatment = treatmentRS.getString("TreatmentName");
-				ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'", conn);
+			if(appointmentType.equals("Remedial")) {
+				ResultSet treatmentRS = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = " 
+						+ startTime + " AND Username = '" + username + "'", conn);
+				while(treatmentRS.next()) {
+					String treatment = treatmentRS.getString("TreatmentName");
+					ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'", conn);
+					if(rs.next()) {
+						cost += rs.getFloat("Price");
+					}
+				}
+			} else if(appointmentType.equals("Checkup")) {
+				ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Checkup'", conn);
 				if(rs.next()) {
-					cost += rs.getFloat("Price");
+					cost = rs.getFloat("Price");
+				}
+			} else if(appointmentType.equals("Cleaning")) {
+				ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Cleaning'", conn);
+				if(rs.next()) {
+					cost = rs.getFloat("Price");
 				}
 			}
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -68,13 +81,13 @@ public class Appointment {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start + ", EndDate = " + end 
 					+ " WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
-			startTime = start;
-			endTime = end;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("start and end times");
 			return;
 		}
+		startTime = start;
+		endTime = end;
 	}
 	
 	protected String getUsername() {
@@ -85,12 +98,12 @@ public class Appointment {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET Username = '" + user 
 					+ "' WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
-			username = user;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("username");
 			return;
 		}
+		username = user;
 	}
 	
 	protected int getPatientID() {
@@ -102,12 +115,12 @@ public class Appointment {
 			DBQueries.execUpdate("UPDATE Appointments SET PatientID = " + patID 
 								  + " WHERE StartDate = "
 					+ startTime + " AND PatientID = " + patientID);
-			patientID = patID;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("patientID");
 			return;
 		}
+		patientID = patID;
 	}
 	
 	protected String getNotes() {
@@ -118,12 +131,12 @@ public class Appointment {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET Notes = '" + note + "' WHERE StartDate = "
 					+ startTime + " AND PatientID = " + patientID);
-			notes = note;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("notes");
 			return;
 		}
+		notes = note;
 	}
 	
 	protected String getAppointmentType() {
@@ -134,12 +147,12 @@ public class Appointment {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET Type = '" + getAppointmentTypeString(appointmentT) 
 			+ "' WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
-			appointmentType = getAppointmentTypeString(appointmentT);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("appointment type");
 			return;
 		}
+		appointmentType = getAppointmentTypeString(appointmentT);
 	}
 	
 	protected int getTotalAppointments() {
@@ -150,12 +163,12 @@ public class Appointment {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET TotalAppointments = " + total + " WHERE StartDate = "
 					+ startTime + " AND PatientID = " + patientID);
-			totalAppointments = total;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("total appointments");
 			return;
 		}
+		totalAppointments = total;
 	}
 	
 	protected int getCurrentAppointment() {
@@ -166,12 +179,12 @@ public class Appointment {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET CurrentAppointment = " + current + " WHERE StartDate = "
 					+ startTime + " AND PatientID = " + patientID);
-			currentAppointment = current;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("current appointment");
 			return;
 		}
+		currentAppointment = current;
 	}
 	
 	private String getAppointmentTypeString(AppointmentType app) {
