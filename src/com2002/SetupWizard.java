@@ -6,13 +6,20 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -23,11 +30,13 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.NumberFormatter;
 
 import com2002.models.Doctor;
 import com2002.models.Role;
 import com2002.models.Secretary;
 import com2002.models.Staff;
+import com2002.utils.Database;
 
 public class SetupWizard {
 	
@@ -151,20 +160,44 @@ public class SetupWizard {
 	    southPanel.add(this.treatmentsButtons.get(1));
 	    this.treatmentsButtons.get(1).setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE));
+	    this.treatmentsButtons.get(1).addActionListener(new ActionListener() {
+	    	@Override
+	    	public void actionPerformed(ActionEvent arg0) {
+	    		try {
+		    		Connection conn = Database.getConnection();
+					Statement stmt = conn.createStatement();
+					for (int i = 0; i < treatmentsFields.size(); i+=2) {
+						String name = treatmentsFields.get(i).getText();
+						String price = treatmentsFields.get(i + 1).getText();
+						String sqlQuery = "INSERT INTO Treatments VALUES ('" + name + "', '" + price + "')";
+						stmt.executeUpdate(sqlQuery);
+					}
+					Database.closeDb(conn);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		    	frame.setDisplayedPanel(healthPlansScreen);
+		    	frame.repaint();
+	    	}
+	    });
 	    this.treatmentsScreen.add(southPanel, BorderLayout.SOUTH);
 	}
 
 	private void addTextFieldsTreatments() {
-		for (int i = 1; i < TREATMENTS_LABELS.length; i++) {
-			this.treatmentsFields.add(new JTextField(20));
-			int index = this.treatmentsFields.size() - 1;
-			this.treatmentsFields.get(index).setMaximumSize(this.treatmentsFields.get(index).getPreferredSize());
-			if (i == 1) {
-				this.treatmentsPanels.get(1).add(this.treatmentsFields.get(index));
-			} else {
-				this.treatmentsPanels.get(2).add(this.treatmentsFields.get(index));
-			}
-		}
+		//Name textbox
+		this.treatmentsFields.add(new JTextField(20)); //create one
+		int index = this.treatmentsFields.size() - 1; //get it's index
+		this.treatmentsPanels.get(1).add(this.treatmentsFields.get(index)); //add to panel
+		this.treatmentsFields.get(index).setMaximumSize(this.treatmentsFields.get(index).getPreferredSize()); //set max size
+		//Price textbox
+		//steps to ensure type of data entered
+		NumberFormat numFormat = new DecimalFormat("#0.00"); //Format of data in price textfield
+		NumberFormatter  numFormatter  = new NumberFormatter(numFormat);
+		this.treatmentsFields.add(new JFormattedTextField(numFormatter));
+		int index2 = this.treatmentsFields.size() - 1; //it's index;
+		this.treatmentsFields.get(index2).setColumns(20); //size (width)
+		this.treatmentsPanels.get(2).add(this.treatmentsFields.get(index2)); //add to panel
+		this.treatmentsFields.get(index2).setMaximumSize(this.treatmentsFields.get(index).getPreferredSize()); //max size
 	}
 
 	private void initializeEmployees() {

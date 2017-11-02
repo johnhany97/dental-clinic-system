@@ -35,6 +35,7 @@ public class Application {
 			window = new DisplayFrame();
 			SetupWizard setupWizard = new SetupWizard(window);
 			window.setDisplayedPanel(setupWizard.initialPanel());
+//			System.out.println(Float.valueOf("2.00"));
 		}
 //		javax.swing.JPanel panel = new javax.swing.JPanel();
 //		window = new DisplayFrame();

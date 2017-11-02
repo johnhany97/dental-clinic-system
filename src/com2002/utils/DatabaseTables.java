@@ -23,6 +23,7 @@ public class DatabaseTables {
 				"	`StartDate`	DATETIME NOT NULL,\r\n" +  //YYYY-MM-DD HH:MM:SS
 				"	`EndDate`	DATETIME NOT NULL,\r\n" + 
 				"	`Username`	VARCHAR(15) NOT NULL,\r\n" + 
+				"	`Type`	VARCHAR(30) NOT NULL,\r\n" + 
 				"	`PatientID`	INTEGER NOT NULL,\r\n" + 
 				"	`Notes`	VARCHAR(1000),\r\n" + 
 				"	`TotalAppointments`	INTEGER,\r\n" + 
