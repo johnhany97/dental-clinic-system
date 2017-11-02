@@ -1,18 +1,17 @@
 package com2002.models;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com2002.utils.Database;
 
 public class Appointment {
 
-	private LocalDate startTime;
-	private LocalDate endTime;
+	private LocalDateTime startTime;
+	private LocalDateTime endTime;
 	private String username;
 	private int patientID;
 	private String notes;
@@ -20,7 +19,7 @@ public class Appointment {
 	private int totalAppointments;
 	private int currentAppointment;
 	
-	public Appointment(LocalDate start, LocalDate end, String userN, int patID, String nts, 
+	public Appointment(LocalDateTime start, LocalDateTime end, String userN, int patID, String nts, 
 					   AppointmentType treatmentN, int totalA, int currA) {
 		execUpdate("INSERT INTO Appointments VALUES ('" + start + "', '" + end + "', '" + userN + "', '" 
 					+ patID + "', '" + nts + "', '" + treatmentN + "', '" + totalA + "', '" + currA + "')");
@@ -53,11 +52,15 @@ public class Appointment {
 		return cost;
 	}
 	
-	protected LocalDate getStartTime() {
+	protected LocalDateTime getStartTime() {
 		return startTime;
 	}
 	
-	protected LocalDate getEndTime() {
+	protected void setStartTime(LocalDateTime start) {
+		
+	}
+	
+	protected LocalDateTime getEndTime() {
 		return endTime;
 	}
 	
