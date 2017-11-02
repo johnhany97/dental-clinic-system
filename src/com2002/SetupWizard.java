@@ -48,6 +48,7 @@ public class SetupWizard {
 	final private static String START_APP_LABEL = "Start using Application";
 	final private static String ADD_MORE_BUTTON_LABEL = "Add";
 	final private static String CONTINUE_BUTTON_LABEL = "Continue";
+	final private static String THANKS_TITLE = "We're done! Thanks :)";
 	
 	//Instance variables
 	private JPanel welcomeScreen;
@@ -68,8 +69,10 @@ public class SetupWizard {
 	private List<JTextField> treatmentsFields;
 	//HealthPlansScreen
 	private JPanel healthPlansScreen;
-	private JLabel[] healthPlansLabels;
-	private JButton[] healthPlansButtons;
+	private List<JLabel> healthPlansLabels;
+	private List<JPanel> healthPlansPanels;
+	private List<JTextField> healthPlansFields;
+	private List<JButton> healthPlansButtons;
 	//Thanks
 	private JPanel thanksScreen;
 	private JLabel thanksLabel;
@@ -82,22 +85,44 @@ public class SetupWizard {
 	}
 	
 	public JPanel initialPanel() {
-		return this.treatmentsScreen;
+		return this.healthPlansScreen;
 	}
 	
 	private void initPanels() {
 		initializeWelcome();
 		initializeEmployees();
 		initializeTreatments();
-//		initializeHealthPlans();
-//		initializeThanks();
+		initializeHealthPlans();
+		initializeThanks();
 	}
 	
 	private void initializeThanks() {
-		
+		this.thanksScreen = new JPanel();
+		this.thanksScreen.setLayout(new BorderLayout());
+		//Title
+		this.thanksLabel = new JLabel(THANKS_TITLE, SwingConstants.CENTER);
+		this.thanksLabel.setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE * 2));
+		this.thanksScreen.add(this.thanksLabel, BorderLayout.NORTH);
+		//Button
+		//should take you to login screen
+		//should update the setupDone file to the constant representing setup is finished
 	}
 
 	private void initializeHealthPlans() {
+		this.healthPlansScreen = new JPanel();
+		this.healthPlansScreen.setLayout(new BorderLayout());
+		//Title
+		this.healthPlansLabels = new ArrayList<JLabel>();
+		this.healthPlansLabels.add(new JLabel(this.HEALTH_PLAN_LABELS[0], SwingConstants.CENTER));
+		this.healthPlansLabels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE));
+		this.healthPlansScreen.add(this.healthPlansLabels.get(0), BorderLayout.NORTH);
+		
+		//Add button
+		
+		//Next Button
+		
 		
 	}
 
