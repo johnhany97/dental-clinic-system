@@ -42,6 +42,7 @@ public class SetupWizard {
 	
 	final private static String[] EMPLOYEE_LABELS = {"Employees", "First Name", "Last Name", "Username", "Password", "Role"};
 	final private static String[] TREATMENTS_LABELS = {"Treatments", "Name", "Price"};
+	final private static String[] APPOINTMENT_TYPES_LABELS = {"Appointment Types' Prices", "Checkup", "Cleaning", "Remedial", "Empty"};
 	final private static String[] HEALTH_PLAN_LABELS = {"Health Plans", "Name", "Price", "Checkup Level", "Hygiene Level", "Repair Level"};
 	final private static String NEXT_BUTTON_LABEL = "Next";
 	final private static String WELCOME_TITLE = "Welcome";
@@ -67,6 +68,12 @@ public class SetupWizard {
 	private List<JButton> treatmentsButtons;
 	private List<JPanel> treatmentsPanels;
 	private List<JTextField> treatmentsFields;
+	//AppointmentTypes
+	private JPanel appointmentTypesScreen;
+	private List<JLabel> appointmentTypesLabels;
+	private JButton appointmentTypesButton;
+	private List<JPanel> appointmentTypesPanels;
+	private List<JTextField> appointmentTypesFields;
 	//HealthPlansScreen
 	private JPanel healthPlansScreen;
 	private List<JLabel> healthPlansLabels;
@@ -92,6 +99,7 @@ public class SetupWizard {
 		initializeWelcome();
 		initializeEmployees();
 		initializeTreatments();
+		initializeAppointmentTypes();
 		initializeHealthPlans();
 		initializeThanks();
 	}
@@ -124,6 +132,70 @@ public class SetupWizard {
 		//Next Button
 		
 		
+	}
+	
+	private void initializeAppointmentTypes() {
+		this.appointmentTypesScreen = new JPanel();
+		this.appointmentTypesScreen.setLayout(new BorderLayout());
+		//Title
+		this.appointmentTypesLabels = new ArrayList<JLabel>();
+		this.appointmentTypesLabels.add(new JLabel(APPOINTMENT_TYPES_LABELS[0], SwingConstants.CENTER));
+		this.appointmentTypesLabels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE));
+		this.appointmentTypesScreen.add(this.appointmentTypesLabels.get(0), BorderLayout.NORTH);
+		//Add the 4 labels with their price fields
+		this.appointmentTypesPanels = new ArrayList<JPanel>();
+		this.appointmentTypesPanels.add(new JPanel());
+		this.appointmentTypesPanels.get(0).setLayout(new BoxLayout(this.appointmentTypesPanels.get(0), BoxLayout.PAGE_AXIS));
+		this.appointmentTypesFields = new ArrayList<JTextField>();
+		NumberFormat numFormat = new DecimalFormat("#0.0"); //Format of data in price textfield
+		NumberFormatter  numFormatter  = new NumberFormatter(numFormat);
+		for (int i = 1; i < APPOINTMENT_TYPES_LABELS.length; i++) {
+			//Create a panel
+			this.appointmentTypesPanels.add(new JPanel());
+			int index = this.appointmentTypesPanels.size() - 1;
+			this.appointmentTypesPanels.get(index).setLayout(new FlowLayout());
+			//Create label
+			this.appointmentTypesLabels.add(new JLabel(APPOINTMENT_TYPES_LABELS[i], SwingConstants.CENTER));
+			int labelIndex = this.appointmentTypesLabels.size() - 1;
+			this.appointmentTypesLabels.get(labelIndex).setFont(new Font("Sans Serif", Font.PLAIN,
+					DisplayFrame.FONT_SIZE / 2));
+			//Create textfield
+			this.appointmentTypesFields.add(new JFormattedTextField(numFormatter));
+			int fieldIndex = this.appointmentTypesFields.size() - 1; //it's index;
+			this.appointmentTypesFields.get(fieldIndex).setColumns(20); //size (width)
+			//add label and textfield to panel'
+			this.appointmentTypesPanels.get(index).add(this.appointmentTypesLabels.get(labelIndex));
+			this.appointmentTypesPanels.get(index).add(this.appointmentTypesFields.get(fieldIndex));
+			//add panel to bigger panel
+			this.appointmentTypesPanels.get(0).add(this.appointmentTypesPanels.get(index));
+		}
+		this.appointmentTypesScreen.add(this.appointmentTypesPanels.get(0), BorderLayout.CENTER);
+		//Next button
+	    this.appointmentTypesButton = new JButton(NEXT_BUTTON_LABEL);
+	    this.appointmentTypesScreen.add(this.appointmentTypesButton, BorderLayout.SOUTH);
+	    this.appointmentTypesButton.setFont(new Font("Sans Serif", Font.PLAIN,
+	            DisplayFrame.FONT_SIZE));
+	    this.appointmentTypesButton.addActionListener(new ActionListener() {
+	    	@Override
+	    	public void actionPerformed(ActionEvent arg0) {
+	    		try {
+		    		Connection conn = Database.getConnection();
+					Statement stmt = conn.createStatement();
+					for (int i = 1; i < APPOINTMENT_TYPES_LABELS.length; i++) {
+						String name = APPOINTMENT_TYPES_LABELS[i];
+						String price = appointmentTypesFields.get(i - 1).getText();
+						String sqlQuery = "INSERT INTO AppointmentTypes VALUES ('" + name + "', '" + price + "')";
+						stmt.executeUpdate(sqlQuery);
+					}
+					Database.closeDb(conn);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		    	frame.setDisplayedPanel(healthPlansScreen);
+		    	frame.repaint();
+	    	}
+	    });
 	}
 
 	private void initializeTreatments() {
@@ -201,7 +273,7 @@ public class SetupWizard {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-		    	frame.setDisplayedPanel(healthPlansScreen);
+		    	frame.setDisplayedPanel(appointmentTypesScreen);
 		    	frame.repaint();
 	    	}
 	    });
