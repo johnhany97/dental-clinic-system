@@ -93,6 +93,7 @@ public class DatabaseTables {
 			stmt.executeUpdate(patientsTable);
 			stmt.executeUpdate(appointmentsTable);
 			stmt.executeUpdate(patientHealthPlanTable);
+			stmt.executeUpdate(appointmentTreatmentTable);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -109,7 +110,7 @@ public class DatabaseTables {
 		Statement stmt = conn.createStatement();;
 
 		try {
-			String sqlString = "DROP TABLE IF EXISTS Treatments, Appointments, Employees, HealthPlans, PatientHealthPlan, Patients, Address";
+			String sqlString = "DROP TABLE IF EXISTS AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, Treatments";
             stmt.executeUpdate(sqlString);
         } catch(SQLException e) {
             System.out.println(e.toString());
