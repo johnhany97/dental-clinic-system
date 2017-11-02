@@ -3,13 +3,14 @@ package com2002.models;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import com2002.utils.Database;
 
 public class Appointment {
-	private LocalDateTime startTime;
-	private LocalDateTime endTime;
+	private Timestamp startTime;
+	private Timestamp endTime;
 	private String username;
 	private int patientID;
 	private String notes;
@@ -17,7 +18,28 @@ public class Appointment {
 	private int totalAppointments;
 	private int currentAppointment;
 	
-	public Appointment(LocalDateTime start, LocalDateTime end, String userN, int patID, String nts, 
+	public Appointment(Timestamp startD, int patID) {
+		try {
+			Connection conn = Database.getConnection();
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
+					+ startD + " AND PatientID = " + patID + "", conn);
+			if(rs.next()) {
+				startTime = startD;
+				endTime = rs.getTimestamp("EndDate");
+				username = rs.getString("Username");
+				patientID = patID;
+				notes = rs.getString("Notes");
+				appointmentType = rs.getString("Type");
+				totalAppointments = rs.getInt("TotalAppointments");
+				currentAppointment = rs.getInt("CurrentAppointment");
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
 					   AppointmentType treatmentN, int totalA, int currA) {
 		try {
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + start + "', '" + end + "', '" + userN + "', '" 
@@ -69,15 +91,15 @@ public class Appointment {
 		return cost;
 	}
 	
-	protected LocalDateTime getStartTime() {
+	protected Timestamp getStartTime() {
 		return startTime;
 	}
 	
-	protected LocalDateTime getEndTime() {
+	protected Timestamp getEndTime() {
 		return endTime;
 	}
 	
-	protected void setStartEndTime(LocalDateTime start, LocalDateTime end) {
+	protected void setStartEndTime(Timestamp start, Timestamp end) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start + ", EndDate = " + end 
 					+ " WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
@@ -197,6 +219,8 @@ public class Appointment {
 		}
 		return "Empty";
 	}
+	
+	
 	
 	private void printError(String method) {
 		System.out.println("Something went wrong with updating the " + method + ". "
