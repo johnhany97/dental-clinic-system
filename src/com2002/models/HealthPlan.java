@@ -11,19 +11,19 @@ import com2002.utils.Database;
 public class HealthPlan {
 
 	private String name;
-	private int price;
+	private Double price;
 	private int checkUpLevel;
 	private int hygieneLevel;
 	private int repairWorkLevel;
 	
-	public HealthPlan(String nme, int pri, int chkUpLevel, int hygLevel, int rWorkLevel){
+	public HealthPlan(String nme, Double pri, int chkUpLevel, int hygLevel, int rWorkLevel){
 		try {
 			Connection conn = Database.getConnection();
-			name = nme;
-			price  = pri;
-			checkUpLevel = chkUpLevel;
-			hygieneLevel = hygLevel;
-			repairWorkLevel = rWorkLevel;
+			this.name = nme;
+			this.price  = pri;
+			this.checkUpLevel = chkUpLevel;
+			this.hygieneLevel = hygLevel;
+			this.repairWorkLevel = rWorkLevel;
 			if(!dbHasHealthPlan(nme)){
 				DBQueries.execUpdate("INSERT INTO HealthPlans Values('" + nme + "', '" + pri + "', '" + chkUpLevel + "', '" 
 					+ hygLevel + "', '" + rWorkLevel + "')");
@@ -58,23 +58,23 @@ public class HealthPlan {
 	}
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
-	public int getPrice() {
-		return price;
+	public Double getPrice() {
+		return this.price;
 	}
 
 	public int getCheckUpLevel() {
-		return checkUpLevel;
+		return this.checkUpLevel;
 	}
 
 	public int getHygieneLevel() {
-		return hygieneLevel;
+		return this.hygieneLevel;
 	}
 
 	public int getRepairWorkLevel() {
-		return repairWorkLevel;
+		return this.repairWorkLevel;
 	}
 
 
