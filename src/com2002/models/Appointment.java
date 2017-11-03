@@ -18,16 +18,16 @@ public class Appointment {
 	private int totalAppointments;
 	private int currentAppointment;
 	
-	public Appointment(Timestamp startD, int patID) {
+	public Appointment(Timestamp startD, String userN) {
 		try {
 			Connection conn = Database.getConnection();
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
-					+ startD + " AND PatientID = " + patID + "", conn);
+					+ startD + " AND Username = " + userN + "", conn);
 			if(rs.next()) {
 				startTime = startD;
 				endTime = rs.getTimestamp("EndDate");
-				username = rs.getString("Username");
-				patientID = patID;
+				username = userN;
+				patientID = rs.getInt("PatientID");
 				notes = rs.getString("Notes");
 				appointmentType = rs.getString("Type");
 				totalAppointments = rs.getInt("TotalAppointments");
@@ -39,7 +39,7 @@ public class Appointment {
 		}
 	}
 	
-	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
+	public void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
 					   AppointmentType treatmentN, int totalA, int currA) {
 		try {
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + start + "', '" + end + "', '" + userN + "', '" 
@@ -59,17 +59,17 @@ public class Appointment {
 		currentAppointment = currA;
 	}
 	
-	protected void removeAppointment() {
+	protected void removeAppointment(Timestamp start, String userN) {
 		try {
-			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
+			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime + " AND Username = " + username);
 		} catch (SQLException e) {
 			System.out.println("Failed to delete appointment. Make sure appointment is properly initialised.");
 			return;
 		}
-		startTime = null;
+		startTime = start;
 		endTime = null;
-		username = null;
-		patientID = -1;
+		username = userN;
+		patientID = 0;
 		notes = null;
 		appointmentType = "";
 		totalAppointments = -1;
