@@ -47,11 +47,11 @@ Appointments</y:NodeLabel>
           <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="121.609375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="194.775390625" x="2.0" y="45.40234375">StartDate : Date &lt;&lt;PK&gt;&gt;
 EndDate : Date
 Username : String &lt;&lt;FK&gt;&gt; &lt;&lt;PK&gt;&gt;
+Type: String &lt;&lt;FK&gt;&gt;
 PatientID : Int &lt;&lt;FK&gt;&gt;
 Notes : String
 TotalAppointments : Int
-CurrentAppointment : Int
-Type: String &lt;&lt;FK&gt;&gt;<y:LabelModel>
+CurrentAppointment : Int<y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
             <y:ModelParameter>

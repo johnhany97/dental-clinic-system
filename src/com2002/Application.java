@@ -7,10 +7,10 @@ import java.nio.file.Paths;
 public class Application {
 	
 	/** Defines name of file being used to monitor whether the application is initially setup or not **/
-	private final static String FILE_NAME = "setupDone.txt";
-	
+	public final static String FILE_NAME = "setupDone.txt";
+
 	/** Defines what the file should read if system is already setup **/
-	private final static String SETUP = "1";
+	public final static String SETUP = "1";
 	
 	//Instance variables
 	private static DisplayFrame window;
