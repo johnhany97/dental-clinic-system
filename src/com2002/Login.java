@@ -7,7 +7,7 @@ public class Login {
 	private JPanel screen;
 	
 	public Login() {
-		
+		this.screen = new JPanel();
 	}
 	
 	public JPanel getPanel() {
