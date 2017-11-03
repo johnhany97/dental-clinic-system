@@ -40,6 +40,7 @@ public class Appointment {
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println("Something went wrong with creating an appointment.");
 		}
 	}
 	
@@ -328,7 +329,7 @@ public class Appointment {
 	
 	/**
 	 * Method for printing error message to the console.
-	 * @param method The method from which the error has occured.
+	 * @param method The method from which the error has occurred.
 	 */
 	private void printError(String method) {
 		System.out.println("Something went wrong with updating the " + method + ". "
