@@ -31,6 +31,7 @@ public abstract class Staff {
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println("Something went wrong. A staff member with this username and password may not exist.");
 		}
 	}
 	
@@ -39,7 +40,6 @@ public abstract class Staff {
 			try {
 				DBQueries.execUpdate("INSERT INTO Employees VALUES ('" + fName + "', '" + lName + "', '" 
 						+ userN + "', '" + pass + "', '" + getRoleString(r) + "')");
-				
 			} catch (SQLException e) {
 				e.printStackTrace();
 				System.out.println("An error has occurred. A staff member with username " + userN + " might already exist.");
@@ -50,7 +50,6 @@ public abstract class Staff {
 			username = userN;
 			role = getRoleString(r);
 		}
-		
 	}
 	
 	private boolean dbHasUsername(String userN) {
@@ -143,5 +142,7 @@ public abstract class Staff {
 		System.out.println(arthur.getFirstName() + " " + arthur.getLastName() + " with username " 
 		+ arthur.getUsername() + " is a " + arthur.getRole());
 	}
+	
+	
 	
 }
