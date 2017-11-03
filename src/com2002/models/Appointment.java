@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 import com2002.utils.Database;
 
@@ -42,7 +41,7 @@ public class Appointment {
 	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
 					   AppointmentType treatmentN, int totalA, int currA) {
 		try {
-			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + start + "', '" + end + "', '" + userN + "', '" 
+			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + start.toString() + "', '" + end.toString() + "', '" + userN + "', '" 
 						+ treatmentN + "', '" + patID + "', '" + nts + "', '" + totalA + "', '" + currA + "')");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -61,7 +60,7 @@ public class Appointment {
 	
 	protected void removeAppointment() {
 		try {
-			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
+			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime.toString() + " AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			System.out.println("Failed to delete appointment. Make sure appointment is properly initialised.");
 			return;
@@ -81,8 +80,8 @@ public class Appointment {
 		try {
 			Connection conn = Database.getConnection();
 			if(appointmentType.equals("Remedial")) {
-				ResultSet treatmentRS = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = " 
-						+ startTime + " AND Username = '" + username + "'", conn);
+				ResultSet treatmentRS = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = '" 
+						+ startTime.toString() + "' AND Username = '" + username + "'", conn);
 				while(treatmentRS.next()) {
 					String treatment = treatmentRS.getString("TreatmentName");
 					ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'", conn);
@@ -104,6 +103,7 @@ public class Appointment {
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.print("Something went wrong with calculating the cost.");
 		}
 		return cost;
 	}
@@ -119,7 +119,7 @@ public class Appointment {
 	protected void setStartEndTime(Timestamp start, Timestamp end) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start + ", EndDate = " + end 
-					+ " WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
+					+ " WHERE StartDate = '" + startTime.toString() + "' AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("start and end times");
@@ -136,7 +136,7 @@ public class Appointment {
 	protected void setUsername(String user) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET Username = '" + user 
-					+ "' WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
+					+ "' WHERE StartDate = '" + startTime.toString() + "' AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("username");
@@ -152,8 +152,8 @@ public class Appointment {
 	protected void setPatientID(int patID) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET PatientID = " + patID 
-								  + " WHERE StartDate = "
-					+ startTime + " AND PatientID = " + patientID);
+								  + " WHERE StartDate = '"
+					+ startTime.toString() + "' AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("patientID");
@@ -168,8 +168,8 @@ public class Appointment {
 	
 	protected void setNotes(String note) {
 		try {
-			DBQueries.execUpdate("UPDATE Appointments SET Notes = '" + note + "' WHERE StartDate = "
-					+ startTime + " AND PatientID = " + patientID);
+			DBQueries.execUpdate("UPDATE Appointments SET Notes = '" + note + "' WHERE StartDate = '"
+					+ startTime.toString() + "' AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("notes");
@@ -185,7 +185,7 @@ public class Appointment {
 	protected void setAppointmentType(AppointmentType appointmentT) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET Type = '" + getAppointmentTypeString(appointmentT) 
-			+ "' WHERE StartDate = " + startTime + " AND PatientID = " + patientID);
+			+ "' WHERE StartDate = '" + startTime.toString() + "' AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("appointment type");
@@ -200,8 +200,8 @@ public class Appointment {
 	
 	protected void setTotalAppointments(int total) {
 		try {
-			DBQueries.execUpdate("UPDATE Appointments SET TotalAppointments = " + total + " WHERE StartDate = "
-					+ startTime + " AND PatientID = " + patientID);
+			DBQueries.execUpdate("UPDATE Appointments SET TotalAppointments = " + total + " WHERE StartDate = '"
+					+ startTime.toString() + "' AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("total appointments");
@@ -216,8 +216,8 @@ public class Appointment {
 	
 	protected void setCurrentAppointment(int current) {
 		try {
-			DBQueries.execUpdate("UPDATE Appointments SET CurrentAppointment = " + current + " WHERE StartDate = "
-					+ startTime + " AND PatientID = " + patientID);
+			DBQueries.execUpdate("UPDATE Appointments SET CurrentAppointment = " + current + " WHERE StartDate = '"
+					+ startTime.toString() + "' AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("current appointment");
