@@ -1,3 +1,10 @@
+/**
+ * Database Tables Class
+ * 
+ * This is used to initialize database to specific schema.
+ * Used in setup
+ * @author John Ayad
+ */
 package com2002.utils;
 
 import java.sql.Connection;
@@ -6,14 +13,29 @@ import java.sql.SQLException;
 
 public class DatabaseTables {
 	
+	/**
+	 * Setup Function
+	 * 
+	 * Used to clear database from all previous tables (relating to this app)
+	 * Then it creates new tables (empty) in the db
+	 * @throws SQLException if an error occurred whilst attempting connection
+	 */
 	public static void setup() throws SQLException {
 		dropTables();
 		createTables();
 	}
 
-	public static void createTables() throws SQLException {
+	/**
+	 * createTables Function
+	 * 
+	 * This function creates tables in the Database as per the application's
+	 * default database schema
+	 * @throws SQLException if an error occurred whilst attempting connection
+	 */
+	private static void createTables() throws SQLException {
+		//connect
 		Connection conn = Database.getConnection();
-
+		//tables schema
 		String treatmentsTable = "CREATE TABLE `Treatments` (\r\n" + 
 				"	`Name` VARCHAR(30) NOT NULL,\r\n" + 
 				"	`Price` DOUBLE,\r\n" + 
@@ -91,7 +113,7 @@ public class DatabaseTables {
 				"	`Postcode`	VARCHAR(8) NOT NULL,\r\n" + 
 				"	PRIMARY KEY(`HouseNumber`,`Postcode`)\r\n" + 
 				")";
-		try {
+		try { //Run the above statements
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(treatmentsTable);
 			stmt.executeUpdate(appointmentTypesTable);
@@ -109,31 +131,24 @@ public class DatabaseTables {
 		}
 	}
 	
-	public static void populateTables() {
-		
-	}
-	
-	public static void dropTables() throws SQLException {
+	/**
+	 * dropTables Function
+	 * 
+	 * This is used to delete all tables relevant to this app from the database
+	 * 
+	 * @throws SQLException if an error occurred whilst attempting connection to the database
+	 */
+	private static void dropTables() throws SQLException {
 		Connection conn = Database.getConnection();
-		Statement stmt = conn.createStatement();;
+		Statement stmt = conn.createStatement();
 
-		try {
+		try { //order is important for tables (reverse the creation order)
 			String sqlString = "DROP TABLE IF EXISTS AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, AppointmentTypes, Treatments";
             stmt.executeUpdate(sqlString);
         } catch(SQLException e) {
-            System.out.println(e.toString());
-            System.out.println("this");
+            e.printStackTrace();
         } finally {
             Database.closeDb(conn);
         }
-	}
-	
-	public static void main(String[] args) {
-		//THIS IS TEMPORARY.. .SHOULD BE MOVED ELSEWHERE
-		try {
-			setup();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 }

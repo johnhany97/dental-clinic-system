@@ -3,6 +3,9 @@ package com2002;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
+
+import com2002.utils.DatabaseTables;
 
 public class Application {
 	
@@ -34,6 +37,11 @@ public class Application {
 			window.setDisplayedPanel(loginScreen.getPanel());
 		} else {
 			//We need to setup the entire project
+			try {
+				DatabaseTables.setup();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			SetupWizard setupWizard = new SetupWizard(window);
 			window.setDisplayedPanel(setupWizard.initialPanel());
 		}		
