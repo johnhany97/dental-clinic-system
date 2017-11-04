@@ -12,7 +12,7 @@ public class Secretary extends Staff {
 
 	//Schedule schedule = new Schedule();
 	
-	public Secretary(String userN, String pass) {
+	public Secretary(String userN, String pass) throws SQLException {
 		super(userN, pass);
 		// TODO Auto-generated constructor stub
 	}

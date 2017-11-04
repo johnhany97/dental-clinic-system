@@ -21,23 +21,19 @@ public abstract class Staff {
 	 * This constructor should be called with inputs which already exist in the Staff table.
 	 * @param userN Username of the staff member.
 	 * @param pass Password of the staff member.
+	 * @throws SQLException when an error occurs whilst attempting connection
 	 */
-	public Staff(String userN, String pass) {
-		try {
-			Connection conn = Database.getConnection();
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
-					+ userN + "' AND password = '" + pass + "'", conn);
-			if(rs.next()) {
-				firstName = rs.getString("FirstName");
-				lastName = rs.getString("LastName");
-				username = userN;
-				role = rs.getString("Role");
-			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong. A staff member with this username and password may not exist.");
+	public Staff(String userN, String pass) throws SQLException {
+		Connection conn = Database.getConnection();
+		ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
+				+ userN + "' AND password = '" + pass + "'", conn);
+		if(rs.next()) {
+			firstName = rs.getString("FirstName");
+			lastName = rs.getString("LastName");
+			username = userN;
+			role = rs.getString("Role");
 		}
+		conn.close();
 	}
 	
 	/**

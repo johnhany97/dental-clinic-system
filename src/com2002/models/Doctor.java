@@ -1,8 +1,10 @@
 package com2002.models;
 
+import java.sql.SQLException;
+
 public class Doctor extends Staff {
 
-	public Doctor(String userN, String pass) {
+	public Doctor(String userN, String pass) throws SQLException {
 		super(userN, pass);
 	}
 	
