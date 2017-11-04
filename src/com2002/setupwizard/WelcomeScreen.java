@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com2002.DisplayFrame;
+import com2002.interfaces.Screen;
 
 public class WelcomeScreen implements Screen {
 

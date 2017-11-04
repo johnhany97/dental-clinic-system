@@ -20,6 +20,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import com2002.DisplayFrame;
+import com2002.interfaces.Screen;
 import com2002.models.Doctor;
 import com2002.models.Role;
 import com2002.models.Secretary;

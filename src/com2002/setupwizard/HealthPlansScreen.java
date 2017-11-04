@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import javax.swing.text.NumberFormatter;
 
 import com2002.DisplayFrame;
+import com2002.interfaces.Screen;
 import com2002.models.HealthPlan;
 
 public class HealthPlansScreen implements Screen {

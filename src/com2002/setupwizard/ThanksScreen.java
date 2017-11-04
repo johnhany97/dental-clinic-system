@@ -16,6 +16,7 @@ import javax.swing.SwingConstants;
 import com2002.Application;
 import com2002.DisplayFrame;
 import com2002.Login;
+import com2002.interfaces.Screen;
 
 public class ThanksScreen implements Screen {
 	
@@ -60,7 +61,7 @@ public class ThanksScreen implements Screen {
 		    		  e.printStackTrace();
 		    	  }
 		    	  //Take you to login screen
-		    	  Login loginScreen = new Login();
+		    	  Login loginScreen = new Login(frame);
 		    	  frame.setDisplayedPanel(loginScreen.getPanel());
 		      }
 	    });

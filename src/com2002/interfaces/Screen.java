@@ -1,4 +1,4 @@
-package com2002.setupwizard;
+package com2002.interfaces;
 
 import javax.swing.JPanel;
 

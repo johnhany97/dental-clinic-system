@@ -24,6 +24,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 
 import com2002.DisplayFrame;
+import com2002.interfaces.Screen;
 import com2002.utils.Database;
 
 public class TreatmentsScreen implements Screen {

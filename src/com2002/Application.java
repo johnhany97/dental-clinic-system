@@ -27,20 +27,15 @@ public class Application {
 	}
 	
 	public static void main(String[] args) {
+		window = new DisplayFrame();
 		if (isSetup()) {
-			//We need to setup the entire project
-			
-		} else {
 			//We're all setup.. go to login screen
-			window = new DisplayFrame();
+			Login loginScreen = new Login(window);
+			window.setDisplayedPanel(loginScreen.getPanel());
+		} else {
+			//We need to setup the entire project
 			SetupWizard setupWizard = new SetupWizard(window);
 			window.setDisplayedPanel(setupWizard.initialPanel());
-//			System.out.println(Float.valueOf("2.00"));
-		}
-//		javax.swing.JPanel panel = new javax.swing.JPanel();
-//		window = new DisplayFrame();
-//		window.setDisplayedPanel(panel);
-//		
+		}		
 	}
-
 }
