@@ -1,3 +1,10 @@
+/**
+ * AppointmentTypesScreen Class
+ * 
+ * This is the class representing appointment types setting up
+ * in the setup wizard
+ * @author John Ayad
+ */
 package com2002.setupwizard;
 
 import java.awt.BorderLayout;
@@ -28,72 +35,86 @@ import com2002.utils.Database;
 
 public class AppointmentTypesScreen implements Screen {
 	
+	/** Constant representing all of the input labels and the title **/
 	final private static String[] APPOINTMENT_TYPES_LABELS = {"Appointment Types' Prices", "Checkup", "Cleaning", "Remedial", "Empty"};
+	
+	/** Constant representing the button's label **/
 	final private static String NEXT_BUTTON_LABEL = "Next";
 	
-	private JPanel appointmentTypesScreen;
-	private List<JLabel> appointmentTypesLabels;
-	private JButton appointmentTypesButton;
-	private List<JPanel> appointmentTypesPanels;
-	private List<JTextField> appointmentTypesFields;
+	//Instance variables
+	private JPanel screen;
+	private List<JLabel> labels;
+	private JButton nextButton;
+	private List<JPanel> panels;
+	private List<JTextField> fields;
 	private DisplayFrame frame;
 	
+	/**
+	 * Constructor
+	 * 
+	 * Used to create an instance of this class
+	 * @param frame the frame in which this panel will be shown
+	 */
 	public AppointmentTypesScreen(DisplayFrame frame) {
 		this.frame = frame;
 		initializeAppointmentTypes();
 	}
 	
+	/**
+	 * Function used to initialize the screen and all of it's components
+	 */
 	private void initializeAppointmentTypes() {
-		this.appointmentTypesScreen = new JPanel();
-		this.appointmentTypesScreen.setLayout(new BorderLayout());
+		this.screen = new JPanel();
+		this.screen.setLayout(new BorderLayout());
 		//Title
-		this.appointmentTypesLabels = new ArrayList<JLabel>();
-		this.appointmentTypesLabels.add(new JLabel(APPOINTMENT_TYPES_LABELS[0], SwingConstants.CENTER));
-		this.appointmentTypesLabels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
+		this.labels = new ArrayList<JLabel>();
+		this.labels.add(new JLabel(APPOINTMENT_TYPES_LABELS[0], SwingConstants.CENTER));
+		this.labels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
-		this.appointmentTypesScreen.add(this.appointmentTypesLabels.get(0), BorderLayout.NORTH);
+		this.screen.add(this.labels.get(0), BorderLayout.NORTH);
 		//Add the 4 labels with their price fields
-		this.appointmentTypesPanels = new ArrayList<JPanel>();
-		this.appointmentTypesPanels.add(new JPanel());
-		this.appointmentTypesPanels.get(0).setLayout(new BoxLayout(this.appointmentTypesPanels.get(0), BoxLayout.PAGE_AXIS));
-		this.appointmentTypesFields = new ArrayList<JTextField>();
+		this.panels = new ArrayList<JPanel>();
+		this.panels.add(new JPanel());
+		this.panels.get(0).setLayout(new BoxLayout(this.panels.get(0), BoxLayout.PAGE_AXIS));
+		this.fields = new ArrayList<JTextField>();
 		NumberFormat numFormat = new DecimalFormat("#0.0"); //Format of data in price textfield
 		NumberFormatter  numFormatter  = new NumberFormatter(numFormat);
 		for (int i = 1; i < APPOINTMENT_TYPES_LABELS.length; i++) {
 			//Create a panel
-			this.appointmentTypesPanels.add(new JPanel());
-			int index = this.appointmentTypesPanels.size() - 1;
-			this.appointmentTypesPanels.get(index).setLayout(new FlowLayout());
+			this.panels.add(new JPanel());
+			int index = this.panels.size() - 1;
+			this.panels.get(index).setLayout(new FlowLayout());
 			//Create label
-			this.appointmentTypesLabels.add(new JLabel(APPOINTMENT_TYPES_LABELS[i], SwingConstants.CENTER));
-			int labelIndex = this.appointmentTypesLabels.size() - 1;
-			this.appointmentTypesLabels.get(labelIndex).setFont(new Font("Sans Serif", Font.PLAIN,
+			this.labels.add(new JLabel(APPOINTMENT_TYPES_LABELS[i], SwingConstants.CENTER));
+			int labelIndex = this.labels.size() - 1;
+			this.labels.get(labelIndex).setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
 			//Create textfield
-			this.appointmentTypesFields.add(new JFormattedTextField(numFormatter));
-			int fieldIndex = this.appointmentTypesFields.size() - 1; //it's index;
-			this.appointmentTypesFields.get(fieldIndex).setColumns(20); //size (width)
+			this.fields.add(new JFormattedTextField(numFormatter));
+			int fieldIndex = this.fields.size() - 1; //it's index;
+			this.fields.get(fieldIndex).setColumns(20); //size (width)
 			//add label and textfield to panel'
-			this.appointmentTypesPanels.get(index).add(this.appointmentTypesLabels.get(labelIndex));
-			this.appointmentTypesPanels.get(index).add(this.appointmentTypesFields.get(fieldIndex));
+			this.panels.get(index).add(this.labels.get(labelIndex));
+			this.panels.get(index).add(this.fields.get(fieldIndex));
 			//add panel to bigger panel
-			this.appointmentTypesPanels.get(0).add(this.appointmentTypesPanels.get(index));
+			this.panels.get(0).add(this.panels.get(index));
 		}
-		this.appointmentTypesScreen.add(this.appointmentTypesPanels.get(0), BorderLayout.CENTER);
+		this.screen.add(this.panels.get(0), BorderLayout.CENTER);
 		//Next button
-	    this.appointmentTypesButton = new JButton(NEXT_BUTTON_LABEL);
-	    this.appointmentTypesScreen.add(this.appointmentTypesButton, BorderLayout.SOUTH);
-	    this.appointmentTypesButton.setFont(new Font("Sans Serif", Font.PLAIN,
+	    this.nextButton = new JButton(NEXT_BUTTON_LABEL);
+	    this.screen.add(this.nextButton, BorderLayout.SOUTH);
+	    this.nextButton.setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE));
-	    this.appointmentTypesButton.addActionListener(new ActionListener() {
+	    this.nextButton.addActionListener(new ActionListener() {
 	    	@Override
 	    	public void actionPerformed(ActionEvent arg0) {
+	    		//Save data
 	    		try {
 		    		Connection conn = Database.getConnection();
 					Statement stmt = conn.createStatement();
 					for (int i = 1; i < APPOINTMENT_TYPES_LABELS.length; i++) {
 						String name = APPOINTMENT_TYPES_LABELS[i];
-						String price = appointmentTypesFields.get(i - 1).getText();
+						String price = fields.get(i - 1).getText();
 						String sqlQuery = "INSERT INTO AppointmentTypes VALUES ('" + name + "', '" + price + "')";
 						stmt.executeUpdate(sqlQuery);
 					}
@@ -101,16 +122,19 @@ public class AppointmentTypesScreen implements Screen {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+	    		//Next screen
 	    		HealthPlansScreen healthPlansScreen = new HealthPlansScreen(frame);
 		    	frame.setDisplayedPanel(healthPlansScreen.getPanel());
 		    	frame.repaint();
 	    	}
 	    });
 	}
-
 	
+	/**
+	 * Function used to return this screen's JPanel
+	 * @return JPanel this class's panel
+	 */
 	public JPanel getPanel() {
-		return this.appointmentTypesScreen;
+		return this.screen;
 	}
-
 }

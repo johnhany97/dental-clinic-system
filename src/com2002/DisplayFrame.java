@@ -1,3 +1,10 @@
+/**
+ * DisplayFrame class
+ * 
+ * Class representing the Frame in which the application
+ * will be shown
+ * @author John Ayad
+ */
 package com2002;
 
 import java.awt.Container;
@@ -34,8 +41,13 @@ public class DisplayFrame extends JFrame {
 	  private int screenWidthStep;
 	  private int screenHeightStep;
 	  
+	  /**
+	   * Constructor
+	   * 
+	   * Used to create an instance of the DisplayFrame
+	   */
 	  public DisplayFrame() {
-		  initializeFrame();
+		  initializeFrame(); //initialize the frame's size and location
 	  }
 	  
 	  /**
@@ -68,7 +80,6 @@ public class DisplayFrame extends JFrame {
 	    int screenLocationX = (screenDimensions.width - this.screenWidth) / 2;
 	    int screenLocationY = (screenDimensions.height - this.screenHeight) / 2;
 	    setLocation(new Point(screenLocationX, screenLocationY));
-	    
 	    // Default close operation
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    // Prevent resizing
