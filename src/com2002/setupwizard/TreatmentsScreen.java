@@ -1,3 +1,10 @@
+/**
+ * TreatmentsScreen Class
+ * 
+ * This is the class representing treatments creation
+ * in the setup wizard
+ * @author John Ayad
+ */
 package com2002.setupwizard;
 
 import java.awt.BorderLayout;
@@ -29,90 +36,103 @@ import com2002.utils.Database;
 
 public class TreatmentsScreen implements Screen {
 	
-	final private static String[] TREATMENTS_LABELS = {"Treatments", "Name", "Price"};
+	/** Constant representing this screen's title and labels **/
+	final private static String[] LABELS = {"Treatments", "Name", "Price"};
+	/** Constant representing the next button label **/
 	final private static String NEXT_BUTTON_LABEL = "Next";
-	final private static String ADD_MORE_BUTTON_LABEL = "Add";
+	/** Constant representing the add more button label **/
+	final private static String ADD_BUTTON_LABEL = "Add";
 
-	private JPanel treatmentsScreen;
-	private List<JLabel> treatmentsLabels;
-	private List<JButton> treatmentsButtons;
-	private List<JPanel> treatmentsPanels;
-	private List<JTextField> treatmentsFields;
+	//Instance variables
+	private JPanel screen;
+	private List<JLabel> labels;
+	private List<JButton> buttons;
+	private List<JPanel> panels;
+	private List<JTextField> fields;
 	private DisplayFrame frame;
 
+    /**
+     * Constructor
+     * 
+     * Used to create an instance of this class and initialize it
+     * @param frame DisplayFrame in which this is to be shown
+     */
 	public TreatmentsScreen(DisplayFrame frame) {
 		this.frame = frame;
 		initializeTreatments();
 	}
-	
+
+	/**
+	 * Function used to initialize panel and components
+	 */
 	private void initializeTreatments() {
-		this.treatmentsScreen = new JPanel();
-		this.treatmentsScreen.setLayout(new BorderLayout());
+		this.screen = new JPanel();
+		this.screen.setLayout(new BorderLayout());
 		//Title
-		this.treatmentsLabels = new ArrayList<JLabel>();
-		this.treatmentsLabels.add(new JLabel(TREATMENTS_LABELS[0], SwingConstants.CENTER));
-		this.treatmentsLabels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
+		this.labels = new ArrayList<JLabel>();
+		this.labels.add(new JLabel(LABELS[0], SwingConstants.CENTER));
+		this.labels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
-		this.treatmentsScreen.add(this.treatmentsLabels.get(0), BorderLayout.NORTH);
+		this.screen.add(this.labels.get(0), BorderLayout.NORTH);
 		// Treatments labels and text fields
-		this.treatmentsPanels = new ArrayList<JPanel>();
-		this.treatmentsPanels.add(new JPanel());
-		this.treatmentsPanels.get(0).setLayout(new BorderLayout());
+		this.panels = new ArrayList<JPanel>();
+		this.panels.add(new JPanel());
+		this.panels.get(0).setLayout(new BorderLayout());
 		//West panel
-		this.treatmentsPanels.add(new JPanel());
-		this.treatmentsPanels.get(1).setLayout(new BoxLayout(this.treatmentsPanels.get(1), BoxLayout.PAGE_AXIS));
-		this.treatmentsPanels.get(0).add(this.treatmentsPanels.get(1), BorderLayout.WEST);
-		this.treatmentsPanels.get(1).setBorder(new EmptyBorder(30, 30, 30, 30));
+		this.panels.add(new JPanel());
+		this.panels.get(1).setLayout(new BoxLayout(this.panels.get(1), BoxLayout.PAGE_AXIS));
+		this.panels.get(0).add(this.panels.get(1), BorderLayout.WEST);
+		this.panels.get(1).setBorder(new EmptyBorder(30, 30, 30, 30));
 		//East panel
-		this.treatmentsPanels.add(new JPanel());
-		this.treatmentsPanels.get(2).setLayout(new BoxLayout(this.treatmentsPanels.get(2), BoxLayout.PAGE_AXIS));
-		this.treatmentsPanels.get(0).add(this.treatmentsPanels.get(2), BorderLayout.EAST);
-		this.treatmentsPanels.get(2).setBorder(new EmptyBorder(30, 30, 30, 30));
+		this.panels.add(new JPanel());
+		this.panels.get(2).setLayout(new BoxLayout(this.panels.get(2), BoxLayout.PAGE_AXIS));
+		this.panels.get(0).add(this.panels.get(2), BorderLayout.EAST);
+		this.panels.get(2).setBorder(new EmptyBorder(30, 30, 30, 30));
 		//labels
-		for (int i = 1; i < TREATMENTS_LABELS.length; i++) {
-			this.treatmentsLabels.add(new JLabel(TREATMENTS_LABELS[i], SwingConstants.CENTER));
-			int index = this.treatmentsLabels.size() - 1;
-			this.treatmentsLabels.get(index).setFont(new Font("Sans Serif", Font.PLAIN,
+		for (int i = 1; i < LABELS.length; i++) {
+			this.labels.add(new JLabel(LABELS[i], SwingConstants.CENTER));
+			int index = this.labels.size() - 1;
+			this.labels.get(index).setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
 			if (i == 1) { 
-				this.treatmentsPanels.get(1).add(this.treatmentsLabels.get(i));
+				this.panels.get(1).add(this.labels.get(i));
 			} else {
-				this.treatmentsPanels.get(2).add(this.treatmentsLabels.get(i));
+				this.panels.get(2).add(this.labels.get(i));
 			}
 		}
-		this.treatmentsScreen.add(this.treatmentsPanels.get(0), BorderLayout.CENTER);
+		this.screen.add(this.panels.get(0), BorderLayout.CENTER);
 		//add textfields
-		this.treatmentsFields = new ArrayList<JTextField>();
+		this.fields = new ArrayList<JTextField>();
 		addTextFieldsTreatments();
 		//add Button
-	    this.treatmentsButtons = new ArrayList<JButton>();
+	    this.buttons = new ArrayList<JButton>();
 	    JPanel southPanel = new JPanel();
 	    southPanel.setLayout(new FlowLayout());
-	    this.treatmentsButtons.add(new JButton(ADD_MORE_BUTTON_LABEL));
-	    this.treatmentsButtons.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
+	    this.buttons.add(new JButton(ADD_BUTTON_LABEL));
+	    this.buttons.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE));
-	    this.treatmentsButtons.get(0).addActionListener(new ActionListener() {
+	    this.buttons.get(0).addActionListener(new ActionListener() {
 		      @Override
 		      public void actionPerformed(ActionEvent arg0) {
 		    	  addTextFieldsTreatments();
 		    	  frame.revalidate();
 		      }
 	    });
-	    southPanel.add(this.treatmentsButtons.get(0));
+	    southPanel.add(this.buttons.get(0));
 		//next button
-	    this.treatmentsButtons.add(new JButton(NEXT_BUTTON_LABEL));
-	    southPanel.add(this.treatmentsButtons.get(1));
-	    this.treatmentsButtons.get(1).setFont(new Font("Sans Serif", Font.PLAIN,
+	    this.buttons.add(new JButton(NEXT_BUTTON_LABEL));
+	    southPanel.add(this.buttons.get(1));
+	    this.buttons.get(1).setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE));
-	    this.treatmentsButtons.get(1).addActionListener(new ActionListener() {
+	    this.buttons.get(1).addActionListener(new ActionListener() {
 	    	@Override
 	    	public void actionPerformed(ActionEvent arg0) {
 	    		try {
 		    		Connection conn = Database.getConnection();
 					Statement stmt = conn.createStatement();
-					for (int i = 0; i < treatmentsFields.size(); i+=2) {
-						String name = treatmentsFields.get(i).getText();
-						String price = treatmentsFields.get(i + 1).getText();
+					for (int i = 0; i < fields.size(); i+=2) {
+						String name = fields.get(i).getText();
+						String price = fields.get(i + 1).getText();
 						String sqlQuery = "INSERT INTO Treatments VALUES ('" + name + "', '" + price + "')";
 						stmt.executeUpdate(sqlQuery);
 					}
@@ -125,27 +145,34 @@ public class TreatmentsScreen implements Screen {
 		    	frame.repaint();
 	    	}
 	    });
-	    this.treatmentsScreen.add(southPanel, BorderLayout.SOUTH);
+	    this.screen.add(southPanel, BorderLayout.SOUTH);
 	}
 
+	/**
+	 * Function used to add a set of text fields and labels to the panels list
+	 */
 	private void addTextFieldsTreatments() {
 		//Name textbox
-		this.treatmentsFields.add(new JTextField(20)); //create one
-		int index = this.treatmentsFields.size() - 1; //get it's index
-		this.treatmentsPanels.get(1).add(this.treatmentsFields.get(index)); //add to panel
-		this.treatmentsFields.get(index).setMaximumSize(this.treatmentsFields.get(index).getPreferredSize()); //set max size
+		this.fields.add(new JTextField(20)); //create one
+		int index = this.fields.size() - 1; //get it's index
+		this.panels.get(1).add(this.fields.get(index)); //add to panel
+		this.fields.get(index).setMaximumSize(this.fields.get(index).getPreferredSize()); //set max size
 		//Price textbox
 		//steps to ensure type of data entered
 		NumberFormat numFormat = new DecimalFormat("#0.00"); //Format of data in price textfield
 		NumberFormatter  numFormatter  = new NumberFormatter(numFormat);
-		this.treatmentsFields.add(new JFormattedTextField(numFormatter));
-		int index2 = this.treatmentsFields.size() - 1; //it's index;
-		this.treatmentsFields.get(index2).setColumns(20); //size (width)
-		this.treatmentsPanels.get(2).add(this.treatmentsFields.get(index2)); //add to panel
-		this.treatmentsFields.get(index2).setMaximumSize(this.treatmentsFields.get(index).getPreferredSize()); //max size
+		this.fields.add(new JFormattedTextField(numFormatter));
+		int index2 = this.fields.size() - 1; //it's index;
+		this.fields.get(index2).setColumns(20); //size (width)
+		this.panels.get(2).add(this.fields.get(index2)); //add to panel
+		this.fields.get(index2).setMaximumSize(this.fields.get(index).getPreferredSize()); //max size
 	}
-	
+
+	/**
+	 * Function used to return panel representing this class
+	 * @return JPanel showing its content
+	 */
 	public JPanel getPanel() {
-		return this.treatmentsScreen;
+		return this.screen;
 	}
 }

@@ -1,3 +1,10 @@
+/**
+ * AppointmentTypesScreen Class
+ * 
+ * This is the class representing appointment types setting up
+ * in the setup wizard
+ * @author John Ayad
+ */
 package com2002.setupwizard;
 
 import java.awt.BorderLayout;
@@ -20,27 +27,39 @@ import com2002.interfaces.Screen;
 
 public class ThanksScreen implements Screen {
 	
+	/** Constant representing Start App button label **/
 	final private static String START_APP_LABEL = "Start using Application";
+	/** Constant representing title of this screen **/
 	final private static String THANKS_TITLE = "<html><center>We're done!<br>Thanks :)</center></html>";
 
-	private JPanel thanksScreen;
-	private JLabel thanksLabel;
+	//Instance variables
+	private JPanel screen;
+	private JLabel title;
 	private JButton thanksButton;
 	private DisplayFrame frame;
-	
+
+	/**
+	 * Constructor
+	 * 
+	 * Used to initialize and create a new instance of this class
+	 * @param frame DisplayFrame in which this screen is to be shown
+	 */
 	public ThanksScreen(DisplayFrame frame) {
 		this.frame = frame;
 		initializeThanks();
 	}
-	
+
+	/**
+	 * Function used to initialize panel and it's components
+	 */
 	private void initializeThanks() {
-		this.thanksScreen = new JPanel();
-		this.thanksScreen.setLayout(new BorderLayout());
+		this.screen = new JPanel();
+		this.screen.setLayout(new BorderLayout());
 		//Title
-		this.thanksLabel = new JLabel(THANKS_TITLE, SwingConstants.CENTER);
-		this.thanksLabel.setFont(new Font("Sans Serif", Font.PLAIN,
+		this.title = new JLabel(THANKS_TITLE, SwingConstants.CENTER);
+		this.title.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE * 2));
-		this.thanksScreen.add(this.thanksLabel, BorderLayout.NORTH);
+		this.screen.add(this.title, BorderLayout.NORTH);
 		//Button
 		this.thanksButton = new JButton(START_APP_LABEL);
 		this.thanksButton.setFont(new Font("Sans Serif", Font.PLAIN,
@@ -65,10 +84,14 @@ public class ThanksScreen implements Screen {
 		    	  frame.setDisplayedPanel(loginScreen.getPanel());
 		      }
 	    });
-	    this.thanksScreen.add(this.thanksButton, BorderLayout.SOUTH);
+	    this.screen.add(this.thanksButton, BorderLayout.SOUTH);
 	}
-	
+
+	/**
+	 * Function used to return this screen's JPanel
+	 * @return JPanel this class's panel
+	 */
 	public JPanel getPanel() {
-		return this.thanksScreen;
+		return this.screen;
 	}
 }

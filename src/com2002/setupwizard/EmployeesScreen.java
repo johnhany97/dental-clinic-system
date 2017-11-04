@@ -1,3 +1,10 @@
+/**
+ * EmployeesScreen Class
+ * 
+ * This is the class representing employees registration
+ * in the setup wizard
+ * @author John Ayad
+ */
 package com2002.setupwizard;
 
 import java.awt.BorderLayout;
@@ -28,66 +35,77 @@ import com2002.models.Staff;
 
 public class EmployeesScreen implements Screen {
 	
-	final private static String[] EMPLOYEE_LABELS = {"Employees", "First Name", "Last Name", "Username", "Password", "Role"};
+	/** Constant representing title and labels used in class **/
+	final private static String[] LABELS = {"Employees", "First Name", "Last Name", "Username", "Password", "Role"};
+	/** Constant representing button label **/
 	final private static String NEXT_BUTTON_LABEL = "Next";
 	
 	//Instance Variables
-	private JPanel employeesScreen;
-	private List<JLabel> employeesLabels;
-	private List<JPanel> employeesPanels;
-    private List<Object> employeesTextFields;
-    private List<JList> employeesRolesLists;
-	private JButton employeesButton;
+	private JPanel screen;
+	private List<JLabel> labels;
+	private List<JPanel> panels;
+    private List<Object> textFields;
+    private List<JList> rolesLists;
+	private JButton nextButton;
     private DisplayFrame frame;
 
+    /**
+     * Constructor
+     * 
+     * Used to create an instance of this class and initialize it
+     * @param frame DisplayFrame in which this is to be shown
+     */
 	public EmployeesScreen(DisplayFrame frame) {
 		this.frame = frame;
 		initializeEmployees();
 	}
 
+	/**
+	 * Function used to initialize panel and components
+	 */
 	private void initializeEmployees() {
-		this.employeesScreen = new JPanel();
-		this.employeesScreen.setLayout(new BorderLayout());
+		this.screen = new JPanel();
+		this.screen.setLayout(new BorderLayout());
 		//Title
-		this.employeesLabels = new ArrayList<JLabel>();
-		this.employeesLabels.add(new JLabel(EMPLOYEE_LABELS[0], SwingConstants.CENTER));
-		this.employeesLabels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
+		this.labels = new ArrayList<JLabel>();
+		this.labels.add(new JLabel(LABELS[0], SwingConstants.CENTER));
+		this.labels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
-		this.employeesScreen.add(this.employeesLabels.get(0), BorderLayout.NORTH);
+		this.screen.add(this.labels.get(0), BorderLayout.NORTH);
 		//Texts and inputs
-		//We need three sets (For secretary, doctor & Hygienist)
-		this.employeesPanels = new ArrayList<JPanel>();
-	    this.employeesTextFields = new ArrayList<Object>(); 
-	    this.employeesRolesLists = new ArrayList<JList>();
+		//We need three sets (For secretary, doctor & hygienist)
+		this.panels = new ArrayList<JPanel>();
+	    this.textFields = new ArrayList<Object>(); 
+	    this.rolesLists = new ArrayList<JList>();
 	    for (int i = 0; i < 3; i++) {
 	    	addSetOfTextFieldsAndLabels();
 	    }
 	    JPanel centerPanel = new JPanel();
 	    centerPanel.setLayout(new FlowLayout());
-	    for (int i = 0; i < this.employeesPanels.size(); i++) {
-	    	centerPanel.add(this.employeesPanels.get(i));
+	    for (int i = 0; i < this.panels.size(); i++) {
+	    	centerPanel.add(this.panels.get(i));
 	    }
-	    this.employeesScreen.add(centerPanel, BorderLayout.CENTER);
+	    this.screen.add(centerPanel, BorderLayout.CENTER);
 	    //Next Button
-	    this.employeesButton = new JButton(NEXT_BUTTON_LABEL);
-	    this.employeesScreen.add(this.employeesButton, BorderLayout.SOUTH);
-	    this.employeesButton.setFont(new Font("Sans Serif", Font.PLAIN,
+	    this.nextButton = new JButton(NEXT_BUTTON_LABEL);
+	    this.screen.add(this.nextButton, BorderLayout.SOUTH);
+	    this.nextButton.setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE));
-	    this.employeesButton.addActionListener(new ActionListener() {
+	    this.nextButton.addActionListener(new ActionListener() {
 	      @Override
 	      public void actionPerformed(ActionEvent arg0) {
-	    	  //Take you to next panel and hide this one
+	    	  //Save data in db
 	    	  int index = 0;
 	    	  for (int i = 0; i < 3; i++) {
-	    		  String firstName = ((JTextField) employeesTextFields.get(index)).getText();
+	    		  String firstName = ((JTextField) textFields.get(index)).getText();
 	    		  index++;
-	    		  String lastName = ((JTextField) employeesTextFields.get(index)).getText();
+	    		  String lastName = ((JTextField) textFields.get(index)).getText();
 	    		  index++;
-	    		  String username = ((JTextField) employeesTextFields.get(index)).getText();
+	    		  String username = ((JTextField) textFields.get(index)).getText();
 	    		  index++;
-	    		  String password = String.valueOf(((JPasswordField) employeesTextFields.get(index)).getPassword());
+	    		  String password = String.valueOf(((JPasswordField) textFields.get(index)).getPassword());
 	    		  index++;
-	    		  String role = (String) employeesRolesLists.get(i).getSelectedValue();
+	    		  String role = (String) rolesLists.get(i).getSelectedValue();
 	    		  Staff employee;
 	    		  if (role.equals("Secretary")) {
 	    			  employee = new Secretary(firstName, lastName, username, password);
@@ -96,6 +114,7 @@ public class EmployeesScreen implements Screen {
 	    			  employee = new Doctor(firstName, lastName, username, password, r);
 	    		  }
 	    	  }
+	    	  //Next screen
 	    	  TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
 	    	  frame.setDisplayedPanel(treatmentsScreen.getPanel());
 	    	  frame.repaint();
@@ -103,47 +122,57 @@ public class EmployeesScreen implements Screen {
 	    });
 	}
 	
+	/**
+	 * Function used to add fields and labels for each employee (3 is the current number)
+	 */
 	private void addSetOfTextFieldsAndLabels() {
-		this.employeesPanels.add(new JPanel());
-		int panelIndex = this.employeesPanels.size() - 1;
-		this.employeesPanels.get(panelIndex).setLayout(new BoxLayout(this.employeesPanels.get(panelIndex), BoxLayout.PAGE_AXIS));
-
-		for (int i = 1; i < EMPLOYEE_LABELS.length; i++) { //Start from 1 because 0 is title of screen
-			this.employeesLabels.add(new JLabel(EMPLOYEE_LABELS[i], SwingConstants.LEFT));
-			int index = this.employeesLabels.size() - 1;
-			this.employeesLabels.get(index).setFont(new Font("Sans Serif", Font.PLAIN,
+		//Add a new panel
+		this.panels.add(new JPanel());
+		//Get it's inde
+		int panelIndex = this.panels.size() - 1;
+		//Set layout
+		this.panels.get(panelIndex).setLayout(new BoxLayout(this.panels.get(panelIndex), BoxLayout.PAGE_AXIS));
+		
+		for (int i = 1; i < LABELS.length; i++) { //Start from 1 because 0 is title of screen
+			//Label of textfield
+			this.labels.add(new JLabel(LABELS[i], SwingConstants.LEFT));
+			int index = this.labels.size() - 1;
+			this.labels.get(index).setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
-			if (EMPLOYEE_LABELS[i].equals("Password")) {
+			if (LABELS[i].equals("Password")) { //Password has hidden content
 				JPasswordField passwordField = new JPasswordField(8);
-				this.employeesTextFields.add(passwordField);
+				this.textFields.add(passwordField);
 				passwordField.setEchoChar('#');
-			} else if (EMPLOYEE_LABELS[i].equals("Role")) {
+			} else if (LABELS[i].equals("Role")) { //role shows a list of options
 				DefaultListModel<String> employeeRoles = new DefaultListModel<String>();
 				employeeRoles.addElement("Secretary");
 				employeeRoles.addElement("Dentist");
 				employeeRoles.addElement("Hygienist");
-				this.employeesRolesLists.add(new JList(employeeRoles));
-				int rolesIndex = this.employeesRolesLists.size() - 1;
-				this.employeesRolesLists.get(rolesIndex).setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				this.employeesRolesLists.get(rolesIndex).setSelectedIndex(0);
-				this.employeesRolesLists.get(rolesIndex).setVisibleRowCount(3);
-			} else {
-				this.employeesTextFields.add(new JTextField(8));
+				this.rolesLists.add(new JList(employeeRoles));
+				int rolesIndex = this.rolesLists.size() - 1;
+				this.rolesLists.get(rolesIndex).setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				this.rolesLists.get(rolesIndex).setSelectedIndex(0);
+				this.rolesLists.get(rolesIndex).setVisibleRowCount(3);
+			} else { //just a normal textfield
+				this.textFields.add(new JTextField(8));
 			}
-			this.employeesPanels.get(panelIndex).add(this.employeesLabels.get(index));
-			if (EMPLOYEE_LABELS[i].equals("Password")) {
-				this.employeesPanels.get(panelIndex).add((JPasswordField) this.employeesTextFields.get(this.employeesTextFields.size() - 1));
-			} else if (EMPLOYEE_LABELS[i].equals("Role")) {
-				this.employeesPanels.get(panelIndex).add(this.employeesRolesLists.get(this.employeesRolesLists.size() - 1));
+			this.panels.get(panelIndex).add(this.labels.get(index));
+			if (LABELS[i].equals("Password")) {
+				this.panels.get(panelIndex).add((JPasswordField) this.textFields.get(this.textFields.size() - 1));
+			} else if (LABELS[i].equals("Role")) {
+				this.panels.get(panelIndex).add(this.rolesLists.get(this.rolesLists.size() - 1));
 			} else {
-				this.employeesPanels.get(panelIndex).add((JTextField) this.employeesTextFields.get(this.employeesTextFields.size() - 1));
+				this.panels.get(panelIndex).add((JTextField) this.textFields.get(this.textFields.size() - 1));
 			}
 		}
-		
 	}
 	
+	/**
+	 * Function used to return panel representing this class
+	 * @return JPanel showing its content
+	 */
 	public JPanel getPanel() {
-		return this.employeesScreen;
+		return this.screen;
 	}
 	
 
