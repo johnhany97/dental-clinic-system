@@ -28,10 +28,10 @@ public abstract class Staff {
 		ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
 				+ userN + "' AND password = '" + pass + "'", conn);
 		if(rs.next()) {
-			firstName = rs.getString("FirstName");
-			lastName = rs.getString("LastName");
-			username = userN;
-			role = rs.getString("Role");
+			this.firstName = rs.getString("FirstName");
+			this.lastName = rs.getString("LastName");
+			this.username = userN;
+			this.role = rs.getString("Role");
 		}
 		conn.close();
 	}
@@ -54,10 +54,10 @@ public abstract class Staff {
 				System.out.println("An error has occurred. A staff member with username " + userN + " might already exist.");
 				return;
 			}
-			firstName = fName;
-			lastName = lName;
-			username = userN;
-			role = getRoleString(r);
+			this.firstName = fName;
+			this.lastName = lName;
+			this.username = userN;
+			this.role = getRoleString(r);
 		}
 	}
 	
@@ -76,15 +76,15 @@ public abstract class Staff {
 	 * Returns the first name of the staff member.
 	 * @return The first name of the staff member.
 	 */
-	protected String getFirstName() {
-		return firstName;
+	public String getFirstName() {
+		return this.firstName;
 	}
 	
 	/**
 	 * Updates the value of the first name.
 	 * @param firstN The new value of first name.
 	 */
-	protected void setFirstName(String firstN) {
+	public void setFirstName(String firstN) {
 		try {
 			DBQueries.execUpdate("UPDATE Employees SET FirstName = '" + firstN 
 					+ "' WHERE Username = '" + username + "'");
@@ -93,22 +93,22 @@ public abstract class Staff {
 			printError("first name");
 			return;
 		}
-		firstName = firstN;
+		this.firstName = firstN;
 	}
 	
 	/**
 	 * Returns the last name of staff member.
 	 * @return The last name of staff member.
 	 */
-	protected String getLastName() {
-		return lastName;
+	public String getLastName() {
+		return this.lastName;
 	}
 	
 	/**
 	 * Updates the last name to given value.
 	 * @param lastN
 	 */
-	protected void setLastName(String lastN) {
+	public void setLastName(String lastN) {
 		try {
 			DBQueries.execUpdate("UPDATE Employees SET LastName = '" + lastN 
 					+ "' WHERE Username = '" + username + "'");
@@ -117,22 +117,22 @@ public abstract class Staff {
 			printError("last name");
 			return;
 		}
-		lastName = lastN;
+		this.lastName = lastN;
 	}
 	
 	/**
 	 * Returns the username of the staff member.
 	 * @return The username of the staff member.
 	 */
-	protected String getUsername() {
-		return username;
+	public String getUsername() {
+		return this.username;
 	}
 	
 	/**
 	 * Updates the value of the username to the given value.
 	 * @param userN The new username value.
 	 */
-	protected void setUsername(String userN) {
+	public void setUsername(String userN) {
 		try {
 			DBQueries.execUpdate("UPDATE Employees SET Username = '" + userN 
 					+ "' WHERE Username = '" + username + "'");
@@ -141,22 +141,22 @@ public abstract class Staff {
 			printError("username");
 			return;
 		}
-		username = userN;
+		this.username = userN;
 	}
 	
 	/**
 	 * Returns the role of staff member as a string.
 	 * @return The role of staff member as a string.
 	 */
-	protected String getRole() {
-		return role;
+	public String getRole() {
+		return this.role;
 	}
 	
 	/**
 	 * Updates the role of staff member to the given role.
 	 * @param r The new role you want the staff member to be.
 	 */
-	protected void setRole(Role r) {
+	public void setRole(Role r) {
 		try {
 			DBQueries.execUpdate("UPDATE Employees SET Role = '" + getRoleString(r) 
 					+ "' WHERE Username = '" + username + "'");
@@ -165,7 +165,7 @@ public abstract class Staff {
 			printError("role");
 			return;
 		}
-		role = getRoleString(r);
+		this.role = getRoleString(r);
 	}
 	
 	/**
@@ -173,7 +173,7 @@ public abstract class Staff {
 	 * @param r Role of staff member as an enum.
 	 * @return Role of staff member as a string.
 	 */
-	protected String getRoleString(Role r) {
+	public String getRoleString(Role r) {
 		if(r == Role.HYGIENIST) {
 			return "Hygienist";
 		} else if(r == Role.SECRETARY) {
@@ -197,7 +197,4 @@ public abstract class Staff {
 		System.out.println(arthur.getFirstName() + " " + arthur.getLastName() + " with username " 
 		+ arthur.getUsername() + " is a " + arthur.getRole());
 	}
-	
-	
-	
 }

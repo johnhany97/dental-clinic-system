@@ -6,18 +6,22 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import com2002.interfaces.Screen;
+import com2002.models.Doctor;
+import com2002.models.Secretary;
 import com2002.models.Staff;
 
 public class Login implements Screen {
@@ -86,8 +90,30 @@ public class Login implements Screen {
 				String name = ((JTextField) fields.get(0)).getText();
 				String password = String.valueOf(((JPasswordField) fields.get(1)).getPassword());
 				//TODO: Attempt doctor and attempt secretary.. 
-				//if not existing, give error alert message
-				//if exists, take to appropriate view
+				Doctor testDoc;
+				Secretary testSec;
+				try {
+					testSec = new Secretary(name, password);
+					testDoc = new Doctor(name, password);
+					if (testDoc.getFirstName() == null && testSec.getFirstName() == null) { //Not found!
+						JOptionPane.showMessageDialog(frame,
+							    "User not found",
+							    "Check username or password",
+							    JOptionPane.ERROR_MESSAGE);
+					} else if (testDoc.getFirstName() == null) { //It's the secretary
+						SecretaryView secView = new SecretaryView(frame, testSec);
+						frame.setDisplayedPanel(secView.getPanel());
+					} else { //It's the doctor
+						DoctorView docView = new DoctorView(frame, testDoc);
+						frame.setDisplayedPanel(docView.getPanel());
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(frame,
+						    "Error connecting to Database",
+						    "Check your internet connection",
+						    JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		this.screen.add(this.loginButton, BorderLayout.SOUTH);

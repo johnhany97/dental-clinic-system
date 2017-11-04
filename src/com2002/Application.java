@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 
+import com2002.utils.Database;
 import com2002.utils.DatabaseTables;
 
 public class Application {
@@ -44,6 +45,6 @@ public class Application {
 			}
 			SetupWizard setupWizard = new SetupWizard(window);
 			window.setDisplayedPanel(setupWizard.initialPanel());
-		}		
+		}
 	}
 }
