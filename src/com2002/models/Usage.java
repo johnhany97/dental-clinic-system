@@ -1,6 +1,5 @@
 package com2002.models;
 
-;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
