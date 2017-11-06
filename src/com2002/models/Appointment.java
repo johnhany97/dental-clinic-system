@@ -55,7 +55,7 @@ public class Appointment {
 	 * @param currA The current appointment number out of the total appointments (set to 1 if not course treatment).
 	 * @return 
 	 */
-	public void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts,
+	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts,
 					   AppointmentType treatmentN, int totalA, int currA) {
 		try {
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + start.toString() + "', '" + end.toString() + "', '" + userN + "', '" 
