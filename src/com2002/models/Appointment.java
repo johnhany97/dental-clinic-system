@@ -17,16 +17,12 @@ public class Appointment {
 	private int totalAppointments;
 	private int currentAppointment;
 	
-<<<<<<< HEAD
-	public Appointment(Timestamp startD, String userN) {
-=======
 	/**
 	 * This constructor should be called with inputs which already exist in the Appointments table.
 	 * @param startD The timestamp of when the appointment starts.
 	 * @param patID The patient's ID
 	 */
-	public Appointment(Timestamp startD, int patID) {
->>>>>>> dbe0577efd8ea88db06ae09dbd0eabee9123e40a
+	public Appointment(Timestamp startD, String userN) {
 		try {
 			Connection conn = Database.getConnection();
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
@@ -44,13 +40,9 @@ public class Appointment {
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Something went wrong with creating an appointment.");
 		}
 	}
 	
-<<<<<<< HEAD
-	public void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
-=======
 	/**
 	 * This constructor should be called when creating a new appointment.
 	 * @param start Timestamp of when the appointment should start.
@@ -61,9 +53,9 @@ public class Appointment {
 	 * @param treatmentN The appointment type (Remedial, Cleaning, etc.).
 	 * @param totalA The total number of appointments if it's a course treatment, otherwise just set to 1.
 	 * @param currA The current appointment number out of the total appointments (set to 1 if not course treatment).
+	 * @return 
 	 */
-	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
->>>>>>> dbe0577efd8ea88db06ae09dbd0eabee9123e40a
+	public void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts,
 					   AppointmentType treatmentN, int totalA, int currA) {
 		try {
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + start.toString() + "', '" + end.toString() + "', '" + userN + "', '" 
@@ -83,18 +75,12 @@ public class Appointment {
 		currentAppointment = currA;
 	}
 	
-<<<<<<< HEAD
-	protected void removeAppointment(Timestamp start, String userN) {
-		try {
-			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime + " AND Username = " + username);
-=======
 	/**
 	 * Removes appointment from Appointments table and sets all instance values to null/defaults.
 	 */
-	protected void removeAppointment() {
+	protected void removeAppointment(Timestamp start, String userN) {
 		try {
-			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime.toString() + " AND PatientID = " + patientID);
->>>>>>> dbe0577efd8ea88db06ae09dbd0eabee9123e40a
+			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime + " AND Username = " + username);
 		} catch (SQLException e) {
 			System.out.println("Failed to delete appointment. Make sure appointment is properly initialised.");
 			return;

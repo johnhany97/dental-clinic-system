@@ -63,7 +63,6 @@ public class Schedule {
 		return schedule;
 	}
 	
-	
 	public static void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
 			   AppointmentType treatmentN, int totalA, int currA) {
 		Appointment app = new Appointment(start, userN);
