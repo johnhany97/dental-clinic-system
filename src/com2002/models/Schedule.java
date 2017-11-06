@@ -64,7 +64,7 @@ public class Schedule {
 	}
 	
 	
-	public void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
+	public static void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
 			   AppointmentType treatmentN, int totalA, int currA) {
 		Appointment app = new Appointment(start, userN);
 		app.setAppointment(start, end, userN, patID, nts, treatmentN, totalA, currA);
@@ -88,6 +88,10 @@ public class Schedule {
 	}
 	
 	public static void main(String[] args) {
+		//YYYY-MM-DD HH:MM:SS
+		Appointment app1 = new Appointment(java.sql.Timestamp.valueOf("2007-09-23 10:10:10.0"), "a");
+		app1.setAppointment(java.sql.Timestamp.valueOf("2007-09-23 10:10:10.0"), java.sql.Timestamp.valueOf("2007-09-23 11:10:10.0"), "a", 1, "abc", AppointmentType.CHECKUP, 1, 1);
+		
 	}
 	
 }

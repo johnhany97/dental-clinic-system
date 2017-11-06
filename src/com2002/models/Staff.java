@@ -17,53 +17,74 @@ public abstract class Staff {
 	private String role;
 	//private String password;
 	
-	public Staff(String userN, String pass) {
-		try {
-			Connection conn = Database.getConnection();
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
-					+ userN + "' AND password = '" + pass + "'", conn);
-			if(rs.next()) {
-				firstName = rs.getString("FirstName");
-				lastName = rs.getString("LastName");
-				username = userN;
-				role = rs.getString("Role");
-			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+	/**
+	 * This constructor should be called with inputs which already exist in the Staff table.
+	 * @param userN Username of the staff member.
+	 * @param pass Password of the staff member.
+	 * @throws SQLException when an error occurs whilst attempting connection
+	 */
+	public Staff(String userN, String pass) throws SQLException {
+		Connection conn = Database.getConnection();
+		ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
+				+ userN + "' AND password = '" + pass + "'", conn);
+		if(rs.next()) {
+			this.firstName = rs.getString("FirstName");
+			this.lastName = rs.getString("LastName");
+			this.username = userN;
+			this.role = rs.getString("Role");
 		}
+		conn.close();
 	}
 	
+	/**
+	 * This constructor is called whenever a new Doctor or Secretary staff member is created.
+	 * @param fName First name of staff member.
+	 * @param lName Last name of staff member.
+	 * @param userN Username of staff member, needs to be unique.
+	 * @param pass Password of staff member.
+	 * @param r Role of staff member.
+	 */
 	public Staff(String fName, String lName, String userN, String pass, Role r) {
 		if(!dbHasUsername(userN)) {
 			try {
 				DBQueries.execUpdate("INSERT INTO Employees VALUES ('" + fName + "', '" + lName + "', '" 
 						+ userN + "', '" + pass + "', '" + getRoleString(r) + "')");
-				
 			} catch (SQLException e) {
 				e.printStackTrace();
 				System.out.println("An error has occurred. A staff member with username " + userN + " might already exist.");
 				return;
 			}
-			firstName = fName;
-			lastName = lName;
-			username = userN;
-			role = getRoleString(r);
+			this.firstName = fName;
+			this.lastName = lName;
+			this.username = userN;
+			this.role = getRoleString(r);
 		}
-		
 	}
 	
+	/**
+	 * Checks whether Employees table contains a specified username.
+	 * @param userN Username of staff.
+	 * @return True if username already exists.
+	 */
 	private boolean dbHasUsername(String userN) {
 		String found = DBQueries.getData("Username", "Employees", "Username", userN);
 		return userN == found;
 		
 	}
 	
-	protected String getFirstName() {
-		return firstName;
+	/**
+	 * Returns the first name of the staff member.
+	 * @return The first name of the staff member.
+	 */
+	public String getFirstName() {
+		return this.firstName;
 	}
 	
-	protected void setFirstName(String firstN) {
+	/**
+	 * Updates the value of the first name.
+	 * @param firstN The new value of first name.
+	 */
+	public void setFirstName(String firstN) {
 		try {
 			DBQueries.execUpdate("UPDATE Employees SET FirstName = '" + firstN 
 					+ "' WHERE Username = '" + username + "'");
@@ -72,14 +93,22 @@ public abstract class Staff {
 			printError("first name");
 			return;
 		}
-		firstName = firstN;
+		this.firstName = firstN;
 	}
 	
-	protected String getLastName() {
-		return lastName;
+	/**
+	 * Returns the last name of staff member.
+	 * @return The last name of staff member.
+	 */
+	public String getLastName() {
+		return this.lastName;
 	}
 	
-	protected void setLastName(String lastN) {
+	/**
+	 * Updates the last name to given value.
+	 * @param lastN
+	 */
+	public void setLastName(String lastN) {
 		try {
 			DBQueries.execUpdate("UPDATE Employees SET LastName = '" + lastN 
 					+ "' WHERE Username = '" + username + "'");
@@ -88,14 +117,22 @@ public abstract class Staff {
 			printError("last name");
 			return;
 		}
-		lastName = lastN;
+		this.lastName = lastN;
 	}
 	
-	protected String getUsername() {
-		return username;
+	/**
+	 * Returns the username of the staff member.
+	 * @return The username of the staff member.
+	 */
+	public String getUsername() {
+		return this.username;
 	}
 	
-	protected void setUsername(String userN) {
+	/**
+	 * Updates the value of the username to the given value.
+	 * @param userN The new username value.
+	 */
+	public void setUsername(String userN) {
 		try {
 			DBQueries.execUpdate("UPDATE Employees SET Username = '" + userN 
 					+ "' WHERE Username = '" + username + "'");
@@ -104,14 +141,22 @@ public abstract class Staff {
 			printError("username");
 			return;
 		}
-		username = userN;
+		this.username = userN;
 	}
 	
-	protected String getRole() {
-		return role;
+	/**
+	 * Returns the role of staff member as a string.
+	 * @return The role of staff member as a string.
+	 */
+	public String getRole() {
+		return this.role;
 	}
 	
-	protected void setRole(Role r) {
+	/**
+	 * Updates the role of staff member to the given role.
+	 * @param r The new role you want the staff member to be.
+	 */
+	public void setRole(Role r) {
 		try {
 			DBQueries.execUpdate("UPDATE Employees SET Role = '" + getRoleString(r) 
 					+ "' WHERE Username = '" + username + "'");
@@ -120,10 +165,15 @@ public abstract class Staff {
 			printError("role");
 			return;
 		}
-		role = getRoleString(r);
+		this.role = getRoleString(r);
 	}
 	
-	protected String getRoleString(Role r) {
+	/**
+	 * Converts Role of staff member into a string and returns it.
+	 * @param r Role of staff member as an enum.
+	 * @return Role of staff member as a string.
+	 */
+	public String getRoleString(Role r) {
 		if(r == Role.HYGIENIST) {
 			return "Hygienist";
 		} else if(r == Role.SECRETARY) {
@@ -132,6 +182,10 @@ public abstract class Staff {
 		return "Dentist";
 	}
 	
+	/**
+	 * Method for printing error message to the console.
+	 * @param method The method from which the error has occurred.
+	 */
 	private void printError(String method) {
 		System.out.println("Something went wrong with updating the " + method + ". "
 				+ "The staff member may have not been initialised properly "
@@ -143,7 +197,4 @@ public abstract class Staff {
 		System.out.println(arthur.getFirstName() + " " + arthur.getLastName() + " with username " 
 		+ arthur.getUsername() + " is a " + arthur.getRole());
 	}
-	
-	
-	
 }

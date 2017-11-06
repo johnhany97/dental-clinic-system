@@ -3,14 +3,18 @@ package com2002;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
+
+import com2002.utils.Database;
+import com2002.utils.DatabaseTables;
 
 public class Application {
 	
 	/** Defines name of file being used to monitor whether the application is initially setup or not **/
-	private final static String FILE_NAME = "setupDone.txt";
-	
+	public final static String FILE_NAME = "setupDone.txt";
+
 	/** Defines what the file should read if system is already setup **/
-	private final static String SETUP = "1";
+	public final static String SETUP = "1";
 	
 	//Instance variables
 	private static DisplayFrame window;
@@ -27,20 +31,20 @@ public class Application {
 	}
 	
 	public static void main(String[] args) {
+		window = new DisplayFrame();
 		if (isSetup()) {
-			//We need to setup the entire project
-			
-		} else {
 			//We're all setup.. go to login screen
-			window = new DisplayFrame();
+			Login loginScreen = new Login(window);
+			window.setDisplayedPanel(loginScreen.getPanel());
+		} else {
+			//We need to setup the entire project
+			try {
+				DatabaseTables.setup();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			SetupWizard setupWizard = new SetupWizard(window);
 			window.setDisplayedPanel(setupWizard.initialPanel());
-//			System.out.println(Float.valueOf("2.00"));
 		}
-//		javax.swing.JPanel panel = new javax.swing.JPanel();
-//		window = new DisplayFrame();
-//		window.setDisplayedPanel(panel);
-//		
 	}
-
 }

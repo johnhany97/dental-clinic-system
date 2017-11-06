@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 
 import com2002.utils.Database;
 
@@ -12,7 +13,7 @@ public class Secretary extends Staff {
 
 	//Schedule schedule = new Schedule();
 	
-	public Secretary(String userN, String pass) {
+	public Secretary(String userN, String pass) throws SQLException {
 		super(userN, pass);
 		// TODO Auto-generated constructor stub
 	}
@@ -21,11 +22,15 @@ public class Secretary extends Staff {
 		super(firstName, lastName, userN, pass, Role.SECRETARY);
 	}
 	
-	/*
-	protected void registerPatient(String firstName, String lastName, String title, String phoneNumber, String address, Date dateOfBirth) {
-		Patient patient = new Patient(firstName, lastName, title, phoneNumber, address, dateOfBirth);
+	protected void registerAddress(String houseNumber, String streetName, String district, String city, String postcode) {
+		Address address = new Address(houseNumber, streetName, district, city, postcode);
 	}
 	
+	protected void registerPatient(String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) {
+		Patient patient = new Patient(firstName, lastName, dob, phoneNumber, houseNumber, postcode);
+	}
+	
+	/*
 	protected void subscribePatient(Patient patient) {
 		patient.subscribe(patient);
 	}
@@ -38,4 +43,5 @@ public class Secretary extends Staff {
 		return schedule.getAppointments();
 	}
 	*/
+	
 }
