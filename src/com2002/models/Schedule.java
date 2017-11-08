@@ -36,9 +36,10 @@ public class Schedule {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ArrayList<Appointment> getAppointmentsByDoctor(String username) throws Exception {
+	public static ArrayList<Appointment> getAppointmentsByDoctor(Doctor doctor) throws Exception {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
+		String username = doctor.getUsername();
 		ResultSet rs = execQuery("SELECT * FROM Appointments WHERE Username = '" + username + "'", conn);
 		while (rs.next()) {
 			String startDate = rs.getString("StartDate");

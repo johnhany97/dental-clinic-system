@@ -26,11 +26,4 @@ public class Usage {
 	public int getRepairWorkUsed() {
 		return repairWorkUsed;
 	}
-	
-	
-	
-	
-	
-	
-
 }
