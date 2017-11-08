@@ -14,7 +14,7 @@ import com2002.utils.*;
 public class Schedule {
 
 	@SuppressWarnings("deprecation")
-	public static ArrayList<Appointment> getAppointments() throws SQLException {
+	public static ArrayList<Appointment> getAppointments() throws Exception {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
 		ResultSet rs = execQuery("SELECT * FROM Appointments", conn);
@@ -36,7 +36,7 @@ public class Schedule {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ArrayList<Appointment> getAppointmentsByDoctor(String username) throws SQLException {
+	public static ArrayList<Appointment> getAppointmentsByDoctor(String username) throws Exception {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
 		ResultSet rs = execQuery("SELECT * FROM Appointments WHERE Username = '" + username + "'", conn);
@@ -77,7 +77,7 @@ public class Schedule {
 		Appointment app = new Appointment(start, end, userN, patID, nts, treatmentN, totalA, currA);
 	}
 	
-	public void deleteAppointment(Timestamp start, String userN) {
+	public void deleteAppointment(Timestamp start, String userN) throws Exception {
 		Appointment app = new Appointment(start, userN);
 		app.removeAppointment( start, userN);
 	}
