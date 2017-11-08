@@ -8,7 +8,8 @@ package com2002;
 
 import javax.swing.JPanel;
 
-import com2002.setupwizard.WelcomeScreen;
+import com2002.views.DisplayFrame;
+import com2002.views.setupwizard.WelcomeScreen;
 
 public class SetupWizard {
 	

@@ -1,15 +1,9 @@
 package com2002.models;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
-
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
-import com2002.utils.Database;
 
 public class Secretary extends Staff {
 
