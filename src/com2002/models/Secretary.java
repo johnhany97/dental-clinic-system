@@ -9,12 +9,12 @@ public class Secretary extends Staff {
 
 	//Schedule schedule = new Schedule();
 	
-	public Secretary(String userN, String pass) throws SQLException {
-		super(userN, pass);
+	public Secretary(String username, String password) throws SQLException {
+		super(username, password);
 	}
 	
-	public Secretary(String firstName, String lastName, String userN, String pass) throws MySQLIntegrityConstraintViolationException, SQLException {
-		super(firstName, lastName, userN, pass, Role.SECRETARY);
+	public Secretary(String firstName, String lastName, String username, String password) throws MySQLIntegrityConstraintViolationException, SQLException {
+		super(firstName, lastName, username, password, Role.SECRETARY);
 	}
 	
 	protected void registerAddress(String houseNumber, String streetName, String district, String city, String postcode) {

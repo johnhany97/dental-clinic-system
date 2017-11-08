@@ -47,7 +47,7 @@ public abstract class Staff {
 	 * @param role Role of staff member.
 	 */
 	public Staff(String firstName, String lastName, String username, String password, Role role) throws MySQLIntegrityConstraintViolationException, SQLException {
-		if(!dbHasUsername(username)) {
+		if(!DBQueries.staffUsernameExists(username)) {
 			DBQueries.execUpdate("INSERT INTO Employees VALUES ('" + firstName + "', '" + lastName + "', '" 
 						+ username + "', '" + password + "', '" + getRoleString(role) + "')");
 			this.firstName = firstName;
@@ -59,15 +59,7 @@ public abstract class Staff {
 		}
 	}
 	
-	/**
-	 * Checks whether Employees table contains a specified username.
-	 * @param username Username of staff.
-	 * @return True if username already exists.
-	 */
-	private boolean dbHasUsername(String username) {
-		String found = DBQueries.getData("Username", "Employees", "Username", username);
-		return username.equals(found);
-	}
+	
 	
 	/**
 	 * Returns the first name of the staff member.
