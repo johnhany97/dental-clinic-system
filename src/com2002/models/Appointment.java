@@ -67,7 +67,6 @@ public class Appointment {
 	 * @param treatmentN The appointment type (Remedial, Cleaning, etc.).
 	 * @param totalA The total number of appointments if it's a course treatment, otherwise just set to 1.
 	 * @param currA The current appointment number out of the total appointments (set to 1 if not course treatment).
-	 * @return 
 	 */
 	public Appointment(Timestamp startTime, Timestamp endTime, String username, int patientID, String notes,
 					   AppointmentType treatmentName, int totalAppointments, int currentAppointments) {
@@ -101,14 +100,14 @@ public class Appointment {
 			System.out.println("Failed to delete appointment. Make sure appointment is properly initialised.");
 			return;
 		}
-		startTime = start;
-		endTime = null;
-		username = userN;
-		patientID = 0;
-		notes = null;
-		appointmentType = "";
-		totalAppointments = -1;
-		currentAppointment = -1;
+		this.startTime = start;
+		this.endTime = null;
+		this.username = userN;
+		this.patientID = 0;
+		this.notes = null;
+		this.appointmentType = "";
+		this.totalAppointments = -1;
+		this.currentAppointment = -1;
 	}
 	
 	/**
@@ -120,10 +119,10 @@ public class Appointment {
 		try {
 			Connection conn = Database.getConnection();
 			if(appointmentType.equals("Remedial")) {
-				ResultSet treatmentRS = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = '" 
-						+ startTime.toString() + "' AND Username = '" + username + "'", conn);
-				while(treatmentRS.next()) {
-					String treatment = treatmentRS.getString("TreatmentName");
+				ResultSet treatmentRs = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = '" 
+						+ this.startTime.toString() + "' AND Username = '" + this.username + "'", conn);
+				while(treatmentRs.next()) {
+					String treatment = treatmentRs.getString("TreatmentName");
 					ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'", conn);
 					if(rs.next()) {
 						cost += rs.getFloat("Price");
@@ -153,7 +152,7 @@ public class Appointment {
 	 * @return Timestamp of when the appointment starts.
 	 */
 	protected Timestamp getStartTime() {
-		return startTime;
+		return this.startTime;
 	}
 	
 	/**
@@ -161,7 +160,7 @@ public class Appointment {
 	 * @return Timestamp of when the appointment ends.
 	 */
 	protected Timestamp getEndTime() {
-		return endTime;
+		return this.endTime;
 	}
 	
 	/**
@@ -172,14 +171,14 @@ public class Appointment {
 	protected void setStartEndTime(Timestamp start, Timestamp end) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start.toString() + ", EndDate = " + end.toString() 
-					+ " WHERE StartDate = '" + startTime.toString() + "' AND PatientID = " + patientID);
+					+ " WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("start and end times");
 			return;
 		}
-		startTime = start;
-		endTime = end;
+		this.startTime = start;
+		this.endTime = end;
 	}
 	
 	/**
@@ -187,7 +186,7 @@ public class Appointment {
 	 * @return The username of the staff member conducting appointment.
 	 */
 	protected String getUsername() {
-		return username;
+		return this.username;
 	}
 	
 	/**
@@ -197,13 +196,13 @@ public class Appointment {
 	protected void setUsername(String user) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET Username = '" + user 
-					+ "' WHERE StartDate = '" + startTime.toString() + "' AND PatientID = " + patientID);
+					+ "' WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("username");
 			return;
 		}
-		username = user;
+		this.username = user;
 	}
 	
 	/**
@@ -211,7 +210,7 @@ public class Appointment {
 	 * @return The ID of the patient who is booked for this appointment.
 	 */
 	protected int getPatientID() {
-		return patientID;
+		return this.patientID;
 	}
 	
 	/**
@@ -222,13 +221,13 @@ public class Appointment {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET PatientID = " + patID 
 								  + " WHERE StartDate = '"
-					+ startTime.toString() + "' AND PatientID = " + patientID);
+					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("patientID");
 			return;
 		}
-		patientID = patID;
+		this.patientID = patID;
 	}
 	
 	/**
@@ -236,7 +235,7 @@ public class Appointment {
 	 * @return The notes stored for this appointment.
 	 */
 	protected String getNotes() {
-		return notes;
+		return this.notes;
 	}
 	
 	/**
@@ -246,13 +245,13 @@ public class Appointment {
 	protected void setNotes(String note) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET Notes = '" + note + "' WHERE StartDate = '"
-					+ startTime.toString() + "' AND PatientID = " + patientID);
+					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("notes");
 			return;
 		}
-		notes = note;
+		this.notes = note;
 	}
 	
 	/**
@@ -260,7 +259,7 @@ public class Appointment {
 	 * @return The appointment type as a String.
 	 */
 	protected String getAppointmentType() {
-		return appointmentType;
+		return this.appointmentType;
 	}
 	
 	/**
@@ -270,13 +269,13 @@ public class Appointment {
 	protected void setAppointmentType(AppointmentType appointmentT) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET Type = '" + getAppointmentTypeString(appointmentT) 
-			+ "' WHERE StartDate = '" + startTime.toString() + "' AND PatientID = " + patientID);
+			+ "' WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("appointment type");
 			return;
 		}
-		appointmentType = getAppointmentTypeString(appointmentT);
+		this.appointmentType = getAppointmentTypeString(appointmentT);
 	}
 	
 	/**
@@ -284,7 +283,7 @@ public class Appointment {
 	 * @return The total number of appointments.
 	 */
 	protected int getTotalAppointments() {
-		return totalAppointments;
+		return this.totalAppointments;
 	}
 	
 	/**
@@ -294,13 +293,13 @@ public class Appointment {
 	protected void setTotalAppointments(int total) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET TotalAppointments = " + total + " WHERE StartDate = '"
-					+ startTime.toString() + "' AND PatientID = " + patientID);
+					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("total appointments");
 			return;
 		}
-		totalAppointments = total;
+		this.totalAppointments = total;
 	}
 	
 	/**
@@ -308,7 +307,7 @@ public class Appointment {
 	 * @return The current appointment value.
 	 */
 	protected int getCurrentAppointment() {
-		return currentAppointment;
+		return this.currentAppointment;
 	}
 	
 	/**
@@ -318,13 +317,13 @@ public class Appointment {
 	protected void setCurrentAppointment(int current) {
 		try {
 			DBQueries.execUpdate("UPDATE Appointments SET CurrentAppointment = " + current + " WHERE StartDate = '"
-					+ startTime.toString() + "' AND PatientID = " + patientID);
+					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("current appointment");
 			return;
 		}
-		currentAppointment = current;
+		this.currentAppointment = current;
 	}
 	
 	/**
