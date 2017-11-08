@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import com2002.utils.Database;
 
 // remind John to remove password from class diag
@@ -19,18 +21,18 @@ public abstract class Staff {
 	
 	/**
 	 * This constructor should be called with inputs which already exist in the Staff table.
-	 * @param userN Username of the staff member.
-	 * @param pass Password of the staff member.
+	 * @param username Username of the staff member.
+	 * @param password Password of the staff member.
 	 * @throws SQLException when an error occurs whilst attempting connection
 	 */
-	public Staff(String userN, String pass) throws SQLException {
+	public Staff(String username, String password) throws SQLException {
 		Connection conn = Database.getConnection();
 		ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
-				+ userN + "' AND password = '" + pass + "'", conn);
+				+ username + "' AND password = '" + password + "'", conn);
 		if(rs.next()) {
 			this.firstName = rs.getString("FirstName");
 			this.lastName = rs.getString("LastName");
-			this.username = userN;
+			this.username = username;
 			this.role = rs.getString("Role");
 		}
 		conn.close();
@@ -38,38 +40,33 @@ public abstract class Staff {
 	
 	/**
 	 * This constructor is called whenever a new Doctor or Secretary staff member is created.
-	 * @param fName First name of staff member.
-	 * @param lName Last name of staff member.
-	 * @param userN Username of staff member, needs to be unique.
-	 * @param pass Password of staff member.
-	 * @param r Role of staff member.
+	 * @param firstName First name of staff member.
+	 * @param lastName Last name of staff member.
+	 * @param username Username of staff member, needs to be unique.
+	 * @param password Password of staff member.
+	 * @param role Role of staff member.
 	 */
-	public Staff(String fName, String lName, String userN, String pass, Role r) {
-		if(!dbHasUsername(userN)) {
-			try {
-				DBQueries.execUpdate("INSERT INTO Employees VALUES ('" + fName + "', '" + lName + "', '" 
-						+ userN + "', '" + pass + "', '" + getRoleString(r) + "')");
-			} catch (SQLException e) {
-				e.printStackTrace();
-				System.out.println("An error has occurred. A staff member with username " + userN + " might already exist.");
-				return;
-			}
-			this.firstName = fName;
-			this.lastName = lName;
-			this.username = userN;
-			this.role = getRoleString(r);
+	public Staff(String firstName, String lastName, String username, String password, Role role) throws MySQLIntegrityConstraintViolationException, SQLException {
+		if(!dbHasUsername(username)) {
+			DBQueries.execUpdate("INSERT INTO Employees VALUES ('" + firstName + "', '" + lastName + "', '" 
+						+ username + "', '" + password + "', '" + getRoleString(role) + "')");
+			this.firstName = firstName;
+			this.lastName = lastName;
+			this.username = username;
+			this.role = getRoleString(role);
+		} else {
+			throw new MySQLIntegrityConstraintViolationException("A staff member with username " + username + " already exists.");
 		}
 	}
 	
 	/**
 	 * Checks whether Employees table contains a specified username.
-	 * @param userN Username of staff.
+	 * @param username Username of staff.
 	 * @return True if username already exists.
 	 */
-	private boolean dbHasUsername(String userN) {
-		String found = DBQueries.getData("Username", "Employees", "Username", userN);
-		return userN == found;
-		
+	private boolean dbHasUsername(String username) {
+		String found = DBQueries.getData("Username", "Employees", "Username", username);
+		return username.equals(found);
 	}
 	
 	/**
@@ -82,18 +79,13 @@ public abstract class Staff {
 	
 	/**
 	 * Updates the value of the first name.
-	 * @param firstN The new value of first name.
+	 * @param firstName The new value of first name.
+	 * @throws SQLException 
 	 */
-	public void setFirstName(String firstN) {
-		try {
-			DBQueries.execUpdate("UPDATE Employees SET FirstName = '" + firstN 
+	public void setFirstName(String firstName) throws SQLException {
+		DBQueries.execUpdate("UPDATE Employees SET FirstName = '" + firstName 
 					+ "' WHERE Username = '" + username + "'");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("first name");
-			return;
-		}
-		this.firstName = firstN;
+		this.firstName = firstName;
 	}
 	
 	/**
@@ -106,18 +98,13 @@ public abstract class Staff {
 	
 	/**
 	 * Updates the last name to given value.
-	 * @param lastN
+	 * @param lastName
+	 * @throws SQLException 
 	 */
-	public void setLastName(String lastN) {
-		try {
-			DBQueries.execUpdate("UPDATE Employees SET LastName = '" + lastN 
+	public void setLastName(String lastName) throws SQLException {
+		DBQueries.execUpdate("UPDATE Employees SET LastName = '" + lastName 
 					+ "' WHERE Username = '" + username + "'");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("last name");
-			return;
-		}
-		this.lastName = lastN;
+		this.lastName = lastName;
 	}
 	
 	/**
@@ -130,18 +117,13 @@ public abstract class Staff {
 	
 	/**
 	 * Updates the value of the username to the given value.
-	 * @param userN The new username value.
+	 * @param username The new username value.
+	 * @throws SQLException 
 	 */
-	public void setUsername(String userN) {
-		try {
-			DBQueries.execUpdate("UPDATE Employees SET Username = '" + userN 
-					+ "' WHERE Username = '" + username + "'");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("username");
-			return;
-		}
-		this.username = userN;
+	public void setUsername(String username) throws SQLException {
+		DBQueries.execUpdate("UPDATE Employees SET Username = '" + username 
+					+ "' WHERE Username = '" + this.username + "'");
+		this.username = username;
 	}
 	
 	/**
@@ -154,29 +136,24 @@ public abstract class Staff {
 	
 	/**
 	 * Updates the role of staff member to the given role.
-	 * @param r The new role you want the staff member to be.
+	 * @param role The new role you want the staff member to be.
+	 * @throws SQLException 
 	 */
-	public void setRole(Role r) {
-		try {
-			DBQueries.execUpdate("UPDATE Employees SET Role = '" + getRoleString(r) 
+	public void setRole(Role role) throws SQLException {
+		DBQueries.execUpdate("UPDATE Employees SET Role = '" + getRoleString(role) 
 					+ "' WHERE Username = '" + username + "'");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("role");
-			return;
-		}
-		this.role = getRoleString(r);
+		this.role = getRoleString(role);
 	}
 	
 	/**
 	 * Converts Role of staff member into a string and returns it.
-	 * @param r Role of staff member as an enum.
+	 * @param role Role of staff member as an enum.
 	 * @return Role of staff member as a string.
 	 */
-	public String getRoleString(Role r) {
-		if(r == Role.HYGIENIST) {
+	public String getRoleString(Role role) {
+		if(role == Role.HYGIENIST) {
 			return "Hygienist";
-		} else if(r == Role.SECRETARY) {
+		} else if(role == Role.SECRETARY) {
 			return "Secretary";
 		}
 		return "Dentist";
@@ -193,8 +170,18 @@ public abstract class Staff {
 	}
 	
 	public static void main(String[] args) {
-		Staff arthur = new Secretary("Arthur", "Granacher", "ayjee", "password");
-		System.out.println(arthur.getFirstName() + " " + arthur.getLastName() + " with username " 
-		+ arthur.getUsername() + " is a " + arthur.getRole());
+		Staff arthur;
+		try {
+			arthur = new Secretary("Arthur", "Granacher", "ayjee", "password");
+			System.out.println(arthur.getFirstName() + " " + arthur.getLastName() + " with username " 
+					+ arthur.getUsername() + " is a " + arthur.getRole());
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

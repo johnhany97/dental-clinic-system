@@ -21,11 +21,14 @@ public class Appointment {
 	 * This constructor should be called with inputs which already exist in the Appointments table.
 	 * @param startD The timestamp of when the appointment starts.
 	 * @param patID The patient's ID
+	 * @throws Exception 
 	 */
-	public Appointment(Timestamp startD, String userN) {
+	public Appointment(Timestamp startD, String userN) throws Exception {
+		Connection conn = null;
+		ResultSet rs = null;
 		try {
-			Connection conn = Database.getConnection();
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
+			conn = Database.getConnection();
+			rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
 					+ startD + " AND Username = " + userN + "", conn);
 			if(rs.next()) {
 				startTime = startD;
@@ -40,6 +43,17 @@ public class Appointment {
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			if(conn == null) {
+				throw new Exception("Could not get connection.");
+			} else if(rs == null) {
+				throw new Exception("There was an error with your SQL query. "
+						+ "An entry with the specified startDate and username may not exist.");
+			}
+			try {
+				conn.close();
+			} catch (SQLException e1) {
+				throw new Exception("Could not close connection.");
+			}
 		}
 	}
 	
@@ -62,7 +76,9 @@ public class Appointment {
 						+ treatmentN + "', '" + patID + "', '" + nts + "', '" + totalA + "', '" + currA + "')");
 		} catch (SQLException e) {
 			e.printStackTrace();
+			
 			System.out.println("Something went wrong with creating an appointment.");
+			
 			return;
 		}
 		startTime = start;

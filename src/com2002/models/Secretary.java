@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import com2002.utils.Database;
 
 public class Secretary extends Staff {
@@ -15,10 +17,9 @@ public class Secretary extends Staff {
 	
 	public Secretary(String userN, String pass) throws SQLException {
 		super(userN, pass);
-		// TODO Auto-generated constructor stub
 	}
 	
-	public Secretary(String firstName, String lastName, String userN, String pass) {
+	public Secretary(String firstName, String lastName, String userN, String pass) throws MySQLIntegrityConstraintViolationException, SQLException {
 		super(firstName, lastName, userN, pass, Role.SECRETARY);
 	}
 	
