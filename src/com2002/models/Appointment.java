@@ -22,16 +22,16 @@ public class Appointment {
 	 * @param startD The timestamp of when the appointment starts.
 	 * @param patID The patient's ID
 	 */
-	public Appointment(Timestamp startD, int patID) {
+	public Appointment(Timestamp startD, String userN) {
 		try {
 			Connection conn = Database.getConnection();
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
-					+ startD + " AND PatientID = " + patID + "", conn);
+					+ startD + " AND Username = " + userN + "", conn);
 			if(rs.next()) {
 				startTime = startD;
 				endTime = rs.getTimestamp("EndDate");
-				username = rs.getString("Username");
-				patientID = patID;
+				username = userN;
+				patientID = rs.getInt("PatientID");
 				notes = rs.getString("Notes");
 				appointmentType = rs.getString("Type");
 				totalAppointments = rs.getInt("TotalAppointments");
@@ -40,7 +40,6 @@ public class Appointment {
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Something went wrong with creating an appointment.");
 		}
 	}
 	
@@ -54,8 +53,9 @@ public class Appointment {
 	 * @param treatmentN The appointment type (Remedial, Cleaning, etc.).
 	 * @param totalA The total number of appointments if it's a course treatment, otherwise just set to 1.
 	 * @param currA The current appointment number out of the total appointments (set to 1 if not course treatment).
+	 * @return 
 	 */
-	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
+	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts,
 					   AppointmentType treatmentN, int totalA, int currA) {
 		try {
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + start.toString() + "', '" + end.toString() + "', '" + userN + "', '" 
@@ -78,17 +78,17 @@ public class Appointment {
 	/**
 	 * Removes appointment from Appointments table and sets all instance values to null/defaults.
 	 */
-	protected void removeAppointment() {
+	protected void removeAppointment(Timestamp start, String userN) {
 		try {
-			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime.toString() + " AND PatientID = " + patientID);
+			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime + " AND Username = " + username);
 		} catch (SQLException e) {
 			System.out.println("Failed to delete appointment. Make sure appointment is properly initialised.");
 			return;
 		}
-		startTime = null;
+		startTime = start;
 		endTime = null;
-		username = null;
-		patientID = -1;
+		username = userN;
+		patientID = 0;
 		notes = null;
 		appointmentType = "";
 		totalAppointments = -1;

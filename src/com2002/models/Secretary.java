@@ -1,6 +1,7 @@
 package com2002.models;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class Secretary extends Staff {
 
@@ -15,11 +16,15 @@ public class Secretary extends Staff {
 		super(firstName, lastName, userN, pass, Role.SECRETARY);
 	}
 	
-	/*
-	protected void registerPatient(String firstName, String lastName, String title, String phoneNumber, String address, Date dateOfBirth) {
-		Patient patient = new Patient(firstName, lastName, title, phoneNumber, address, dateOfBirth);
+	protected void registerAddress(String houseNumber, String streetName, String district, String city, String postcode) {
+		Address address = new Address(houseNumber, streetName, district, city, postcode);
 	}
 	
+	protected void registerPatient(String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) {
+		Patient patient = new Patient(firstName, lastName, dob, phoneNumber, houseNumber, postcode);
+	}
+	
+	/*
 	protected void subscribePatient(Patient patient) {
 		patient.subscribe(patient);
 	}
@@ -32,4 +37,5 @@ public class Secretary extends Staff {
 		return schedule.getAppointments();
 	}
 	*/
+	
 }
