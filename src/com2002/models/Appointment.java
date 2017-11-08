@@ -19,21 +19,21 @@ public class Appointment {
 	
 	/**
 	 * This constructor should be called with inputs which already exist in the Appointments table.
-	 * @param startD The timestamp of when the appointment starts.
+	 * @param startTime The timestamp of when the appointment starts.
 	 * @param patID The patient's ID
 	 * @throws Exception 
 	 */
-	public Appointment(Timestamp startD, String userN) throws Exception {
+	public Appointment(Timestamp startTime, String username) throws Exception {
 		Connection conn = null;
 		ResultSet rs = null;
 		try {
 			conn = Database.getConnection();
 			rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
-					+ startD.toString() + " AND Username = " + userN + "", conn);
+					+ startTime.toString() + " AND Username = " + username + "", conn);
 			if(rs.next()) {
-				this.startTime = startD;
+				this.startTime = startTime;
 				this.endTime = rs.getTimestamp("EndDate");
-				this.username = userN;
+				this.username = username;
 				this.patientID = rs.getInt("PatientID");
 				this.notes = rs.getString("Notes");
 				this.appointmentType = rs.getString("Type");
@@ -68,11 +68,11 @@ public class Appointment {
 	 * @param totalA The total number of appointments if it's a course treatment, otherwise just set to 1.
 	 * @param currA The current appointment number out of the total appointments (set to 1 if not course treatment).
 	 */
-	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts,
-					   AppointmentType treatmentN, int totalA, int currA) {
+	public Appointment(Timestamp startTime, Timestamp endTime, String username, int patientID, String notes,
+					   AppointmentType treatmentName, int totalAppointments, int currentAppointments) {
 		try {
-			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + start.toString() + "', '" + end.toString() + "', '" + userN + "', '" 
-						+ treatmentN + "', '" + patID + "', '" + nts + "', '" + totalA + "', '" + currA + "')");
+			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + startTime.toString() + "', '" + endTime.toString() + "', '" + username + "', '" 
+						+ treatmentName + "', '" + patientID + "', '" + notes + "', '" + totalAppointments + "', '" + currentAppointments + "')");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			
@@ -80,14 +80,14 @@ public class Appointment {
 			
 			return;
 		}
-		this.startTime = start;
-		this.endTime = end;
-		this.username = userN;
-		this.patientID = patID;
-		this.notes = nts;
-		this.appointmentType = getAppointmentTypeString(treatmentN);
-		this.totalAppointments = totalA;
-		this.currentAppointment = currA;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.username = username;
+		this.patientID = patientID;
+		this.notes = notes;
+		this.appointmentType = getAppointmentTypeString(treatmentName);
+		this.totalAppointments = totalAppointments;
+		this.currentAppointment = currentAppointments;
 	}
 	
 	/**
