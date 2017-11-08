@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import com2002.utils.Database;
@@ -23,9 +24,10 @@ public abstract class Staff {
 	 * This constructor should be called with inputs which already exist in the Staff table.
 	 * @param username Username of the staff member.
 	 * @param password Password of the staff member.
-	 * @throws SQLException when an error occurs whilst attempting connection
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Staff(String username, String password) throws SQLException {
+	public Staff(String username, String password) throws CommunicationsException, SQLException  {
 		Connection conn = Database.getConnection();
 		ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
 				+ username + "' AND password = '" + password + "'", conn);
@@ -45,8 +47,11 @@ public abstract class Staff {
 	 * @param username Username of staff member, needs to be unique.
 	 * @param password Password of staff member.
 	 * @param role Role of staff member.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws MySQLIntegrityConstraintViolationException if username already exists
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Staff(String firstName, String lastName, String username, String password, Role role) throws MySQLIntegrityConstraintViolationException, SQLException {
+	public Staff(String firstName, String lastName, String username, String password, Role role) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		if(!DBQueries.staffUsernameExists(username)) {
 			DBQueries.execUpdate("INSERT INTO Employees VALUES ('" + firstName + "', '" + lastName + "', '" 
 						+ username + "', '" + password + "', '" + getRoleString(role) + "')");
@@ -72,9 +77,10 @@ public abstract class Staff {
 	/**
 	 * Updates the value of the first name.
 	 * @param firstName The new value of first name.
-	 * @throws SQLException 
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void setFirstName(String firstName) throws SQLException {
+	public void setFirstName(String firstName) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE Employees SET FirstName = '" + firstName 
 					+ "' WHERE Username = '" + username + "'");
 		this.firstName = firstName;
@@ -91,9 +97,10 @@ public abstract class Staff {
 	/**
 	 * Updates the last name to given value.
 	 * @param lastName
-	 * @throws SQLException 
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void setLastName(String lastName) throws SQLException {
+	public void setLastName(String lastName) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE Employees SET LastName = '" + lastName 
 					+ "' WHERE Username = '" + username + "'");
 		this.lastName = lastName;
@@ -110,9 +117,11 @@ public abstract class Staff {
 	/**
 	 * Updates the value of the username to the given value.
 	 * @param username The new username value.
-	 * @throws SQLException 
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws MySQLIntegrityConstraintViolationException if username already exists
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void setUsername(String username) throws SQLException {
+	public void setUsername(String username) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		DBQueries.execUpdate("UPDATE Employees SET Username = '" + username 
 					+ "' WHERE Username = '" + this.username + "'");
 		this.username = username;
@@ -129,9 +138,10 @@ public abstract class Staff {
 	/**
 	 * Updates the role of staff member to the given role.
 	 * @param role The new role you want the staff member to be.
-	 * @throws SQLException 
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void setRole(Role role) throws SQLException {
+	public void setRole(Role role) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE Employees SET Role = '" + getRoleString(role) 
 					+ "' WHERE Username = '" + username + "'");
 		this.role = getRoleString(role);
