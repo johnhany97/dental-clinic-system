@@ -138,11 +138,11 @@ public class Appointment {
 	 * @param start The new start timestamp.
 	 * @param end The new end timestamp.
 	 */
-	protected void setStartEndTime(Timestamp start, Timestamp end) throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start.toString() + ", EndDate = " + end.toString() 
+	protected void setStartEndTime(Timestamp startTime, Timestamp endTime) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + startTime.toString() + ", EndDate = " + endTime.toString() 
 					+ " WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		this.startTime = start;
-		this.endTime = end;
+		this.startTime = startTime;
+		this.endTime = endTime;
 	}
 	
 	/**
@@ -157,10 +157,10 @@ public class Appointment {
 	 * Updates the username of the staff member conducting appointment to given value.
 	 * @param user The new username of the staff member conducting appointment.
 	 */
-	protected void setUsername(String user) throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("UPDATE Appointments SET Username = '" + user 
+	protected void setUsername(String username) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET Username = '" + username 
 				+ "' WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		this.username = user;
+		this.username = username;
 	}
 	
 	/**
@@ -175,11 +175,11 @@ public class Appointment {
 	 * Updates the patient's ID to the given value.
 	 * @param patID The new patient's ID.
 	 */
-	protected void setPatientID(int patID) throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("UPDATE Appointments SET PatientID = " + patID 
+	protected void setPatientID(int patientID) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET PatientID = " + patientID 
 						+ " WHERE StartDate = '" + this.startTime.toString() 
 						+ "' AND PatientID = " + this.patientID);
-		this.patientID = patID;
+		this.patientID = patientID;
 	}
 	
 	/**
@@ -194,10 +194,10 @@ public class Appointment {
 	 * Updates the notes to the given string.
 	 * @param note The new string for the notes.
 	 */
-	protected void setNotes(String note) throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("UPDATE Appointments SET Notes = '" + note + "' WHERE StartDate = '"
+	protected void setNotes(String notes) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET Notes = '" + notes + "' WHERE StartDate = '"
 					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		this.notes = note;
+		this.notes = notes;
 	}
 	
 	/**
@@ -212,10 +212,10 @@ public class Appointment {
 	 * Updates the appointment type to the given type.
 	 * @param appointmentT The new appointment type.
 	 */
-	protected void setAppointmentType(AppointmentType appointmentT) throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("UPDATE Appointments SET Type = '" + getAppointmentTypeString(appointmentT) 
+	protected void setAppointmentType(AppointmentType appointmentType) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET Type = '" + getAppointmentTypeString(appointmentType) 
 			+ "' WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		this.appointmentType = getAppointmentTypeString(appointmentT);
+		this.appointmentType = getAppointmentTypeString(appointmentType);
 	}
 	
 	/**
@@ -230,10 +230,10 @@ public class Appointment {
 	 * Updates the total number of appointments to the given value.
 	 * @param total The new value of total appointments.
 	 */
-	protected void setTotalAppointments(int total) throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("UPDATE Appointments SET TotalAppointments = " + total + " WHERE StartDate = '"
+	protected void setTotalAppointments(int totalAppointments) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET TotalAppointments = " + totalAppointments + " WHERE StartDate = '"
 				+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		this.totalAppointments = total;
+		this.totalAppointments = totalAppointments;
 	}
 	
 	/**
@@ -248,10 +248,10 @@ public class Appointment {
 	 * Set the current appointment to the given value.
 	 * @param current The new value of current appointment.
 	 */
-	protected void setCurrentAppointment(int current) throws CommunicationsException, SQLException {
-			DBQueries.execUpdate("UPDATE Appointments SET CurrentAppointment = " + current + " WHERE StartDate = '"
+	protected void setCurrentAppointment(int currentAppointment) throws CommunicationsException, SQLException {
+			DBQueries.execUpdate("UPDATE Appointments SET CurrentAppointment = " + currentAppointment + " WHERE StartDate = '"
 					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		this.currentAppointment = current;
+		this.currentAppointment = currentAppointment;
 	}
 	
 	/**
@@ -259,12 +259,12 @@ public class Appointment {
 	 * @param app The appointment type as an enum.
 	 * @return String version of appointment type.
 	 */
-	private String getAppointmentTypeString(AppointmentType app) {
-		if(app == AppointmentType.CHECKUP) {
+	private String getAppointmentTypeString(AppointmentType appointmentType) {
+		if(appointmentType == AppointmentType.CHECKUP) {
 			return "Checkup";
-		} else if(app == AppointmentType.CLEANING) {
+		} else if(appointmentType == AppointmentType.CLEANING) {
 			return "Cleaning";
-		} else if(app == AppointmentType.REMEDIAL) {
+		} else if(appointmentType == AppointmentType.REMEDIAL) {
 			return "Remedial";
 		}
 		return "Empty";

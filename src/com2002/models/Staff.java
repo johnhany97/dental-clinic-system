@@ -51,7 +51,8 @@ public abstract class Staff {
 	 * @throws MySQLIntegrityConstraintViolationException if username already exists
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Staff(String firstName, String lastName, String username, String password, Role role) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+	public Staff(String firstName, String lastName, String username, String password, Role role) 
+			throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		if(!DBQueries.staffUsernameExists(username)) {
 			DBQueries.execUpdate("INSERT INTO Employees VALUES ('" + firstName + "', '" + lastName + "', '" 
 						+ username + "', '" + password + "', '" + getRoleString(role) + "')");
