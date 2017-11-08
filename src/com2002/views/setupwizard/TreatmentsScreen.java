@@ -5,7 +5,7 @@
  * in the setup wizard
  * @author John Ayad
  */
-package com2002.setupwizard;
+package com2002.views.setupwizard;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -30,9 +30,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 
-import com2002.DisplayFrame;
 import com2002.interfaces.Screen;
 import com2002.utils.Database;
+import com2002.views.DisplayFrame;
 
 public class TreatmentsScreen implements Screen {
 	

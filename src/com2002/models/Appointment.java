@@ -17,20 +17,19 @@ public class Appointment {
 	private int totalAppointments;
 	private int currentAppointment;
 	
-<<<<<<< HEAD
-	public Appointment(Timestamp startD, String userN) {
-=======
 	/**
 	 * This constructor should be called with inputs which already exist in the Appointments table.
 	 * @param startD The timestamp of when the appointment starts.
 	 * @param patID The patient's ID
+	 * @throws Exception 
 	 */
-	public Appointment(Timestamp startD, int patID) {
->>>>>>> dbe0577efd8ea88db06ae09dbd0eabee9123e40a
+	public Appointment(Timestamp startD, String userN) throws Exception {
+		Connection conn = null;
+		ResultSet rs = null;
 		try {
-			Connection conn = Database.getConnection();
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
-					+ startD + " AND Username = " + userN + "", conn);
+			conn = Database.getConnection();
+			rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
+					+ startD.toString() + " AND Username = " + userN + "", conn);
 			if(rs.next()) {
 				startTime = startD;
 				endTime = rs.getTimestamp("EndDate");
@@ -44,13 +43,20 @@ public class Appointment {
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Something went wrong with creating an appointment.");
+			if(conn == null) {
+				throw new Exception("Could not get connection.");
+			} else if(rs == null) {
+				throw new Exception("There was an error with your SQL query. "
+						+ "An entry with the specified startDate and username may not exist.");
+			}
+			try {
+				conn.close();
+			} catch (SQLException e1) {
+				throw new Exception("Could not close connection.");
+			}
 		}
 	}
 	
-<<<<<<< HEAD
-	public void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
-=======
 	/**
 	 * This constructor should be called when creating a new appointment.
 	 * @param start Timestamp of when the appointment should start.
@@ -61,16 +67,18 @@ public class Appointment {
 	 * @param treatmentN The appointment type (Remedial, Cleaning, etc.).
 	 * @param totalA The total number of appointments if it's a course treatment, otherwise just set to 1.
 	 * @param currA The current appointment number out of the total appointments (set to 1 if not course treatment).
+	 * @return 
 	 */
-	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
->>>>>>> dbe0577efd8ea88db06ae09dbd0eabee9123e40a
+	public Appointment(Timestamp start, Timestamp end, String userN, int patID, String nts,
 					   AppointmentType treatmentN, int totalA, int currA) {
 		try {
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + start.toString() + "', '" + end.toString() + "', '" + userN + "', '" 
 						+ treatmentN + "', '" + patID + "', '" + nts + "', '" + totalA + "', '" + currA + "')");
 		} catch (SQLException e) {
 			e.printStackTrace();
+			
 			System.out.println("Something went wrong with creating an appointment.");
+			
 			return;
 		}
 		startTime = start;
@@ -83,18 +91,12 @@ public class Appointment {
 		currentAppointment = currA;
 	}
 	
-<<<<<<< HEAD
-	protected void removeAppointment(Timestamp start, String userN) {
-		try {
-			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime + " AND Username = " + username);
-=======
 	/**
 	 * Removes appointment from Appointments table and sets all instance values to null/defaults.
 	 */
-	protected void removeAppointment() {
+	protected void removeAppointment(Timestamp start, String userN) {
 		try {
-			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime.toString() + " AND PatientID = " + patientID);
->>>>>>> dbe0577efd8ea88db06ae09dbd0eabee9123e40a
+			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime.toString() + " AND Username = " + username);
 		} catch (SQLException e) {
 			System.out.println("Failed to delete appointment. Make sure appointment is properly initialised.");
 			return;
@@ -169,7 +171,7 @@ public class Appointment {
 	 */
 	protected void setStartEndTime(Timestamp start, Timestamp end) {
 		try {
-			DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start + ", EndDate = " + end 
+			DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start.toString() + ", EndDate = " + end.toString() 
 					+ " WHERE StartDate = '" + startTime.toString() + "' AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();

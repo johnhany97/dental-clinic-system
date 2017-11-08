@@ -5,7 +5,7 @@
  * will be shown
  * @author John Ayad
  */
-package com2002;
+package com2002.views;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -26,11 +26,14 @@ public class DisplayFrame extends JFrame {
 	  /** Defines normal font size **/
 	  final public static int FONT_SIZE = 30;
 	  
+	  /** Defines Default number of rows and columns **/
+	  final public static int DEFAULT_NUM = 5;
+	  
 	  /** Defines number of columns **/
-	  final public static int NUM_COLS = 5;
+	  private int numCols;
 	  
 	  /** Defines number of rows **/
-	  final public static int NUM_ROWS = 5;
+	  private int numRows;
 	  
 	  /** Defines name of the app **/
 	  final public static String TITLE = "Dental Clinic System";
@@ -47,11 +50,27 @@ public class DisplayFrame extends JFrame {
 	   * Used to create an instance of the DisplayFrame
 	   */
 	  public DisplayFrame() {
+		  this.numCols = DEFAULT_NUM;
+		  this.numRows = DEFAULT_NUM;
 		  initializeFrame(); //initialize the frame's size and location
+	  }
+
+	  /**
+	   * Function used to change frame size
+	   * 
+	   * @param numRows Int representing the number of rows with which we multiply the step
+	   * @param numCols Int representing the number of cols with which we multiply the step 
+	   */
+	  public void setFrameSize(int numRows, int numCols) {
+		  this.numRows = numRows;
+		  this.numCols = numCols;
+		  this.screenWidth = this.screenWidthStep * this.numCols;
+		  this.screenHeight = this.screenHeightStep * this.numRows;
+		  setSize(this.screenWidth, this.screenHeight);
 	  }
 	  
 	  /**
-	   *  Function to set the current panel on the frame
+	   * Function to set the current panel on the frame
 	   * 
 	   * @param panel JPanel representing the panel to be displayed on the Frame
 	   */
@@ -74,8 +93,8 @@ public class DisplayFrame extends JFrame {
 	    Dimension screenDimensions = toolkit.getScreenSize();
 	    this.screenWidthStep = screenDimensions.width / WIDTH_STEP;
 	    this.screenHeightStep = screenDimensions.height / HEIGHT_STEP;
-	    this.screenWidth = this.screenWidthStep * NUM_COLS;
-	    this.screenHeight = this.screenHeightStep *NUM_ROWS;
+	    this.screenWidth = this.screenWidthStep * this.numCols;
+	    this.screenHeight = this.screenHeightStep * this.numRows;
 	    setSize(this.screenWidth, this.screenHeight);
 	    int screenLocationX = (screenDimensions.width - this.screenWidth) / 2;
 	    int screenLocationY = (screenDimensions.height - this.screenHeight) / 2;

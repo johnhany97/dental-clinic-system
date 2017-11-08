@@ -5,8 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 
-import com2002.utils.Database;
 import com2002.utils.DatabaseTables;
+import com2002.views.DisplayFrame;
+import com2002.views.LoginView;
 
 public class Application {
 	
@@ -34,7 +35,7 @@ public class Application {
 		window = new DisplayFrame();
 		if (isSetup()) {
 			//We're all setup.. go to login screen
-			Login loginScreen = new Login(window);
+			LoginView loginScreen = new LoginView(window);
 			window.setDisplayedPanel(loginScreen.getPanel());
 		} else {
 			//We need to setup the entire project

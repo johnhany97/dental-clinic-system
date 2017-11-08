@@ -3,6 +3,7 @@ package com2002.models;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import com2002.utils.Database;
 
 public class Address {
@@ -24,14 +25,14 @@ public class Address {
 	public Address(String houseNumber, String streetName, String district, String city, String postcode){
 		try {
 			Connection conn = Database.getConnection();
-			this.houseNumber = houseNumber;
-			this.streetName = streetName;
-			this.district = district;
-			this.city = city;
-			this.postcode = postcode;
 			if(!dbHasAddress(houseNumber, postcode)){
 				DBQueries.execUpdate("INSERT INTO Address Values('" + houseNumber + "', '" + streetName + "', '" + district + "', '" 
 					+ city + "', '" + postcode + "')");
+				this.houseNumber = houseNumber;
+				this.streetName = streetName;
+				this.district = district;
+				this.city = city;
+				this.postcode = postcode;
 			}
 			conn.close();
 		} catch (SQLException e) {
@@ -99,7 +100,7 @@ public class Address {
 	protected void setHouseNumber(String houseNumber) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET HouseNumber = '" + houseNumber 
-					+ "' WHERE StreetName = '" + streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + postcode +"'");
+					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("house number");
@@ -123,7 +124,7 @@ public class Address {
 	protected void setStreetName(String streetName) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET StreetName = '" + streetName 
-					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
+					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("streetName");
@@ -147,7 +148,7 @@ public class Address {
 	protected void setDistrict(String district) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET District = '" + district
-					+ "' WHERE StreetName = '" + streetName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
+					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("district");
@@ -171,7 +172,7 @@ public class Address {
 	protected void setCity(String city) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET City = '" + city 
-					+ "' WHERE StreetName = '" + streetName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
+					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("city");
@@ -195,7 +196,7 @@ public class Address {
 	protected void setPostcode(String postcode) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET PostCode = '" + postcode 
-					+ "' WHERE StreetName = '" + streetName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + this.postcode +"'");
+					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("postcode");

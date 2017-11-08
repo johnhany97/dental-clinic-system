@@ -1,4 +1,4 @@
-package com2002;
+package com2002.views;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,9 +21,8 @@ import javax.swing.SwingConstants;
 import com2002.interfaces.Screen;
 import com2002.models.Doctor;
 import com2002.models.Secretary;
-import com2002.models.Staff;
 
-public class Login implements Screen {
+public class LoginView implements Screen {
 	
 	final private String TITLE = "Welcome";
 	final private String[] LABELS = {"Username", "Password"};
@@ -37,7 +35,7 @@ public class Login implements Screen {
 	private DisplayFrame frame;
 	private JPanel middlePanel;
 	
-	public Login(DisplayFrame frame) {
+	public LoginView(DisplayFrame frame) {
 		this.frame = frame;
 		initializeLogin();
 	}

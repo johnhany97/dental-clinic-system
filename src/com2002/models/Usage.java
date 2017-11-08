@@ -1,6 +1,5 @@
 package com2002.models;
 
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -312,3 +311,4 @@ public class Usage {
 	}
 
 }
+
