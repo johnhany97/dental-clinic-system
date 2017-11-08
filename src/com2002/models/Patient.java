@@ -19,14 +19,14 @@ public class Patient {
 	
 	/**
 	 * This constructor should be called when creating a new patient
-	 * @param fName First Name of the patient.
-	 * @param lName Last Name of the patient.
-	 * @param dob Date of Birth of the patient.
-	 * @param pNumber Phone Number of the patient
-	 * @param hNumber House Number of the patient
-	 * @param pcode Postcode of the patient 
+	 * @param firstName First Name of the patient.
+	 * @param lastName Last Name of the patient.
+	 * @param dateOfBirth Date of Birth of the patient.
+	 * @param phoneNumber Phone Number of the patient
+	 * @param houseNumber House Number of the patient
+	 * @param postcode Postcode of the patient 
 	 */
-	public Patient(String fName, String lName, LocalDate dob, String pNumber, String hNumber, String pcode){
+	public Patient(String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String houseNumber, String postcode){
 		try {
 			Connection conn = Database.getConnection();
 			ResultSet rs = DBQueries.execQuery("SELECT MAX(PatientID) FROM Patients", conn);
@@ -35,15 +35,15 @@ public class Patient {
 			} else if(rs.next()) {
 				patientID = rs.getInt(1) + 1;
 			}
-		    firstName = fName;
-			lastName = lName; 
-			dateOfBirth = dob;
-		    phoneNumber = pNumber;
-			houseNumber = hNumber;
-			postcode = pcode;
+		   this.firstName = firstName;
+		   this.lastName = lastName; 
+		   this.dateOfBirth = dateOfBirth;
+		   this.phoneNumber = phoneNumber;
+		   this.houseNumber = houseNumber;
+		   this.postcode = postcode;
 			if(!dbHasPatient(firstName, houseNumber, postcode)){
-				DBQueries.execUpdate("INSERT INTO Patients Values('" + patientID + "', '" + fName + "', '" + lName + "', '" 
-					+ dob + "', '" + pNumber + "', '" + hNumber + "', '" + pcode + "')");
+				DBQueries.execUpdate("INSERT INTO Patients Values('" + patientID + "', '" + firstName + "', '" + lastName + "', '" 
+					+ dateOfBirth + "', '" + phoneNumber + "', '" + houseNumber + "', '" + postcode + "')");
 			}
 			conn.close();
 		} catch (SQLException e) {
@@ -53,23 +53,23 @@ public class Patient {
 	
 	/**
 	 * This constructor should be called when searching for a particular patient.
-	 * @param fName First Name of the patient.
-	 * @param hNumber House Number of the patient.
-	 * @param pcode Postcode of the patient 
+	 * @param firstName First Name of the patient.
+	 * @param houseNumber House Number of the patient.
+	 * @param postcode Postcode of the patient 
 	 */
-	public Patient(String fName, String hNumber, String pcode) {
+	public Patient(String firstName, String houseNumber, String postcode) {
 		try {
 			Connection conn = Database.getConnection();
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients WHERE  FirstName = '" 
-					+ fName + "' AND HouseNumber = '" + hNumber + "' AND Postcode = '" + pcode + "'", conn);
+					+ firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode + "'", conn);
 			if(rs.next()) {
-				patientID = rs.getInt("PatientID");
-				firstName = rs.getString("FirstName");
-				lastName = rs.getString("LastName");
-				dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
-				phoneNumber = rs.getString("LastName");
-				houseNumber = rs.getString("HouseNumber");
-				postcode = rs.getString("Postcode");
+				this.patientID = rs.getInt("PatientID");
+				this.firstName = rs.getString("FirstName");
+				this.lastName = rs.getString("LastName");
+				this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
+				this.phoneNumber = rs.getString("LastName");
+				this.houseNumber = rs.getString("HouseNumber");
+				this.postcode = rs.getString("Postcode");
 			}
 			conn.close();
 		} catch (SQLException e) {
@@ -79,16 +79,16 @@ public class Patient {
 	
 	/**
 	 * Checks whether Patients table contains a specified patient.
-	 * @param fName First Name of the patient.
-	 * @param lName Last Name of the patient.
-	 * @param pcode Postcode of the patient 
+	 * @param firstName First Name of the patient.
+	 * @param lastName Last Name of the patient.
+	 * @param postcode Postcode of the patient 
 	 * @return True if patient already exists.
 	 */
-	private boolean dbHasPatient(String fName, String hNumber, String pcode) {
-		String found_name = DBQueries.getData("FirstName", "Patients", "FirstName", fName);
-		String found_house = DBQueries.getData("HouseNumber", "Patients", "HouseNumber", hNumber);
-		String found_postcode = DBQueries.getData("Postcode", "Patients", "Postcode", pcode);
-		return fName == found_name && found_house == hNumber && found_postcode == pcode;
+	private boolean dbHasPatient(String firstName, String houseNumber, String postcode) {
+		String found_name = DBQueries.getData("FirstName", "Patients", "FirstName", firstName);
+		String found_house = DBQueries.getData("HouseNumber", "Patients", "HouseNumber", houseNumber);
+		String found_postcode = DBQueries.getData("Postcode", "Patients", "Postcode", postcode);
+		return firstName == found_name && found_house == houseNumber && found_postcode == postcode;
 	}
 	
 	/**
@@ -111,18 +111,18 @@ public class Patient {
 	
 	/**
 	 * Updates the patientID of a patient to a given value.
-	 * @param pID The new patientID of the patient.
+	 * @param patientID The new patientID of the patient.
 	 */
-	protected void SetPatientID(int pID) {
+	protected void setPatientID(int patientID) {
 		try {
-			DBQueries.execUpdate("UPDATE Patients SET PatientID = '" + pID 
+			DBQueries.execUpdate("UPDATE Patients SET PatientID = '" + patientID 
 					+ "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("patientID");
 			return;
 		}
-		patientID = pID;
+		this.patientID = patientID;
 	}
 	
 	/**
@@ -135,18 +135,18 @@ public class Patient {
 	
 	/**
 	 * Updates the First Name of a patient to a given name.
-	 * @param newFName The new first name of a patient.
+	 * @param firstName The new first name of a patient.
 	 */
-	protected void setFirstName(String newFName) { 
+	protected void setFirstName(String firstName) { 
 		try {
-			DBQueries.execUpdate("UPDATE Patients SET FirstName = '" + newFName 
-					+ "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
+			DBQueries.execUpdate("UPDATE Patients SET FirstName = '" + firstName 
+					+ "' WHERE FirstName = '" + this.firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("first name");
 			return;
 		}
-		firstName = newFName;
+		this.firstName = firstName;
 	}
 	
 	/**
@@ -159,18 +159,18 @@ public class Patient {
 	
 	/**
 	 * Updates the Last Name of a patient to a given name.
-	 * @param lastN The new last name of a patient.
+	 * @param lastName The new last name of a patient.
 	 */
-	protected void setLastName(String lastN) {
+	protected void setLastName(String lastName) {
 		try {
-			DBQueries.execUpdate("UPDATE Patients SET LastName = '" + lastN 
+			DBQueries.execUpdate("UPDATE Patients SET LastName = '" + lastName
 					+ "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("last name");
 			return;
 		}
-		lastName = lastN;
+		this.lastName = lastName;
 	}
 	
 	/**
@@ -183,18 +183,18 @@ public class Patient {
 	
 	/**
 	 * Updates the Date of Birth of a patient to a given date.
-	 * @param dob The new date of birth of a patient.
+	 * @param dateOfBirth The new date of birth of a patient.
 	 */
-	protected void SetDateOfBirth(LocalDate dob) {
+	protected void setDateOfBirth(LocalDate dateOfBirth) {
 		try {
-			DBQueries.execUpdate("UPDATE Patients SET DateOfBirth = '" + dob 
+			DBQueries.execUpdate("UPDATE Patients SET DateOfBirth = '" + dateOfBirth 
 					+ "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("date of birth");
 			return;
 		}
-		dateOfBirth = dob;
+		this.dateOfBirth = dateOfBirth;
 	}
 	
 	/**
@@ -207,18 +207,18 @@ public class Patient {
 	
 	/**
 	 * Updates the Phone Number of a patient to given numbers.
-	 * @param pNumber The new phone Number of a patient.
+	 * @param phoneNumber The new phone Number of a patient.
 	 */
-	protected void setPhoneNumber(String pNumber) {
+	protected void setPhoneNumber(String phoneNumber) {
 		try {
-			DBQueries.execUpdate("UPDATE Patients SET PhoneNumber = '" + pNumber 
+			DBQueries.execUpdate("UPDATE Patients SET PhoneNumber = '" + phoneNumber 
 					+ "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("phone number");
 			return;
 		}
-		phoneNumber = pNumber;
+		this.phoneNumber = phoneNumber;
 	}
 	
 	/**
@@ -231,18 +231,18 @@ public class Patient {
 	
 	/**
 	 * Updates the House Number of a patient to a given value/name.
-	 * @param newHNumber The new house number of a patient.
+	 * @param houseNumber The new house number of a patient.
 	 */
-	protected void setHouseNumber(String newHNumber) {
+	protected void setHouseNumber(String houseNumber) {
 		try {
-			DBQueries.execUpdate("UPDATE Patients SET HouseNumber = '" + newHNumber 
-					+ "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
+			DBQueries.execUpdate("UPDATE Patients SET HouseNumber = '" + houseNumber 
+					+ "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("house number");
 			return;
 		}
-		houseNumber = newHNumber;
+		this.houseNumber = houseNumber;
 	}
 	
 	/**
@@ -255,23 +255,31 @@ public class Patient {
 	
 	/**
 	 * Updates the postcode of a patient.
-	 * @param newPcode The new postcode of a patient.
+	 * @param postcode The new postcode of a patient.
 	 */
-	protected void setPostcode(String newPcode) {
+	protected void setPostcode(String postcode) {
 		try {
-			DBQueries.execUpdate("UPDATE Patients SET Postcode = '" + newPcode 
-					+ "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
+			DBQueries.execUpdate("UPDATE Patients SET Postcode = '" + postcode 
+					+ "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("postcode");
 			return;
 		}
-		postcode = newPcode;
+		this.postcode = postcode;
 	}
 	
 	public static void main(String[] args) {
 		LocalDate dt = LocalDate.of(1997,05, 18);
 		Patient nur = new Patient("Nur", "Magid", dt, "07543867024", "57", "W5 1LF");
+		// nur.setPatientID(2);
+		// nur.setFirstName("Arthur");
+		// nur.setLastName("Granacher");
+		// nur.setDateOfBirth(newDT);
+		// nur.setPhoneNumber("07543867023");
+		// nur.setHouseNumber("59");
+		// nur.setPostcode("s10 3an");
+
 		System.out.println(nur.getPatientID() + nur.getFirstName() + nur.getLastName() + nur.getDateOfBirth() + nur.getPhoneNumbere()+nur.getHouseNumber()+ nur.getPostcode());
 	}
 	

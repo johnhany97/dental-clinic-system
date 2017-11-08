@@ -5,6 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import com2002.utils.Database;
 
 public class Appointment {
@@ -21,40 +24,24 @@ public class Appointment {
 	 * This constructor should be called with inputs which already exist in the Appointments table.
 	 * @param startTime The timestamp of when the appointment starts.
 	 * @param patID The patient's ID
-	 * @throws Exception 
 	 */
-	public Appointment(Timestamp startTime, String username) throws Exception {
+	public Appointment(Timestamp startTime, String username) throws CommunicationsException, SQLException {
 		Connection conn = null;
 		ResultSet rs = null;
-		try {
-			conn = Database.getConnection();
-			rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
+		conn = Database.getConnection();
+		rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
 					+ startTime.toString() + " AND Username = " + username + "", conn);
-			if(rs.next()) {
-				this.startTime = startTime;
-				this.endTime = rs.getTimestamp("EndDate");
-				this.username = username;
-				this.patientID = rs.getInt("PatientID");
-				this.notes = rs.getString("Notes");
-				this.appointmentType = rs.getString("Type");
-				this.totalAppointments = rs.getInt("TotalAppointments");
-				this.currentAppointment = rs.getInt("CurrentAppointment");
-			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			if(conn == null) {
-				throw new Exception("Could not get connection.");
-			} else if(rs == null) {
-				throw new Exception("There was an error with your SQL query. "
-						+ "An entry with the specified startDate and username may not exist.");
-			}
-			try {
-				conn.close();
-			} catch (SQLException e1) {
-				throw new Exception("Could not close connection.");
-			}
+		if(rs.next()) {
+			this.startTime = startTime;
+			this.endTime = rs.getTimestamp("EndDate");
+			this.username = username;
+			this.patientID = rs.getInt("PatientID");
+			this.notes = rs.getString("Notes");
+			this.appointmentType = rs.getString("Type");
+			this.totalAppointments = rs.getInt("TotalAppointments");
+			this.currentAppointment = rs.getInt("CurrentAppointment");
 		}
+		conn.close();
 	}
 	
 	/**
@@ -69,17 +56,10 @@ public class Appointment {
 	 * @param currA The current appointment number out of the total appointments (set to 1 if not course treatment).
 	 */
 	public Appointment(Timestamp startTime, Timestamp endTime, String username, int patientID, String notes,
-					   AppointmentType treatmentName, int totalAppointments, int currentAppointments) {
-		try {
-			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + startTime.toString() + "', '" + endTime.toString() + "', '" + username + "', '" 
+					   AppointmentType treatmentName, int totalAppointments, int currentAppointments)
+							   throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+		DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + startTime.toString() + "', '" + endTime.toString() + "', '" + username + "', '" 
 						+ treatmentName + "', '" + patientID + "', '" + notes + "', '" + totalAppointments + "', '" + currentAppointments + "')");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			
-			System.out.println("Something went wrong with creating an appointment.");
-			
-			return;
-		}
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.username = username;
@@ -93,16 +73,11 @@ public class Appointment {
 	/**
 	 * Removes appointment from Appointments table and sets all instance values to null/defaults.
 	 */
-	protected void removeAppointment(Timestamp start, String userN) {
-		try {
-			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime.toString() + " AND Username = " + username);
-		} catch (SQLException e) {
-			System.out.println("Failed to delete appointment. Make sure appointment is properly initialised.");
-			return;
-		}
-		this.startTime = start;
+	protected void removeAppointment() throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime.toString() + " AND Username = " + username);
+		this.startTime = null;
 		this.endTime = null;
-		this.username = userN;
+		this.username = null;
 		this.patientID = 0;
 		this.notes = null;
 		this.appointmentType = "";
@@ -114,36 +89,31 @@ public class Appointment {
 	 * Calculates the cost of the appointment.
 	 * @return The total cost of all the treatments in appointment.
 	 */
-	protected Float calculateCost() {
+	protected Float calculateCost() throws CommunicationsException, SQLException {
 		float cost = 0;
-		try {
-			Connection conn = Database.getConnection();
-			if(appointmentType.equals("Remedial")) {
-				ResultSet treatmentRs = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = '" 
+		Connection conn = Database.getConnection();
+		if(appointmentType.equals("Remedial")) {
+			ResultSet treatmentRs = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = '" 
 						+ this.startTime.toString() + "' AND Username = '" + this.username + "'", conn);
-				while(treatmentRs.next()) {
-					String treatment = treatmentRs.getString("TreatmentName");
-					ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'", conn);
-					if(rs.next()) {
-						cost += rs.getFloat("Price");
-					}
-				}
-			} else if(appointmentType.equals("Checkup")) {
-				ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Checkup'", conn);
+			while(treatmentRs.next()) {
+				String treatment = treatmentRs.getString("TreatmentName");
+				ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'", conn);
 				if(rs.next()) {
-					cost = rs.getFloat("Price");
-				}
-			} else if(appointmentType.equals("Cleaning")) {
-				ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Cleaning'", conn);
-				if(rs.next()) {
-					cost = rs.getFloat("Price");
+					cost += rs.getFloat("Price");
 				}
 			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.print("Something went wrong with calculating the cost.");
+		} else if(appointmentType.equals("Checkup")) {
+			ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Checkup'", conn);
+			if(rs.next()) {
+				cost = rs.getFloat("Price");
+			}
+		} else if(appointmentType.equals("Cleaning")) {
+			ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Cleaning'", conn);
+			if(rs.next()) {
+				cost = rs.getFloat("Price");
+			}
 		}
+		conn.close();
 		return cost;
 	}
 	
@@ -168,17 +138,11 @@ public class Appointment {
 	 * @param start The new start timestamp.
 	 * @param end The new end timestamp.
 	 */
-	protected void setStartEndTime(Timestamp start, Timestamp end) {
-		try {
-			DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start.toString() + ", EndDate = " + end.toString() 
+	protected void setStartEndTime(Timestamp startTime, Timestamp endTime) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + startTime.toString() + ", EndDate = " + endTime.toString() 
 					+ " WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("start and end times");
-			return;
-		}
-		this.startTime = start;
-		this.endTime = end;
+		this.startTime = startTime;
+		this.endTime = endTime;
 	}
 	
 	/**
@@ -193,16 +157,10 @@ public class Appointment {
 	 * Updates the username of the staff member conducting appointment to given value.
 	 * @param user The new username of the staff member conducting appointment.
 	 */
-	protected void setUsername(String user) {
-		try {
-			DBQueries.execUpdate("UPDATE Appointments SET Username = '" + user 
-					+ "' WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("username");
-			return;
-		}
-		this.username = user;
+	protected void setUsername(String username) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET Username = '" + username 
+				+ "' WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
+		this.username = username;
 	}
 	
 	/**
@@ -217,17 +175,11 @@ public class Appointment {
 	 * Updates the patient's ID to the given value.
 	 * @param patID The new patient's ID.
 	 */
-	protected void setPatientID(int patID) {
-		try {
-			DBQueries.execUpdate("UPDATE Appointments SET PatientID = " + patID 
-								  + " WHERE StartDate = '"
-					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("patientID");
-			return;
-		}
-		this.patientID = patID;
+	protected void setPatientID(int patientID) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET PatientID = " + patientID 
+						+ " WHERE StartDate = '" + this.startTime.toString() 
+						+ "' AND PatientID = " + this.patientID);
+		this.patientID = patientID;
 	}
 	
 	/**
@@ -242,16 +194,10 @@ public class Appointment {
 	 * Updates the notes to the given string.
 	 * @param note The new string for the notes.
 	 */
-	protected void setNotes(String note) {
-		try {
-			DBQueries.execUpdate("UPDATE Appointments SET Notes = '" + note + "' WHERE StartDate = '"
+	protected void setNotes(String notes) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET Notes = '" + notes + "' WHERE StartDate = '"
 					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("notes");
-			return;
-		}
-		this.notes = note;
+		this.notes = notes;
 	}
 	
 	/**
@@ -266,16 +212,10 @@ public class Appointment {
 	 * Updates the appointment type to the given type.
 	 * @param appointmentT The new appointment type.
 	 */
-	protected void setAppointmentType(AppointmentType appointmentT) {
-		try {
-			DBQueries.execUpdate("UPDATE Appointments SET Type = '" + getAppointmentTypeString(appointmentT) 
+	protected void setAppointmentType(AppointmentType appointmentType) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET Type = '" + getAppointmentTypeString(appointmentType) 
 			+ "' WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("appointment type");
-			return;
-		}
-		this.appointmentType = getAppointmentTypeString(appointmentT);
+		this.appointmentType = getAppointmentTypeString(appointmentType);
 	}
 	
 	/**
@@ -290,16 +230,10 @@ public class Appointment {
 	 * Updates the total number of appointments to the given value.
 	 * @param total The new value of total appointments.
 	 */
-	protected void setTotalAppointments(int total) {
-		try {
-			DBQueries.execUpdate("UPDATE Appointments SET TotalAppointments = " + total + " WHERE StartDate = '"
-					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("total appointments");
-			return;
-		}
-		this.totalAppointments = total;
+	protected void setTotalAppointments(int totalAppointments) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET TotalAppointments = " + totalAppointments + " WHERE StartDate = '"
+				+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
+		this.totalAppointments = totalAppointments;
 	}
 	
 	/**
@@ -314,16 +248,10 @@ public class Appointment {
 	 * Set the current appointment to the given value.
 	 * @param current The new value of current appointment.
 	 */
-	protected void setCurrentAppointment(int current) {
-		try {
-			DBQueries.execUpdate("UPDATE Appointments SET CurrentAppointment = " + current + " WHERE StartDate = '"
+	protected void setCurrentAppointment(int currentAppointment) throws CommunicationsException, SQLException {
+			DBQueries.execUpdate("UPDATE Appointments SET CurrentAppointment = " + currentAppointment + " WHERE StartDate = '"
 					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("current appointment");
-			return;
-		}
-		this.currentAppointment = current;
+		this.currentAppointment = currentAppointment;
 	}
 	
 	/**
@@ -331,25 +259,15 @@ public class Appointment {
 	 * @param app The appointment type as an enum.
 	 * @return String version of appointment type.
 	 */
-	private String getAppointmentTypeString(AppointmentType app) {
-		if(app == AppointmentType.CHECKUP) {
+	private String getAppointmentTypeString(AppointmentType appointmentType) {
+		if(appointmentType == AppointmentType.CHECKUP) {
 			return "Checkup";
-		} else if(app == AppointmentType.CLEANING) {
+		} else if(appointmentType == AppointmentType.CLEANING) {
 			return "Cleaning";
-		} else if(app == AppointmentType.REMEDIAL) {
+		} else if(appointmentType == AppointmentType.REMEDIAL) {
 			return "Remedial";
 		}
 		return "Empty";
-	}
-	
-	/**
-	 * Method for printing error message to the console.
-	 * @param method The method from which the error has occurred.
-	 */
-	private void printError(String method) {
-		System.out.println("Something went wrong with updating the " + method + ". "
-				+ "The appointment may have not been initialised properly "
-				+ "(some instance variables might be null).");
 	}
 	
 }
