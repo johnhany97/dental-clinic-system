@@ -151,16 +151,6 @@ public abstract class Staff {
 		return "Dentist";
 	}
 	
-	/**
-	 * Method for printing error message to the console.
-	 * @param method The method from which the error has occurred.
-	 */
-	private void printError(String method) {
-		System.out.println("Something went wrong with updating the " + method + ". "
-				+ "The staff member may have not been initialised properly "
-				+ "(some instance variables might be null).");
-	}
-	
 	public static void main(String[] args) {
 		Staff arthur;
 		try {

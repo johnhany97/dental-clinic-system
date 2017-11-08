@@ -17,12 +17,14 @@ public class Secretary extends Staff {
 		super(firstName, lastName, username, password, Role.SECRETARY);
 	}
 	
-	protected void registerAddress(String houseNumber, String streetName, String district, String city, String postcode) {
+	protected Address registerAddress(String houseNumber, String streetName, String district, String city, String postcode) {
 		Address address = new Address(houseNumber, streetName, district, city, postcode);
+		return address;
 	}
 	
-	protected void registerPatient(String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) {
+	protected Patient registerPatient(String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) {
 		Patient patient = new Patient(firstName, lastName, dob, phoneNumber, houseNumber, postcode);
+		return patient;
 	}
 	
 	/*

@@ -29,7 +29,7 @@ public class Appointment {
 		try {
 			conn = Database.getConnection();
 			rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = " 
-					+ startD + " AND Username = " + userN + "", conn);
+					+ startD.toString() + " AND Username = " + userN + "", conn);
 			if(rs.next()) {
 				startTime = startD;
 				endTime = rs.getTimestamp("EndDate");
@@ -96,7 +96,7 @@ public class Appointment {
 	 */
 	protected void removeAppointment(Timestamp start, String userN) {
 		try {
-			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime + " AND Username = " + username);
+			DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime.toString() + " AND Username = " + username);
 		} catch (SQLException e) {
 			System.out.println("Failed to delete appointment. Make sure appointment is properly initialised.");
 			return;
@@ -171,7 +171,7 @@ public class Appointment {
 	 */
 	protected void setStartEndTime(Timestamp start, Timestamp end) {
 		try {
-			DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start + ", EndDate = " + end 
+			DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + start.toString() + ", EndDate = " + end.toString() 
 					+ " WHERE StartDate = '" + startTime.toString() + "' AND PatientID = " + patientID);
 		} catch (SQLException e) {
 			e.printStackTrace();
