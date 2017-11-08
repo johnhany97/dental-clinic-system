@@ -2,26 +2,29 @@ package com2002.models;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 
 public class Secretary extends Staff {
 
 	//Schedule schedule = new Schedule();
 	
-	public Secretary(String userN, String pass) throws SQLException {
-		super(userN, pass);
-		// TODO Auto-generated constructor stub
+	public Secretary(String username, String password) throws SQLException {
+		super(username, password);
 	}
 	
-	public Secretary(String firstName, String lastName, String userN, String pass) {
-		super(firstName, lastName, userN, pass, Role.SECRETARY);
+	public Secretary(String firstName, String lastName, String username, String password) throws MySQLIntegrityConstraintViolationException, SQLException {
+		super(firstName, lastName, username, password, Role.SECRETARY);
 	}
 	
-	protected void registerAddress(String houseNumber, String streetName, String district, String city, String postcode) {
+	protected Address registerAddress(String houseNumber, String streetName, String district, String city, String postcode) {
 		Address address = new Address(houseNumber, streetName, district, city, postcode);
+		return address;
 	}
 	
-	protected void registerPatient(String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) {
+	protected Patient registerPatient(String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) {
 		Patient patient = new Patient(firstName, lastName, dob, phoneNumber, houseNumber, postcode);
+		return patient;
 	}
 	
 	/*

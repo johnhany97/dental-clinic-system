@@ -23,7 +23,7 @@ public class DBQueries {
 	 * @return Returns a ResultSet from the given query.
 	 * @throws SQLException 
 	 */
-	static ResultSet execQuery(String query, Connection conn) throws SQLException {
+	public static ResultSet execQuery(String query, Connection conn) throws SQLException {
 		ResultSet rs = null;
 		conn = Database.getConnection();
 		Statement stmt = conn.createStatement();
@@ -36,7 +36,7 @@ public class DBQueries {
 	 * @param query Query to be executed. Needs to be in correct SQL format.
 	 * @throws SQLException 
 	 */
-	static void execUpdate(String query) throws SQLException {
+	public static void execUpdate(String query) throws SQLException {
 		Connection conn = Database.getConnection();
 		Statement stmt = conn.createStatement();
 		stmt.executeUpdate(query);
@@ -51,7 +51,7 @@ public class DBQueries {
 	 * @param selectData The String you want to find in the specified column.
 	 * @return
 	 */
-	static String getData(String returnCol, String table, String selectCol, String selectData) {
+	public static String getData(String returnCol, String table, String selectCol, String selectData) {
 		String data = "";
 		try {
 			Connection conn = Database.getConnection();
@@ -66,6 +66,16 @@ public class DBQueries {
 			e.printStackTrace();
 		}
 		return data;
+	}
+	
+	/**
+	 * Checks whether Employees table contains a specified username.
+	 * @param username Username of staff.
+	 * @return True if username already exists.
+	 */
+	public static boolean staffUsernameExists(String username) {
+		String found = DBQueries.getData("Username", "Employees", "Username", username);
+		return username.equals(found);
 	}
 	
 	/*
