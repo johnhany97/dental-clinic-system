@@ -1,4 +1,4 @@
-package com2002;
+package com2002.views;
 
 import javax.swing.JPanel;
 

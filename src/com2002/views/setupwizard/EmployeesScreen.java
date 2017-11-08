@@ -5,7 +5,7 @@
  * in the setup wizard
  * @author John Ayad
  */
-package com2002.setupwizard;
+package com2002.views.setupwizard;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -26,12 +26,12 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
-import com2002.DisplayFrame;
 import com2002.interfaces.Screen;
 import com2002.models.Doctor;
 import com2002.models.Role;
 import com2002.models.Secretary;
 import com2002.models.Staff;
+import com2002.views.DisplayFrame;
 
 public class EmployeesScreen implements Screen {
 	

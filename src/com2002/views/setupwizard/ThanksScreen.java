@@ -5,7 +5,7 @@
  * in the setup wizard
  * @author John Ayad
  */
-package com2002.setupwizard;
+package com2002.views.setupwizard;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -21,9 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com2002.Application;
-import com2002.DisplayFrame;
-import com2002.Login;
 import com2002.interfaces.Screen;
+import com2002.views.DisplayFrame;
+import com2002.views.LoginView;
 
 public class ThanksScreen implements Screen {
 	
@@ -80,7 +80,7 @@ public class ThanksScreen implements Screen {
 		    		  e.printStackTrace();
 		    	  }
 		    	  //Take you to login screen
-		    	  Login loginScreen = new Login(frame);
+		    	  LoginView loginScreen = new LoginView(frame);
 		    	  frame.setDisplayedPanel(loginScreen.getPanel());
 		      }
 	    });

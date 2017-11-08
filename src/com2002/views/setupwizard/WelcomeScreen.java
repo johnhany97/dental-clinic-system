@@ -5,7 +5,7 @@
  * in the setup wizard
  * @author John Ayad
  */
-package com2002.setupwizard;
+package com2002.views.setupwizard;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -17,8 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import com2002.DisplayFrame;
 import com2002.interfaces.Screen;
+import com2002.views.DisplayFrame;
 
 public class WelcomeScreen implements Screen {
 
