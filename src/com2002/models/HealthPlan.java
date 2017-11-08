@@ -1,8 +1,8 @@
 package com2002.models;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import com2002.models.DBQueries;
 import com2002.utils.Database;
 
@@ -12,43 +12,64 @@ public class HealthPlan {
 	private Double price;
 	private int checkUpLevel;
 	private int hygieneLevel;
-	private int repairWorkLevel;
+	private int repairLevel;
 	
 	/**
 	 * This constructor should be called when creating a new health treatment plan 
-	 * @param nme Name of the health plan 
-	 * @param pri Price of the health plan
-	 * @param chkUpLevel check up numbers of treatments of the health plan
-	 * @param hygLevel hygiene number of treatments of the health plan
-	 * @param rWorkLevel repair work number of treatments of the health plan 
+	 * @param name Name of the health plan 
+	 * @param price Price of the health plan
+	 * @param checkUpLevel check up numbers of treatments of the health plan
+	 * @param hygieneLevel hygiene number of treatments of the health plan
+	 * @param repairLevel repair work number of treatments of the health plan 
 	 */
-	public HealthPlan(String nme, Double pri, int chkUpLevel, int hygLevel, int rWorkLevel){
+	public HealthPlan(String name, Double price, int checkUpLevel, int hygieneLevel, int repairLevel){
 		try {
 			Connection conn = Database.getConnection();
-			this.name = nme;
-			this.price  = pri;
-			this.checkUpLevel = chkUpLevel;
-			this.hygieneLevel = hygLevel;
-			this.repairWorkLevel = rWorkLevel;
-			if(!dbHasHealthPlan(nme)){
-				DBQueries.execUpdate("INSERT INTO HealthPlans Values('" + nme + "', '" + pri + "', '" + chkUpLevel + "', '" 
-					+ hygLevel + "', '" + rWorkLevel + "')");
+			this.name = name;
+			this.price  = price;
+			this.checkUpLevel = checkUpLevel;
+			this.hygieneLevel = hygieneLevel;
+			this.repairLevel = repairLevel;
+			if(!dbHasHealthPlan(name)){
+				DBQueries.execUpdate("INSERT INTO HealthPlans Values('" + name + "', '" + price + "', '" + checkUpLevel + "', '" 
+					+ hygieneLevel + "', '" + repairLevel + "')");
 			}
 			conn.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	
+	/**
+	 * This constructor should be called when finding a treatment plan
+	 * @param name Name of treatment to be searched
+	 */
+	public HealthPlan(String name) {
+		try {
+			Connection conn = Database.getConnection();
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM HealthPlans WHERE  name = '" 
+					+ name + "'", conn);
+			if(rs.next()) {
+				this.name = rs.getString("Name");
+				this.price = rs.getDouble("Price");
+				this.checkUpLevel = rs.getInt("CheckUpLevel");
+				this.hygieneLevel = rs.getInt("HygieneLevel");
+				this.repairLevel = rs.getInt("RepairLevel");
+			}
+			conn.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
 	}
 	
 	/**
 	 * Checks whether HealthPlan table contains a particular HealthPlan.
-	 * @param nme Name of the HealthPlan.
+	 * @param name Name of the HealthPlan.
 	 * @return True if the HealthPlan already exists.
 	 */
-	private boolean dbHasHealthPlan(String nme) {
-		String found_healthP = DBQueries.getData("Name", "HealthPlans", "Name", nme);
-		return found_healthP == nme;
+	private boolean dbHasHealthPlan(String name) {
+		String found_healthP = DBQueries.getData("Name", "HealthPlans", "Name", name);
+		return found_healthP == name;
 	}
 	
 	/**
@@ -62,55 +83,55 @@ public class HealthPlan {
 	}
 	
 	/**
-	 * Returns a Name of a particular HealthPlan.
-	 * @return name The name of the HealthPlan.
+	 * Returns a name of a particular health plan.
+	 * @return name The name of the health plan.
 	 */
 	public String getName() {
 		return this.name;
 	}
 	
 	/**
-	 * Updates the Name of a HealthPlan to a given name.
-	 * @param newName The new name of a HealthPlan.
+	 * Updates the name of a health plan to a given name.
+	 * @param name The new name of a health plan.
 	 */
-	protected void setTreatmentName(String newName) {
+	protected void setName(String name) {
 		try {
-			DBQueries.execUpdate("UPDATE HealthPlans SET Name = '" + newName 
-					+ "' WHERE Name = '" + name + "'");
+			DBQueries.execUpdate("UPDATE HealthPlans SET Name = '" + name 
+					+ "' WHERE Name = '" + this.name + "'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("treatment name");
 			return;
 		}
-		name = newName;
+		this.name = name;
 	}
 
 	/**
-	 * Returns a Price of a particular HealthPlan.
-	 * @return price The price of a HealthPlan.
+	 * Returns a price of a particular health plan.
+	 * @return price The price of a health plan.
 	 */
 	public Double getPrice() {
 		return this.price;
 	}
 	
 	/**
-	 * Updates the Price of a HealthPlan to a given value.
-	 * @param newPrice The new price of a HealthPlan.
+	 * Updates the price of a health plan to a given value.
+	 * @param price The new price of a HealthPlan.
 	 */
-	protected void setPrice(double newPrice) {
+	protected void setPrice(double price) {
 		try {
-			DBQueries.execUpdate("UPDATE HealthPlans SET Price = '" + newPrice 
-					+ "' WHERE Name = '" + name + "'");
+			DBQueries.execUpdate("UPDATE HealthPlans SET Price = '" + price 
+					+ "' WHERE Name = '" + this.name + "'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("price");
 			return;
 		}
-		price = newPrice;
+		this.price = price;
 	}
 	
 	/**
-	 * Returns a Number of possible check up appointments of a HealthPlan.
+	 * Returns a number of possible check up appointments of a HealthPlan.
 	 * @return checkUpLevel The check up level of a HealthPlan.
 	 */
 	public int getCheckUpLevel() {
@@ -119,77 +140,86 @@ public class HealthPlan {
 	
 	/**
 	 * Updates the checkUpLevel of a HealthPlan to a given value.
-	 * @param newCheckUpLevel The new check up level of a HealthPlan.
+	 * @param checkUpLevel The new check up level of a HealthPlan.
 	 */
-	protected void setCheckUpLevel(int newCheckUpLevel) {
+	protected void setCheckUpLevel(int checkUpLevel) {
 		try {
-			DBQueries.execUpdate("UPDATE HealthPlans SET CheckUpLevel = '" + newCheckUpLevel
-					+ "' WHERE Name = '" + name + "'");
+			DBQueries.execUpdate("UPDATE HealthPlans SET CheckUpLevel = '" + checkUpLevel
+					+ "' WHERE Name = '" + this.name + "'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("checkup");
 			return;
 		}
-		checkUpLevel = newCheckUpLevel;
+		this.checkUpLevel = checkUpLevel;
 	}
 	
 	/**
-	 * Returns a Number of possible hygiene appointments of a HealthPlan
-	 * @return hygieneLevel The hygiene level of a HealthPlan.
+	 * Returns a number of possible hygiene appointments of a health plan
+	 * @return hygieneLevel The hygiene level of a health plan.
 	 */
 	public int getHygieneLevel() {
 		return this.hygieneLevel;
 	}
 	
 	/**
-	 * Updates the Hygiene level of an HealthPlan to a given value.
-	 * @param newHygieneLevel The new hygiene level of a HealthPlan.
+	 * Updates the hygiene level of an health plan to a given value.
+	 * @param hygieneLevel The new hygiene level of a health plan.
 	 */
-	protected void setHygieneLevel(int newHygieneLevel) {
+	protected void setHygieneLevel(int hygieneLevel) {
 		try {
-			DBQueries.execUpdate("UPDATE HealthPlans SET HygieneLevel = '" + newHygieneLevel
-					+ "' WHERE Name = '" + name + "'");
+			DBQueries.execUpdate("UPDATE HealthPlans SET HygieneLevel = '" + hygieneLevel
+					+ "' WHERE Name = '" + this.name + "'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("hygiene");
 			return;
 		}
-		hygieneLevel = newHygieneLevel;
+		this.hygieneLevel = hygieneLevel;
 	}
 
 	/**
-	 * Returns a Number of possible repair work appointments of a HealthPlan
-	 * @return repairWorkLevel The repair work level of a HealthPlan.
+	 * Returns a number of possible repair work appointments of a health plan
+	 * @return repairLevel The repair work level of a health plan.
 	 */
-	public int getRepairWorkLevel() {
-		return this.repairWorkLevel;
+	public int getRepairLevel() {
+		return this.repairLevel;
 	}
 	
-	
 	/**
-	 * Updates the Repair Work Level of a HealthPlan to a given value.
-	 * @param newRepairLevel The new Repair level of a HealthPlan.
+	 * Updates the repair level of a health plan to a given value.
+	 * @param repairLevel The new repair level of a health plan.
 	 */
-	protected void setRepairWorkLevel(int newRepairLevel) {
+	protected void setRepairLevel(int repairLevel) {
 		try {
-			DBQueries.execUpdate("UPDATE HealthPlans SET RepairLevel = '" + newRepairLevel
-					+ "' WHERE Name = '" + name + "'");
+			DBQueries.execUpdate("UPDATE HealthPlans SET RepairLevel = '" + repairLevel
+					+ "' WHERE Name = '" + this.name + "'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			printError("repair");
 			return;
 		}
-		repairWorkLevel = newRepairLevel;
+		this.repairLevel = repairLevel;
 	}
-
-
-
-
-
-
 	
+	public static void main(String[] args) {
+		HealthPlan nhs  = new HealthPlan("NHS free plan", 0.00,  2, 2, 6);
+		HealthPlan maintenance  = new HealthPlan("The maintenance plan", 15.00,  2, 2, 0);
+		HealthPlan oral  = new HealthPlan("The oral health plan", 21.00,  2, 4, 0);
+		HealthPlan dental  = new HealthPlan("The health plan", 26.00,  0, 0, 0);
+		HealthPlan find = new HealthPlan("NHS free plan");
+		
+		dental.setName("The dental health plan");
+		dental.setPrice(36.00);
+		dental.setCheckUpLevel(2);
+		dental.setHygieneLevel(2);
+		dental.setRepairLevel(2);
 
-	
-	
+		System.out.println(nhs.getName() + nhs.getPrice() + nhs.getCheckUpLevel() + nhs.getHygieneLevel() + nhs.getRepairLevel());
+		System.out.println(maintenance.getName() + maintenance.getPrice() + maintenance.getCheckUpLevel() + maintenance.getHygieneLevel() + maintenance.getRepairLevel());
+		System.out.println(oral.getName() + oral.getPrice() + oral.getCheckUpLevel() + oral.getHygieneLevel() + oral.getRepairLevel());
+		System.out.println(dental.getName() + dental.getPrice() + dental.getCheckUpLevel() + dental.getHygieneLevel() + dental.getRepairLevel());
+		System.out.println(find.getName() + find.getPrice() + find.getCheckUpLevel() + find.getHygieneLevel() + find.getRepairLevel());
+	}
 	
 }
