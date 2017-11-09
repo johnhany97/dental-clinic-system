@@ -9,8 +9,6 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 import com2002.utils.Database;
 
-// remind John to remove password from class diag
-
 
 public abstract class Staff {
 	
@@ -29,15 +27,18 @@ public abstract class Staff {
 	 */
 	public Staff(String username, String password) throws CommunicationsException, SQLException  {
 		Connection conn = Database.getConnection();
-		ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
-				+ username + "' AND password = '" + password + "'", conn);
-		if(rs.next()) {
-			this.firstName = rs.getString("FirstName");
-			this.lastName = rs.getString("LastName");
-			this.username = username;
-			this.role = rs.getString("Role");
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
+					+ username + "' AND password = '" + password + "'", conn);
+			if(rs.next()) {
+				this.firstName = rs.getString("FirstName");
+				this.lastName = rs.getString("LastName");
+				this.username = username;
+				this.role = rs.getString("Role");
+			}
+		} finally {
+			conn.close();
 		}
-		conn.close();
 	}
 	
 	/**

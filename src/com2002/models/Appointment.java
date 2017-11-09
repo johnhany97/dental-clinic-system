@@ -278,4 +278,5 @@ public class Appointment {
 	public Patient getPatient() throws SQLException {
 		return new Patient(this.patientID);
 	}
+	
 }

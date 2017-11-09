@@ -25,7 +25,6 @@ public class DBQueries {
 	 */
 	public static ResultSet execQuery(String query, Connection conn) throws SQLException {
 		ResultSet rs = null;
-		conn = Database.getConnection();
 		Statement stmt = conn.createStatement();
 		rs = stmt.executeQuery(query);
 		return rs;
@@ -38,9 +37,12 @@ public class DBQueries {
 	 */
 	public static void execUpdate(String query) throws SQLException {
 		Connection conn = Database.getConnection();
-		Statement stmt = conn.createStatement();
-		stmt.executeUpdate(query);
-		conn.close();
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(query);
+		} finally {
+			conn.close();
+		}
 	}
 	
 	/**
