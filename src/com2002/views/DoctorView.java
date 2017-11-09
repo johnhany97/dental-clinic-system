@@ -70,17 +70,17 @@ public class DoctorView implements Screen {
 			String patientName = patient.getFirstName() + patient.getLastName();
 			String appointmentType = appointment.getAppointmentType();
 			Timestamp startTimeTs = appointment.getStartTime();
-//			String startTime = String.valueOf(startTimeTs.getHours()) + ":" + String.valueOf(startTimeTs.getMinutes());
-			String startTime = "Time";
+			String startTime = String.valueOf(startTimeTs.getHours()) + ":" + String.valueOf(startTimeTs.getMinutes());
+//			String startTime = "Time";
 			Timestamp endTimeTs = appointment.getEndTime();
-//			String endTime = String.valueOf(endTimeTs.getHours()) + ":" + String.valueOf(endTimeTs.getMinutes());
-			String endTime = "Time2";
+			String endTime = String.valueOf(endTimeTs.getHours()) + ":" + String.valueOf(endTimeTs.getMinutes());
+//			String endTime = "Time2";
 			String appointmentTime = startTime + " - " + endTime;
 			//set props
 			//layout
 			this.appointmentCards.get(index).setLayout(new FlowLayout());
 			//background
-			this.appointmentCards.get(index).setBackground(Color.BLACK);
+//			this.appointmentCards.get(index).setBackground(Color.BLACK);
 			// left content
 			JPanel leftPanel = new JPanel();
 			leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
