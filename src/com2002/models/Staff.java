@@ -1,13 +1,10 @@
 package com2002.models;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
-
-import com2002.utils.Database;
 
 
 public abstract class Staff {
@@ -26,18 +23,13 @@ public abstract class Staff {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public Staff(String username, String password) throws CommunicationsException, SQLException  {
-		Connection conn = Database.getConnection();
-		try {
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
-					+ username + "' AND password = '" + password + "'", conn);
-			if(rs.next()) {
-				this.firstName = rs.getString("FirstName");
-				this.lastName = rs.getString("LastName");
-				this.username = username;
-				this.role = rs.getString("Role");
-			}
-		} finally {
-			conn.close();
+		ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
+									+ username + "' AND password = '" + password + "'");
+		if(rs.next()) {
+			this.firstName = rs.getString("FirstName");
+			this.lastName = rs.getString("LastName");
+			this.username = username;
+			this.role = rs.getString("Role");
 		}
 	}
 	

@@ -23,10 +23,15 @@ public class DBQueries {
 	 * @return Returns a ResultSet from the given query.
 	 * @throws SQLException 
 	 */
-	public static ResultSet execQuery(String query, Connection conn) throws SQLException {
+	public static ResultSet execQuery(String query) throws SQLException {
+		Connection conn = Database.getConnection();
 		ResultSet rs = null;
-		Statement stmt = conn.createStatement();
-		rs = stmt.executeQuery(query);
+		try {
+			Statement stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+		} finally {
+			conn.close();
+		}
 		return rs;
 	}
 	

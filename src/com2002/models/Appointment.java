@@ -1,14 +1,11 @@
 package com2002.models;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
-
-import com2002.utils.Database;
 
 public class Appointment {
 	private Timestamp startTime;
@@ -26,22 +23,20 @@ public class Appointment {
 	 * @param patID The patient's ID
 	 */
 	public Appointment(Timestamp startTime, String username) throws CommunicationsException, SQLException {
-		Connection conn = null;
 		ResultSet rs = null;
-		conn = Database.getConnection();
-		rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = '" 
-					+ startTime.toString() + "' AND Username = '" + username + "'", conn);
-		if(rs.next()) {
-			this.startTime = startTime;
-			this.endTime = rs.getTimestamp("EndDate");
-			this.username = username;
-			this.patientID = rs.getInt("PatientID");
-			this.notes = rs.getString("Notes");
-			this.appointmentType = rs.getString("Type");
-			this.totalAppointments = rs.getInt("TotalAppointments");
-			this.currentAppointment = rs.getInt("CurrentAppointment");
-		}
-		conn.close();
+			rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = '" 
+					+ startTime.toString() + "' AND Username = '" + username + "'");
+			if(rs.next()) {
+				this.startTime = startTime;
+				this.endTime = rs.getTimestamp("EndDate");
+				this.username = username;
+				this.patientID = rs.getInt("PatientID");
+				this.notes = rs.getString("Notes");
+				this.appointmentType = rs.getString("Type");
+				this.totalAppointments = rs.getInt("TotalAppointments");
+				this.currentAppointment = rs.getInt("CurrentAppointment");
+			}
+		
 	}
 	
 	/**
@@ -91,29 +86,27 @@ public class Appointment {
 	 */
 	public Float calculateCost() throws CommunicationsException, SQLException {
 		float cost = 0;
-		Connection conn = Database.getConnection();
 		if(appointmentType.equals("Remedial")) {
 			ResultSet treatmentRs = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = '" 
-						+ this.startTime.toString() + "' AND Username = '" + this.username + "'", conn);
+						+ this.startTime.toString() + "' AND Username = '" + this.username + "'");
 			while(treatmentRs.next()) {
 				String treatment = treatmentRs.getString("TreatmentName");
-				ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'", conn);
+				ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'");
 				if(rs.next()) {
 					cost += rs.getFloat("Price");
 				}
 			}
 		} else if(appointmentType.equals("Checkup")) {
-			ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Checkup'", conn);
+			ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Checkup'");
 			if(rs.next()) {
 				cost = rs.getFloat("Price");
 			}
 		} else if(appointmentType.equals("Cleaning")) {
-			ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Cleaning'", conn);
+			ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Cleaning'");
 			if(rs.next()) {
 				cost = rs.getFloat("Price");
 			}
 		}
-		conn.close();
 		return cost;
 	}
 	
