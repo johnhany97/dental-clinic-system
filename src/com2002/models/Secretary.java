@@ -2,6 +2,8 @@ package com2002.models;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 
@@ -22,15 +24,16 @@ public class Secretary extends Staff {
 		return address;
 	}
 	
-	protected Patient registerPatient(String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) {
+	protected Patient registerPatient(String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) 
+			throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
 		Patient patient = new Patient(firstName, lastName, dob, phoneNumber, houseNumber, postcode);
 		return patient;
 	}
 	
-	protected void subscribePatient(Patient patient, HealthPlan healthPlan) {
+	protected Usage subscribePatient(Patient patient, HealthPlan healthPlan) {
 		int patientID = patient.getPatientID();
 		String healthPlanName = healthPlan.getName();
-		Usage usage = new Usage(patientID, healthPlanName);
+		return new Usage(patientID, healthPlanName);
 	}
 	
 	protected void unsubscribePatient(Patient patient) {
