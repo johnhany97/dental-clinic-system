@@ -12,6 +12,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,10 +109,20 @@ public class EmployeesScreen implements Screen {
 	    		  String role = (String) rolesLists.get(i).getSelectedValue();
 	    		  Staff employee;
 	    		  if (role.equals("Secretary")) {
-	    			  employee = new Secretary(firstName, lastName, username, password);
+	    			  try {
+						employee = new Secretary(firstName, lastName, username, password);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 	    		  } else {
 	    			  Role r = role.equals("Dentist") ? Role.DENTIST : Role.HYGIENIST;
-	    			  employee = new Doctor(firstName, lastName, username, password, r);
+	    			  try {
+						employee = new Doctor(firstName, lastName, username, password, r);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 	    		  }
 	    	  }
 	    	  //Next screen

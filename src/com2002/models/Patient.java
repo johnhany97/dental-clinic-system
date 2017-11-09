@@ -77,6 +77,25 @@ public class Patient {
 		}
 	}
 	
+	public Patient(int patientId) {
+		try {
+			Connection conn = Database.getConnection();
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients WHERE PatientID = '" + patientId + "'", conn);
+			if (rs.next()) {
+				this.patientID = rs.getInt("PatientID");
+				this.firstName = rs.getString("FirstName");
+				this.lastName = rs.getString("LastName");
+				this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
+				this.phoneNumber = rs.getString("LastName");
+				this.houseNumber = rs.getString("HouseNumber");
+				this.postcode = rs.getString("Postcode");
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Checks whether Patients table contains a specified patient.
 	 * @param firstName First Name of the patient.

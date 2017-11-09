@@ -97,7 +97,7 @@ public class Address {
 	 * Updates the House Number of an address to a given value/name.
 	 * @param houseNumber The new house number of an address.
 	 */
-	protected void setHouseNumber(String houseNumber) {
+	public void setHouseNumber(String houseNumber) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET HouseNumber = '" + houseNumber 
 					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
@@ -121,7 +121,7 @@ public class Address {
 	 * Updates the Street Name of an address.
 	 * @param streetName The new street name of an address.
 	 */
-	protected void setStreetName(String streetName) {
+	public void setStreetName(String streetName) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET StreetName = '" + streetName 
 					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
@@ -145,7 +145,7 @@ public class Address {
 	 * Updates the District of an address.
 	 * @param district The new district of an address.
 	 */
-	protected void setDistrict(String district) {
+	public void setDistrict(String district) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET District = '" + district
 					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
@@ -169,7 +169,7 @@ public class Address {
 	 * Updates the city of an address.
 	 * @param city The new city of an address.
 	 */
-	protected void setCity(String city) {
+	public void setCity(String city) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET City = '" + city 
 					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
@@ -193,7 +193,7 @@ public class Address {
 	 * Updates the postcode of an address.
 	 * @param postcode The new postcode of an address.
 	 */
-	protected void setPostcode(String postcode) {
+	public void setPostcode(String postcode) {
 		try {
 			DBQueries.execUpdate("UPDATE Address SET PostCode = '" + postcode 
 					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");

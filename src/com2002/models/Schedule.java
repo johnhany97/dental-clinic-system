@@ -8,6 +8,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import com2002.models.*; 
 import com2002.utils.*;
 
@@ -40,6 +43,7 @@ public class Schedule {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
 		String username = doctor.getUsername();
+		System.out.println(username);
 		ResultSet rs = execQuery("SELECT * FROM Appointments WHERE Username = '" + username + "'", conn);
 		while (rs.next()) {
 			String startDate = rs.getString("StartDate");
@@ -74,13 +78,13 @@ public class Schedule {
 	}
 	
 	public static void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
-			   AppointmentType treatmentN, int totalA, int currA) {
+			   AppointmentType treatmentN, int totalA, int currA) throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
 		Appointment app = new Appointment(start, end, userN, patID, nts, treatmentN, totalA, currA);
 	}
 	
 	public void deleteAppointment(Timestamp start, String userN) throws Exception {
 		Appointment app = new Appointment(start, userN);
-		app.removeAppointment( start, userN);
+//		app.removeAppointment( start, userN);
 	}
 	
 	private static ResultSet execQuery(String query, Connection conn) {
@@ -95,9 +99,9 @@ public class Schedule {
 		return rs;
 	}
 	
-	public static void main(String[] args) {
-		setAppointment(java.sql.Timestamp.valueOf("2007-09-23 10:10:10.0"), java.sql.Timestamp.valueOf("2007-09-23 11:10:10.0"), "ayjee", 1, "abc", AppointmentType.CHECKUP, 1, 1);
-		
-	}
+//	public static void main(String[] args) throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
+//		setAppointment(java.sql.Timestamp.valueOf("2007-09-23 10:10:10.0"), java.sql.Timestamp.valueOf("2007-09-23 11:10:10.0"), "ayjee", 1, "abc", AppointmentType.CHECKUP, 1, 1);
+//		
+//	}
 	
 }

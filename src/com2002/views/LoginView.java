@@ -102,10 +102,11 @@ public class LoginView implements Screen {
 						SecretaryView secView = new SecretaryView(frame, testSec);
 						frame.setDisplayedPanel(secView.getPanel());
 					} else { //It's the doctor
-						DoctorView docView = new DoctorView(frame, testDoc);
-						frame.setDisplayedPanel(docView.getPanel());
+						DoctorView docView;
+							docView = new DoctorView(frame, testDoc);
+							frame.setDisplayedPanel(docView.getPanel());
 					}
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(frame,
 						    "Error connecting to Database",
