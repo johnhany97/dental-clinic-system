@@ -27,15 +27,17 @@ public class Secretary extends Staff {
 		return patient;
 	}
 	
-	/*
-	protected void subscribePatient(Patient patient) {
-		patient.subscribe(patient);
+	protected void subscribePatient(Patient patient, HealthPlan healthPlan) {
+		int patientID = patient.getPatientID();
+		String healthPlanName = healthPlan.getName();
+		Usage usage = new Usage(patientID, healthPlanName);
 	}
 	
 	protected void unsubscribePatient(Patient patient) {
-		patient.unsubscribe(patient);
+		int patientID = patient.getPatientID();
 	}
 	
+	/*
 	protected [Appointment] viewSchedule() {
 		return schedule.getAppointments();
 	}
