@@ -15,11 +15,13 @@ public class Secretary extends Staff {
 		super(username, password);
 	}
 	
-	public Secretary(String firstName, String lastName, String username, String password) throws MySQLIntegrityConstraintViolationException, SQLException {
+	public Secretary(String firstName, String lastName, String username, String password) 
+			throws MySQLIntegrityConstraintViolationException, SQLException {
 		super(firstName, lastName, username, password, Role.SECRETARY);
 	}
 	
-	protected Address registerAddress(String houseNumber, String streetName, String district, String city, String postcode) {
+	protected Address registerAddress(String houseNumber, String streetName, String district, String city, String postcode) 
+			throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
 		Address address = new Address(houseNumber, streetName, district, city, postcode);
 		return address;
 	}
