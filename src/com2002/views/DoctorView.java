@@ -3,7 +3,6 @@ package com2002.views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Rectangle;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -34,8 +33,7 @@ public class DoctorView implements Screen {
 	public DoctorView(DisplayFrame frame, Doctor doctor) throws Exception {
 		this.frame = frame;
 		this.doctor = doctor;
-		this.appointments = Schedule.getAppointmentsByDoctor(doctor);
-		System.out.println(this.appointments);
+		this.appointments = Schedule.getAppointmentsByDoctor(this.doctor);
 		initializeScreen();
 	}
 

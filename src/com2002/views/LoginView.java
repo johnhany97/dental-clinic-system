@@ -103,14 +103,18 @@ public class LoginView implements Screen {
 						frame.setDisplayedPanel(secView.getPanel());
 					} else { //It's the doctor
 						DoctorView docView;
-							docView = new DoctorView(frame, testDoc);
-							frame.setDisplayedPanel(docView.getPanel());
+						docView = new DoctorView(frame, testDoc);
+						frame.setDisplayedPanel(docView.getPanel());
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(frame,
-						    "Error connecting to Database",
-						    "Check your internet connection",
+						    "Database error. Check your internet connnection",
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame,
+						    "Error showing doctor's screen",
+						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				}
 			}
