@@ -1,7 +1,6 @@
 package com2002.models;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,9 +9,6 @@ import java.util.ArrayList;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
-
-import com2002.models.*; 
-import com2002.utils.*;
 
 public class Schedule {
 
