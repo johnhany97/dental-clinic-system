@@ -17,9 +17,7 @@ public class DBQueries {
 
 	/**
 	 * Use this method with a query which doesn't make changes to the databases (e.g. SELECT).
-	 * Must call close() method on connection instance when you have finished using the returned ResultSet.
 	 * @param query Query to be executed. Needs to be in correct SQL format.
-	 * @param conn Provide a Connection instance. MUST CLOSE after finished with result set.
 	 * @return Returns a ResultSet from the given query.
 	 * @throws SQLException 
 	 */
@@ -56,7 +54,7 @@ public class DBQueries {
 	 * @param table The name of the table you want to search in.
 	 * @param selectCol The name of the column you want check for the WHERE condition.
 	 * @param selectData The String you want to find in the specified column.
-	 * @return
+	 * @return first String value from specified table, column and row.
 	 */
 	public static String getData(String returnCol, String table, String selectCol, String selectData) {
 		String data = "";
