@@ -27,7 +27,7 @@ public class Patient {
 	 * @param postcode Postcode of the patient 
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
-	 * @throws MySQLIntegrityConstraintViolationException if username already exists
+	 * @throws MySQLIntegrityConstraintViolationException if patient already exists
 	 */
 	
 	public Patient(String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String houseNumber, String postcode) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
@@ -119,7 +119,7 @@ public class Patient {
 	 * @param patientID The new patientID of the patient.
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
-	 * @throws MySQLIntegrityConstraintViolationException if username already exists
+	 * @throws MySQLIntegrityConstraintViolationException if patientID already exists
 	 */
 	protected void setPatientID(int patientID) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		DBQueries.execUpdate("UPDATE Patients SET PatientID = '" + patientID + "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");

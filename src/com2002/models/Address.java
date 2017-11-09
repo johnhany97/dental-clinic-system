@@ -22,7 +22,7 @@ public class Address {
 	 * @param city City of the address
 	 * @param postcode Postcode of the address 
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws MySQLIntegrityConstraintViolationException if username already exists
+	 * @throws MySQLIntegrityConstraintViolationException if address already exists
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public Address(String houseNumber, String streetName, String district, String city, String postcode) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
