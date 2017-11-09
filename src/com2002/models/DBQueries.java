@@ -17,19 +17,16 @@ public class DBQueries {
 
 	/**
 	 * Use this method with a query which doesn't make changes to the databases (e.g. SELECT).
+	 * Must call close() method on connection instance when you have finished using the returned ResultSet.
 	 * @param query Query to be executed. Needs to be in correct SQL format.
+	 * @param conn Provide a Connection instance. MUST CLOSE after finished with result set.
 	 * @return Returns a ResultSet from the given query.
 	 * @throws SQLException 
 	 */
-	public static ResultSet execQuery(String query) throws SQLException {
-		Connection conn = Database.getConnection();
+	public static ResultSet execQuery(String query, Connection conn) throws SQLException {
 		ResultSet rs = null;
-		try {
-			Statement stmt = conn.createStatement();
-			rs = stmt.executeQuery(query);
-		} finally {
-			conn.close();
-		}
+		Statement stmt = conn.createStatement();
+		rs = stmt.executeQuery(query);
 		return rs;
 	}
 	
