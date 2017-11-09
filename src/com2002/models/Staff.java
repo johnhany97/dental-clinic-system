@@ -1,10 +1,13 @@
 package com2002.models;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
+import com2002.utils.Database;
 
 
 public abstract class Staff {
@@ -23,13 +26,18 @@ public abstract class Staff {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public Staff(String username, String password) throws CommunicationsException, SQLException  {
-		ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
-									+ username + "' AND password = '" + password + "'");
-		if(rs.next()) {
-			this.firstName = rs.getString("FirstName");
-			this.lastName = rs.getString("LastName");
-			this.username = username;
-			this.role = rs.getString("Role");
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
+					+ username + "' AND password = '" + password + "'", conn);
+			if(rs.next()) {
+				this.firstName = rs.getString("FirstName");
+				this.lastName = rs.getString("LastName");
+				this.username = username;
+				this.role = rs.getString("Role");
+			}
+		} finally {
+			conn.close();
 		}
 	}
 	
@@ -146,7 +154,7 @@ public abstract class Staff {
 	 * @param role Role of staff member as an enum.
 	 * @return Role of staff member as a string.
 	 */
-	public String getRoleString(Role role) {
+	public static String getRoleString(Role role) {
 		if(role == Role.HYGIENIST) {
 			return "Hygienist";
 		} else if(role == Role.SECRETARY) {
