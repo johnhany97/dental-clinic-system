@@ -1,10 +1,13 @@
 package com2002.models;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
+import com2002.utils.Database;
 
 public class Address {
 	
@@ -30,6 +33,7 @@ public class Address {
 			DBQueries.execUpdate("INSERT INTO Address Values('" + houseNumber + "', '" + streetName + "', '" + district + "', '" 
 				+ city + "', '" + postcode + "')");
 			this.houseNumber = houseNumber;
+				
 			this.streetName = streetName;
 			this.district = district;
 			this.city = city;
@@ -48,8 +52,10 @@ public class Address {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public Address(String houseNumber, String postcode) throws SQLException, CommunicationsException {
+		Connection conn = Database.getConnection();
+		try {
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Address WHERE HouseNumber = '" 
-					+ houseNumber + "' AND Postcode = '" + postcode + "'");
+					+ houseNumber + "' AND Postcode = '" + postcode + "'", conn);
 			if(rs.next()) {
 				this.houseNumber = rs.getString("HouseNumber");
 				this.streetName = rs.getString("StreetName");
@@ -57,6 +63,9 @@ public class Address {
 				this.city = rs.getString("City");
 				this.postcode = rs.getString("Postcode");
 			}
+		} finally{
+			conn.close();
+		}
 	}
 	
 	/**

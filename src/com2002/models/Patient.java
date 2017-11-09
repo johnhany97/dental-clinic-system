@@ -1,11 +1,14 @@
 package com2002.models;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
+import com2002.utils.Database;
 
 public class Patient {
 	
@@ -31,23 +34,28 @@ public class Patient {
 	 */
 	
 	public Patient(String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String houseNumber, String postcode) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
-		ResultSet rs = DBQueries.execQuery("SELECT MAX(PatientID) FROM Patients");
-		if(rs == null){
-			patientID = 1;
-		} else if(rs.next()) {
-			patientID = rs.getInt(1) + 1;
-		}
-		this.firstName = firstName;
-		this.lastName = lastName; 
-		this.dateOfBirth = dateOfBirth;
-		this.phoneNumber = phoneNumber;
-		this.houseNumber = houseNumber;
-		this.postcode = postcode;
-		if(!dbHasPatient(firstName, houseNumber, postcode)){
-			DBQueries.execUpdate("INSERT INTO Patients Values('" + patientID + "', '" + firstName + "', '" + lastName + "', '" 
-				+ dateOfBirth + "', '" + phoneNumber + "', '" + houseNumber + "', '" + postcode + "')");
-		}else {
-			throw new MySQLIntegrityConstraintViolationException("A patient with first name " + firstName + " house number " + houseNumber + " and postcode " + postcode +" already exists.");
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT MAX(PatientID) FROM Patients", conn);
+			if(rs == null){
+				patientID = 1;
+			} else if(rs.next()) {
+				patientID = rs.getInt(1) + 1;
+			}
+			this.firstName = firstName;
+			this.lastName = lastName; 
+			this.dateOfBirth = dateOfBirth;
+			this.phoneNumber = phoneNumber;
+			this.houseNumber = houseNumber;
+			this.postcode = postcode;
+			if(!dbHasPatient(firstName, houseNumber, postcode)){
+				DBQueries.execUpdate("INSERT INTO Patients Values('" + patientID + "', '" + firstName + "', '" + lastName + "', '" 
+					+ dateOfBirth + "', '" + phoneNumber + "', '" + houseNumber + "', '" + postcode + "')");
+			}else {
+				throw new MySQLIntegrityConstraintViolationException("A patient with first name " + firstName + " house number " + houseNumber + " and postcode " + postcode +" already exists.");
+			}
+		} finally{
+			conn.close();
 		}
 	}
 	
@@ -60,16 +68,21 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters. 
 	 */
 	public Patient(String firstName, String houseNumber, String postcode) throws CommunicationsException, SQLException{
-		ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients WHERE  FirstName = '" 
-			+ firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode + "'");
-		if(rs.next()) {
-			this.patientID = rs.getInt("PatientID");
-			this.firstName = rs.getString("FirstName");
-			this.lastName = rs.getString("LastName");
-			this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
-			this.phoneNumber = rs.getString("LastName");
-			this.houseNumber = rs.getString("HouseNumber");
-			this.postcode = rs.getString("Postcode");
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients WHERE  FirstName = '" 
+				+ firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode + "'", conn);
+			if(rs.next()) {
+				this.patientID = rs.getInt("PatientID");
+				this.firstName = rs.getString("FirstName");
+				this.lastName = rs.getString("LastName");
+				this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
+				this.phoneNumber = rs.getString("LastName");
+				this.houseNumber = rs.getString("HouseNumber");
+				this.postcode = rs.getString("Postcode");
+			}
+		} finally {
+			conn.close();
 		}
 	}
 	
@@ -80,15 +93,20 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters. 
 	 */
 	public Patient(int patientId) throws CommunicationsException, SQLException{
-		ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients WHERE PatientID = '" + patientId + "'");
-		if (rs.next()) {
-			this.patientID = rs.getInt("PatientID");
-			this.firstName = rs.getString("FirstName");
-			this.lastName = rs.getString("LastName");
-			this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
-			this.phoneNumber = rs.getString("LastName");
-			this.houseNumber = rs.getString("HouseNumber");
-			this.postcode = rs.getString("Postcode");
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients WHERE PatientID = '" + patientId + "'", conn);
+			if (rs.next()) {
+				this.patientID = rs.getInt("PatientID");
+				this.firstName = rs.getString("FirstName");
+				this.lastName = rs.getString("LastName");
+				this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
+				this.phoneNumber = rs.getString("LastName");
+				this.houseNumber = rs.getString("HouseNumber");
+				this.postcode = rs.getString("Postcode");
+			}
+		} finally {
+			conn.close();
 		}
 	}
 	

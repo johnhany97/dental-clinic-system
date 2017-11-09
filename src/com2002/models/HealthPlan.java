@@ -1,5 +1,6 @@
 package com2002.models;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -7,6 +8,7 @@ import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import com2002.models.DBQueries;
+import com2002.utils.Database;
 
 
 public class HealthPlan {
@@ -48,15 +50,20 @@ public class HealthPlan {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.	 */
 	public HealthPlan(String name) throws CommunicationsException, SQLException {
-		ResultSet rs = DBQueries.execQuery("SELECT * FROM HealthPlans WHERE  name = '" 
-			+ name + "'");
-		if(rs.next()) {
-			this.name = rs.getString("Name");
-			this.price = rs.getDouble("Price");
-			this.checkUpLevel = rs.getInt("CheckUpLevel");
-			this.hygieneLevel = rs.getInt("HygieneLevel");
-			this.repairLevel = rs.getInt("RepairLevel");
-		} 
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM HealthPlans WHERE  name = '" 
+				+ name + "'", conn);
+			if(rs.next()) {
+				this.name = rs.getString("Name");
+				this.price = rs.getDouble("Price");
+				this.checkUpLevel = rs.getInt("CheckUpLevel");
+				this.hygieneLevel = rs.getInt("HygieneLevel");
+				this.repairLevel = rs.getInt("RepairLevel");
+			}
+		} finally {
+			conn.close();
+		}
 	}
 	
 	/**

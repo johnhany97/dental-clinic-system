@@ -1,11 +1,14 @@
 package com2002.models;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
+import com2002.utils.Database;
 
 public class Usage {
 	
@@ -23,17 +26,22 @@ public class Usage {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public Usage(int patientID) throws CommunicationsException, SQLException {
-		ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan WHERE  PatientID = '" 
-				+ patientID + "'");
-		this.patientID = patientID;
-		if(rs.next()) {
-			this.patientID = rs.getInt("PatientID");
-			this.healthPlanName = rs.getString("HealthPlanName");
-			this.checkUpUsed = rs.getInt("CheckUpUsed");
-			this.hygieneUsed = rs.getInt("HygieneUsed");
-			this.repairUsed = rs.getInt("RepairUsed");
-			dateJoined = rs.getDate("DateJoined").toLocalDate();	
-		}	 
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan WHERE  PatientID = '" 
+					+ patientID + "'", conn);
+			this.patientID = patientID;
+			if(rs.next()) {
+				this.patientID = rs.getInt("PatientID");
+				this.healthPlanName = rs.getString("HealthPlanName");
+				this.checkUpUsed = rs.getInt("CheckUpUsed");
+				this.hygieneUsed = rs.getInt("HygieneUsed");
+				this.repairUsed = rs.getInt("RepairUsed");
+				dateJoined = rs.getDate("DateJoined").toLocalDate();	
+			}	
+		} finally {
+			conn.close();
+		}
 	}
 	
 	/**
@@ -67,12 +75,17 @@ public class Usage {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	private boolean dbHasPatientID(int patientID) throws CommunicationsException, SQLException {
-		int foundID = -1;
-		ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE  PatientID = " + patientID);
-		if(rs.next()) {
-			foundID = rs.getInt("PatientID");
+		Connection conn = Database.getConnection();
+		try {
+			int foundID = -1;
+			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE  PatientID = " + patientID, conn);
+			if(rs.next()) {
+				foundID = rs.getInt("PatientID");
+			}
+			return foundID == patientID;
+		} finally {
+			conn.close();
 		}
-		return foundID == patientID;
 	}
 	
 	/**
@@ -234,7 +247,24 @@ public class Usage {
 				+ "', HygieneUsed = '" + this.hygieneUsed + "', RepairUsed = '" + this.repairUsed +"', DateJoined = '" + this.dateJoined + "'   WHERE PatientID = '" + this.patientID + "'");
 		}
 	}
-
+	
+	/**
+	 * Rests the HealthPlan if a year has passed from when they joined.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public void UnsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+		if(!dbHasPatientID(patientID)){
+			this.healthPlanName = null;
+			this.dateJoined = null;
+			this.checkUpUsed = 0;
+			this.hygieneUsed = 0;
+			this.repairUsed = 0;
+			DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID = " + patientID);
+		} else {
+			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " is not subsrcribed anyway.");
+		}
+	}
 	
 	public static void main(String[] args) {
 		//LocalDate dt = LocalDate.of(2016,11, 06);

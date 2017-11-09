@@ -40,7 +40,7 @@ public class Secretary extends Staff {
 	}
 	
 	protected void unsubscribePatient(Patient patient) {
-		int patientID = patient.getPatientID();
+		patient.unsubscribePatient():
 	}
 	
 	/*
