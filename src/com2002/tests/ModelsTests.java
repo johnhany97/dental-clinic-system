@@ -41,7 +41,7 @@ public class ModelsTests {
 	}
 
 	// clears the necessary tables before each test.
-	// **Must add call to delete entries from table for any table you use in your tests**
+	// **Must add call to delete entries for any table you use in your tests**
 	@Before
 	public void clearTables() {
 		try {
