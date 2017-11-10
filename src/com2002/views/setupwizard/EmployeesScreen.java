@@ -21,6 +21,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -110,25 +111,33 @@ public class EmployeesScreen implements Screen {
 	    		  Staff employee;
 	    		  if (role.equals("Secretary")) {
 	    			  try {
-						employee = new Secretary(firstName, lastName, username, password);
+	    				  employee = new Secretary(firstName, lastName, username, password);
+				    	  //Next screen
+				    	  TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
+				    	  frame.setDisplayedPanel(treatmentsScreen.getPanel());
+				    	  frame.repaint();
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(frame,
+								"Error with the database statement execution.",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 	    		  } else {
 	    			  Role r = role.equals("Dentist") ? Role.DENTIST : Role.HYGIENIST;
 	    			  try {
-						employee = new Doctor(firstName, lastName, username, password, r);
+	    				  employee = new Doctor(firstName, lastName, username, password, r);
+				    	  //Next screen
+				    	  TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
+				    	  frame.setDisplayedPanel(treatmentsScreen.getPanel());
+				    	  frame.repaint();
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(frame,
+								"Error with the database statement execution.",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 	    		  }
 	    	  }
-	    	  //Next screen
-	    	  TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
-	    	  frame.setDisplayedPanel(treatmentsScreen.getPanel());
-	    	  frame.repaint();
 	      }
 	    });
 	}
@@ -139,13 +148,13 @@ public class EmployeesScreen implements Screen {
 	private void addSetOfTextFieldsAndLabels() {
 		//Add a new panel
 		this.panels.add(new JPanel());
-		//Get it's inde
+		//Get it's index
 		int panelIndex = this.panels.size() - 1;
 		//Set layout
 		this.panels.get(panelIndex).setLayout(new BoxLayout(this.panels.get(panelIndex), BoxLayout.PAGE_AXIS));
 		
 		for (int i = 1; i < LABELS.length; i++) { //Start from 1 because 0 is title of screen
-			//Label of textfield
+			//Label of text field
 			this.labels.add(new JLabel(LABELS[i], SwingConstants.LEFT));
 			int index = this.labels.size() - 1;
 			this.labels.get(index).setFont(new Font("Sans Serif", Font.PLAIN,

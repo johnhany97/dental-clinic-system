@@ -12,6 +12,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -21,10 +22,14 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.text.NumberFormatter;
+
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import com2002.interfaces.Screen;
 import com2002.models.HealthPlan;
@@ -107,11 +112,33 @@ public class HealthPlansScreen implements Screen {
 					String checkUp = fields.get(i+2).getText();
 					String hygiene = fields.get(i+3).getText();
 					String repair = fields.get(i+4).getText();
-					HealthPlan healthPlan = new HealthPlan(name, Double.valueOf(price), Integer.valueOf(checkUp), Integer.valueOf(hygiene), Integer.valueOf(repair));
+					try {
+						HealthPlan healthPlan = new HealthPlan(name, Double.valueOf(price), Integer.valueOf(checkUp), Integer.valueOf(hygiene), Integer.valueOf(repair));
+						//go to next screen
+						ThanksScreen thanksScreen = new ThanksScreen(frame);
+						frame.setDisplayedPanel(thanksScreen.getPanel());
+					} catch (MySQLIntegrityConstraintViolationException e) {
+						JOptionPane.showMessageDialog(frame,
+							    "There is already a healthplan with that name",
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
+					} catch (CommunicationsException e) {
+						JOptionPane.showMessageDialog(frame,
+							    "Check internet connection.",
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
+					} catch (NumberFormatException e) {
+						JOptionPane.showMessageDialog(frame,
+							    "Number is incorrectly formatted",
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
+					} catch (SQLException e) {
+						JOptionPane.showMessageDialog(frame,
+							    "Error with the database statement execution.",
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
+					}
 				}
-				//go to next screen
-				ThanksScreen thanksScreen = new ThanksScreen(frame);
-				frame.setDisplayedPanel(thanksScreen.getPanel());
 			}
 		});
 		southPanel.add(this.buttons.get(1));

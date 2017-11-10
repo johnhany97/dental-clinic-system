@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -75,13 +76,15 @@ public class ThanksScreen implements Screen {
 			    	  pw.write(Application.SETUP);
 			    	  pw.flush(); 
 			    	  pw.close();
+			    	  //Take you to login screen
+			    	  LoginView loginScreen = new LoginView(frame);
+			    	  frame.setDisplayedPanel(loginScreen.getPanel());
 		    	  } catch (IOException e) {
-		    		  // TODO Auto-generated catch block
-		    		  e.printStackTrace();
+		    		  JOptionPane.showMessageDialog(frame,
+		    				  "Error finishing setup and updating file",
+							  "Error",
+							  JOptionPane.ERROR_MESSAGE);
 		    	  }
-		    	  //Take you to login screen
-		    	  LoginView loginScreen = new LoginView(frame);
-		    	  frame.setDisplayedPanel(loginScreen.getPanel());
 		      }
 	    });
 	    this.screen.add(this.thanksButton, BorderLayout.SOUTH);
