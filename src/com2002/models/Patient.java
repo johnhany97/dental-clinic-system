@@ -257,12 +257,62 @@ public class Patient {
 		this.postcode = postcode;
 	}
 	
-	protected void subscribePatient(String healthPlanName) throws CommunicationsException, SQLException {
-		this.usage =  new Usage(this.patientID, healthPlanName);
+	/**
+	 * Checks whether PatientHealthPlan table contains a specified patientID.
+	 * @param patientID checks if the patient you supply has a health plan
+	 * @return True if a HealthPlan already exists.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	private boolean dbHasPatientID(int patientID) throws CommunicationsException, SQLException {
+		Connection conn = Database.getConnection();
+		try {
+			int foundID = -1;
+			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE  PatientID = " + patientID, conn);
+			if(rs.next()) {
+				foundID = rs.getInt("PatientID");
+			}
+			return foundID == patientID;
+		} finally {
+			conn.close();
+		}
 	}
 	
+	/**
+	 * Subscribe the patient to a health plan.
+	 * @param healthPlanName The healthplan of the patient.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * @throws MySQLIntegrityConstraintViolationException  patient already exists 
+	 */
+	protected void subscribePatient(String healthPlanName) throws CommunicationsException, SQLException,  MySQLIntegrityConstraintViolationException {
+		if(!dbHasPatientID(patientID)){
+			this.usage =  new Usage(this.patientID, healthPlanName);
+		} else {
+			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " is already subsrcribed.");
+		}
+	}
+	
+	/**
+	 * Unsubscribes the patient from a health plan.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
 	protected void unsubscribePatient() throws CommunicationsException, SQLException {
-		this.usage.unsubscribePatient();
+		if(dbHasPatientID(patientID)){
+			this.usage.unsubscribePatient();
+		}
+	}
+	
+	/**
+	 * Reset health plan for a patient.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	protected void resetHealthPlan() throws CommunicationsException, SQLException {
+		if(dbHasPatientID(patientID)){
+			this.usage.resetHealthPlan();
+		} 
 	}
 	
 	public static void main(String[] args) {

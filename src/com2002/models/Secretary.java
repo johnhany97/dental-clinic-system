@@ -36,8 +36,8 @@ public class Secretary extends Staff {
 		patient.subscribePatient(healthPlanName);
 	}
 	
-	protected void unsubscribePatient(Patient patient) throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
-		patient.unsubscribePatient();
+	protected void resetHealthPlan(Patient patient) throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
+		patient.resetHealthPlan();
 	}
 	
 	/*
