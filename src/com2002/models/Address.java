@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import com2002.utils.Database;
 
 public class Address {
@@ -21,33 +24,36 @@ public class Address {
 	 * @param district District of the address
 	 * @param city City of the address
 	 * @param postcode Postcode of the address 
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws MySQLIntegrityConstraintViolationException if address already exists
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Address(String houseNumber, String streetName, String district, String city, String postcode){
-		try {
-			Connection conn = Database.getConnection();
-			if(!dbHasAddress(houseNumber, postcode)){
-				DBQueries.execUpdate("INSERT INTO Address Values('" + houseNumber + "', '" + streetName + "', '" + district + "', '" 
-					+ city + "', '" + postcode + "')");
-				this.houseNumber = houseNumber;
-				this.streetName = streetName;
-				this.district = district;
-				this.city = city;
-				this.postcode = postcode;
-			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+	public Address(String houseNumber, String streetName, String district, String city, String postcode) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
+		if(!dbHasAddress(houseNumber, postcode)){
+			DBQueries.execUpdate("INSERT INTO Address Values('" + houseNumber + "', '" + streetName + "', '" + district + "', '" 
+				+ city + "', '" + postcode + "')");
+			this.houseNumber = houseNumber;
+				
+			this.streetName = streetName;
+			this.district = district;
+			this.city = city;
+			this.postcode = postcode;
 		} 
+		else {
+			throw new MySQLIntegrityConstraintViolationException("An address with house number " + houseNumber + " and postcode " + postcode + "already exists.");
+		}
 	}
 	
 	/**
 	 * This constructor should be called when searching for an address.
 	 * @param houseNumber House Number of the address.
 	 * @param postcode Postcode of the address 
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Address(String houseNumber, String postcode) {
+	public Address(String houseNumber, String postcode) throws SQLException, CommunicationsException {
+		Connection conn = Database.getConnection();
 		try {
-			Connection conn = Database.getConnection();
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Address WHERE HouseNumber = '" 
 					+ houseNumber + "' AND Postcode = '" + postcode + "'", conn);
 			if(rs.next()) {
@@ -57,9 +63,8 @@ public class Address {
 				this.city = rs.getString("City");
 				this.postcode = rs.getString("Postcode");
 			}
+		} finally{
 			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -76,16 +81,6 @@ public class Address {
 	}
 	
 	/**
-	 * Method for printing error message to the console.
-	 * @param method The method from which the error has occurred.
-	 */
-	private void printError(String method) {
-		System.out.println("Something went wrong with updating the " + method + ". "
-				+ "The staff member may have not been initialised properly "
-				+ "(some instance variables might be null).");
-	}
-	
-	/**
 	 * Returns a House Number of a particular address.
 	 * @return houseNumber The house number of an address.
 	 */
@@ -96,16 +91,12 @@ public class Address {
 	/**
 	 * Updates the House Number of an address to a given value/name.
 	 * @param houseNumber The new house number of an address.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void setHouseNumber(String houseNumber) {
-		try {
-			DBQueries.execUpdate("UPDATE Address SET HouseNumber = '" + houseNumber 
-					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("house number");
-			return;
-		}
+	public void setHouseNumber(String houseNumber) throws SQLException, CommunicationsException {
+		DBQueries.execUpdate("UPDATE Address SET HouseNumber = '" + houseNumber 
+				+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		this.houseNumber = houseNumber;
 	}
 	
@@ -120,16 +111,12 @@ public class Address {
 	/**
 	 * Updates the Street Name of an address.
 	 * @param streetName The new street name of an address.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void setStreetName(String streetName) {
-		try {
-			DBQueries.execUpdate("UPDATE Address SET StreetName = '" + streetName 
-					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("streetName");
-			return;
-		}
+	public void setStreetName(String streetName) throws SQLException, CommunicationsException {
+		DBQueries.execUpdate("UPDATE Address SET StreetName = '" + streetName 
+				+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		this.streetName = streetName;
 	}
 	
@@ -144,16 +131,12 @@ public class Address {
 	/**
 	 * Updates the District of an address.
 	 * @param district The new district of an address.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void setDistrict(String district) {
-		try {
-			DBQueries.execUpdate("UPDATE Address SET District = '" + district
-					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("district");
-			return;
-		}
+	public void setDistrict(String district) throws SQLException, CommunicationsException {
+		DBQueries.execUpdate("UPDATE Address SET District = '" + district
+			+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		this.district = district;
 	}
 	
@@ -168,16 +151,11 @@ public class Address {
 	/**
 	 * Updates the city of an address.
 	 * @param city The new city of an address.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void setCity(String city) {
-		try {
-			DBQueries.execUpdate("UPDATE Address SET City = '" + city 
-					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("city");
-			return;
-		}
+	public void setCity(String city) throws SQLException, CommunicationsException  {
+		DBQueries.execUpdate("UPDATE Address SET City = '" + city + "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		this.city = city;
 	}
 	
@@ -192,27 +170,23 @@ public class Address {
 	/**
 	 * Updates the postcode of an address.
 	 * @param postcode The new postcode of an address.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void setPostcode(String postcode) {
-		try {
-			DBQueries.execUpdate("UPDATE Address SET PostCode = '" + postcode 
-					+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("postcode");
-			return;
-		}
+	public void setPostcode(String postcode) throws SQLException, CommunicationsException {
+		DBQueries.execUpdate("UPDATE Address SET PostCode = '" + postcode 
+			+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'"); 
 		this.postcode = postcode;
 	}
 	
 	public static void main(String[] args) {
-		Address nur = new Address("57", "Mulgrave road", "middlesex", "London", "w5 1lf");
+		//Address nur = new Address("57", "Mulgrave road", "middlesex", "London", "w5 1lf");
 		//nur.setHouseNumber("59");
 		//nur.setStreetName("Lynwood Road");
 		//nur.setDistrict("South Yorkshire");
 		//nur.setCity("Sheffield");
 		//nur.setPostcode("S10 3an");
-		System.out.println(nur.getHouseNumber() + nur.getStreetName() + nur.getDistrict() + nur.getCity() + nur.getPostcode());
+		//System.out.println(nur.getHouseNumber() + nur.getStreetName() + nur.getDistrict() + nur.getCity() + nur.getPostcode());
 	}
 	
 }

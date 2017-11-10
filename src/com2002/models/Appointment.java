@@ -26,22 +26,24 @@ public class Appointment {
 	 * @param patID The patient's ID
 	 */
 	public Appointment(Timestamp startTime, String username) throws CommunicationsException, SQLException {
-		Connection conn = null;
+		Connection conn =  Database.getConnection();;
 		ResultSet rs = null;
-		conn = Database.getConnection();
-		rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = '" 
+		try {
+			rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = '" 
 					+ startTime.toString() + "' AND Username = '" + username + "'", conn);
-		if(rs.next()) {
-			this.startTime = startTime;
-			this.endTime = rs.getTimestamp("EndDate");
-			this.username = username;
-			this.patientID = rs.getInt("PatientID");
-			this.notes = rs.getString("Notes");
-			this.appointmentType = rs.getString("Type");
-			this.totalAppointments = rs.getInt("TotalAppointments");
-			this.currentAppointment = rs.getInt("CurrentAppointment");
+			if(rs.next()) {
+				this.startTime = startTime;
+				this.endTime = rs.getTimestamp("EndDate");
+				this.username = username;
+				this.patientID = rs.getInt("PatientID");
+				this.notes = rs.getString("Notes");
+				this.appointmentType = rs.getString("Type");
+				this.totalAppointments = rs.getInt("TotalAppointments");
+				this.currentAppointment = rs.getInt("CurrentAppointment");
+			}
+		} finally {
+			conn.close();
 		}
-		conn.close();
 	}
 	
 	/**
@@ -92,28 +94,31 @@ public class Appointment {
 	public Float calculateCost() throws CommunicationsException, SQLException {
 		float cost = 0;
 		Connection conn = Database.getConnection();
-		if(appointmentType.equals("Remedial")) {
-			ResultSet treatmentRs = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = '" 
-						+ this.startTime.toString() + "' AND Username = '" + this.username + "'", conn);
-			while(treatmentRs.next()) {
-				String treatment = treatmentRs.getString("TreatmentName");
-				ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'", conn);
+		try {
+			if(appointmentType.equals("Remedial")) {
+				ResultSet treatmentRs = DBQueries.execQuery("SELECT TreatmentName FROM AppointmentTreatment WHERE StartDate = '" 
+							+ this.startTime.toString() + "' AND Username = '" + this.username + "'", conn);
+				while(treatmentRs.next()) {
+					String treatment = treatmentRs.getString("TreatmentName");
+					ResultSet rs = DBQueries.execQuery("SELECT Price FROM Treatments WHERE Name = '" + treatment + "'", conn);
+					if(rs.next()) {
+						cost += rs.getFloat("Price");
+					}
+				}
+			} else if(appointmentType.equals("Checkup")) {
+				ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Checkup'", conn);
 				if(rs.next()) {
-					cost += rs.getFloat("Price");
+					cost = rs.getFloat("Price");
+				}
+			} else if(appointmentType.equals("Cleaning")) {
+				ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Cleaning'", conn);
+				if(rs.next()) {
+					cost = rs.getFloat("Price");
 				}
 			}
-		} else if(appointmentType.equals("Checkup")) {
-			ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Checkup'", conn);
-			if(rs.next()) {
-				cost = rs.getFloat("Price");
-			}
-		} else if(appointmentType.equals("Cleaning")) {
-			ResultSet rs = DBQueries.execQuery("SELECT Price FROM AppointmentTypes WHERE Name = 'Cleaning'", conn);
-			if(rs.next()) {
-				cost = rs.getFloat("Price");
-			}
+		} finally {
+			conn.close();
 		}
-		conn.close();
 		return cost;
 	}
 	
@@ -278,4 +283,5 @@ public class Appointment {
 	public Patient getPatient() throws SQLException {
 		return new Patient(this.patientID);
 	}
+	
 }

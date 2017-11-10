@@ -5,6 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import com2002.utils.Database;
 
 public class Usage {
@@ -18,11 +21,13 @@ public class Usage {
 	
 	/**
 	 * This constructor should be called when finding a treatment plan of a patient
-	 * @param patientID ID of the patient to be checked  
+	 * @param patientID ID of the patient to be checked 
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Usage(int patientID){
+	public Usage(int patientID) throws CommunicationsException, SQLException {
+		Connection conn = Database.getConnection();
 		try {
-			Connection conn = Database.getConnection();
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan WHERE  PatientID = '" 
 					+ patientID + "'", conn);
 			this.patientID = patientID;
@@ -32,69 +37,56 @@ public class Usage {
 				this.checkUpUsed = rs.getInt("CheckUpUsed");
 				this.hygieneUsed = rs.getInt("HygieneUsed");
 				this.repairUsed = rs.getInt("RepairUsed");
-				dateJoined = rs.getDate("DateJoined").toLocalDate();
-				
-			}
+				dateJoined = rs.getDate("DateJoined").toLocalDate();	
+			}	
+		} finally {
 			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} 
+		}
 	}
 	
 	/**
 	 * This constructor should be called when subscribing a health plan to a patients
 	 * @param patientID patient ID to subscribe the health plan to them
 	 * @param healthPlanName Health plan name of the patient to subscribe to them
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws MySQLIntegrityConstraintViolationException if patient id already exists
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Usage(int patientID, String healthPlanName){
-		try {
-			Connection conn = Database.getConnection();
-			this.patientID = patientID;
-			this.healthPlanName = healthPlanName; 
-			this.checkUpUsed = 0;
-			this.hygieneUsed = 0;
-			this.repairUsed = 0;
-			this.dateJoined = LocalDate.now();
-			if(!dbHasPatientID(patientID)){
-				DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName + "', '" + this.checkUpUsed + "', '" +
-						this.hygieneUsed + "', '" + this.repairUsed + "', '" + this.dateJoined + "')");
-			}
-			conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+	public Usage(int patientID, String healthPlanName) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
+		this.patientID = patientID;
+		this.healthPlanName = healthPlanName; 
+		this.checkUpUsed = 0;
+		this.hygieneUsed = 0;
+		this.repairUsed = 0;
+		this.dateJoined = LocalDate.now();
+		if(!dbHasPatientID(patientID)){
+			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName + "', '" + this.checkUpUsed + "', '" +
+				this.hygieneUsed + "', '" + this.repairUsed + "', '" + this.dateJoined + "')");
+		} else {
+			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " already has a heath plan.");
+		}
 	}
 	
 	/**
 	 * Checks whether PatientHealthPlan table contains a specified patientID.
 	 * @param patientID checks if the patient you supply has a health plan
 	 * @return True if a HealthPlan already exists.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	private boolean dbHasPatientID(int patientID) {
-		Connection conn;
-		int foundID = -1;
+	private boolean dbHasPatientID(int patientID) throws CommunicationsException, SQLException {
+		Connection conn = Database.getConnection();
 		try {
-			conn = Database.getConnection();
+			int foundID = -1;
 			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE  PatientID = " + patientID, conn);
 			if(rs.next()) {
 				foundID = rs.getInt("PatientID");
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			return foundID == patientID;
+		} finally {
+			conn.close();
 		}
-		return foundID == patientID;
 	}
-	
-	/**
-	 * Method for printing error message to the console.
-	 * @param method The method from which the error has occurred.
-	 */
-	private void printError(String method) {
-		System.out.println("Something went wrong with updating the " + method + ". "
-				+ "The staff member may have not been initialised properly "
-				+ "(some instance variables might be null).");
-	}
-	
 	
 	/**
 	 * Returns a patientID of a particular patient.
@@ -115,16 +107,12 @@ public class Usage {
 	/**
 	 * Updates the health plan of a patient to a another health plan name.
 	 * @param healthPlanName The new name of a HealthPlan.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setHealthPlanName(String healthPlanName) {
-		try {
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET HealthPlanName = '" + healthPlanName + "'"
-					+ " WHERE patientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("treatment name");
-			return;
-		}
+	protected void setHealthPlanName(String healthPlanName) throws CommunicationsException, SQLException  {
+		DBQueries.execUpdate("UPDATE PatientHealthPlan SET HealthPlanName = '" + healthPlanName + "'"
+			+ " WHERE patientID = " + this.patientID);
 		this.healthPlanName = healthPlanName;
 	}
 	
@@ -139,16 +127,12 @@ public class Usage {
 	/**
 	 * Updates the date joined of a patient health plan.
 	 * @param dateJoined The new date joined of a patients health plan.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setDateJoined(LocalDate dateJoined) {
-		try {
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET DateJoined = '" + dateJoined.toString() + "'"
-					+ " WHERE patientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("date joined");
-			return;
-		}
+	protected void setDateJoined(LocalDate dateJoined) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE PatientHealthPlan SET DateJoined = '" + dateJoined.toString() + "'"
+			+ " WHERE patientID = " + this.patientID);
 		this.dateJoined = dateJoined;
 	}
 	
@@ -163,18 +147,15 @@ public class Usage {
 	/**
 	 * Updates the checkUpUsed of a HealthPlan to a given value.
 	 * @param checkUpUsed The new check up used of a health plan.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setCheckUpUsed(int checkUpUsed) {
-		try {
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed
-					+ " WHERE patientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("check up");
-			return;
-		}
+	protected void setCheckUpUsed(int checkUpUsed) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed
+			+ " WHERE patientID = " + this.patientID);
 		this.checkUpUsed = checkUpUsed;
 	}
+
 	/**
 	 * Returns a number of appointments of hygiene used of a patients HealthPlan.
 	 * @return hygieneUsed The number of hygiene appointments of a HealthPlan.
@@ -182,24 +163,23 @@ public class Usage {
 	public int getHygieneUsed() {
 		return hygieneUsed;
 	}
+	
 	/**
 	 * Updates the hygiene used of a HealthPlan to a given value.
 	 * @param hygieneUsed The new number of hygiene appointments of a health plan.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setHygieneUsed(int hygieneUsed) {
-		try {
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed
-					+ " WHERE patientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("hygiene");
-			return;
-		}
+	protected void setHygieneUsed(int hygieneUsed) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed
+			+ " WHERE patientID = " + this.patientID);
 		this.hygieneUsed = hygieneUsed;
 	}
+	
 	/**
 	 * Returns a number of appointments of repair used of a patients HealthPlan.
 	 * @return hygieneUsed The number of repair appointments of a health plan.
+	
 	 */
 	public int getRepairUsed() {
 		return repairUsed;
@@ -208,105 +188,103 @@ public class Usage {
 	/**
 	 * Updates the repair used of a health plan to a given value.
 	 * @param repairUsed The new number of repair appointments of a HealthPlan.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setRepairUsed(int repairUsed) {
-		try {
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed
-					+ " WHERE patientID = " + this.patientID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			printError("repair");
-			return;
-		}
+	protected void setRepairUsed(int repairUsed) throws CommunicationsException, SQLException{
+		DBQueries.execUpdate("UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed
+			+ " WHERE patientID = " + this.patientID);
 		this.repairUsed = repairUsed;
 	}
 	
 	/**
 	 * Increments the check up used of a HealthPlan by 1.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void incrementCheckUp(){
-		try {
-			checkUpUsed =+ 1;
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed
-						+ " WHERE patientID = " + this.patientID);
-			} catch (SQLException e) {
-				e.printStackTrace();
-				printError("incrementing check up");
-				return;
-			}
+	public void incrementCheckUp() throws CommunicationsException, SQLException{
+		checkUpUsed =+ 1;
+		DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed
+				+ " WHERE patientID = " + this.patientID);
 	}
 	
 	/**
 	 * Increments the hygiene used of a HealthPlan by 1.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void incrementHygiene(){
-		try {
-			hygieneUsed =+ 1;
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed
-						+ " WHERE patientID = " + this.patientID);
-			} catch (SQLException e) {
-				e.printStackTrace();
-				printError("incrementing hygiene");
-				return;
-			}
+	public void incrementHygiene() throws CommunicationsException, SQLException{
+		hygieneUsed =+ 1;
+		DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed
+			+ " WHERE patientID = " + this.patientID);
+			
 	}
 
 	/**
 	 * Increments the repair used of a HealthPlan by 1.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void incrementRepair(){
-		try {
-			repairUsed =+ 1;
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed
-						+ " WHERE patientID = " + this.patientID);
-			} catch (SQLException e) {
-				e.printStackTrace();
-				printError("incrementing repair");
-				return;
-			}
+	public void incrementRepair() throws CommunicationsException, SQLException{
+		repairUsed =+ 1;
+		DBQueries.execUpdate("UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed
+			+ " WHERE patientID = " + this.patientID);
 	}
 
 	/**
 	 * Rests the HealthPlan if a year has passed from when they joined.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void resetHealthPlan(){
-		try {
-			Connection conn = Database.getConnection();
-			LocalDate lastYear = LocalDate.now().plusYears(-1);
-			if(lastYear.isAfter(dateJoined)){
-				this.dateJoined = dateJoined.plusYears(1);
-				this.checkUpUsed = 0;
-				this.hygieneUsed = 0;
-				this.repairUsed = 0;
-				DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = '" + this.checkUpUsed 
-						+ "', HygieneUsed = '" + this.hygieneUsed + "', RepairUsed = '" + this.repairUsed +"', DateJoined = '" + this.dateJoined + "'   WHERE PatientID = '" + this.patientID + "'");
-			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} 
+	public void resetHealthPlan() throws CommunicationsException, SQLException{
+		LocalDate lastYear = LocalDate.now().plusYears(-1);
+		if(lastYear.isAfter(dateJoined)){
+			this.dateJoined = dateJoined.plusYears(1);
+			this.checkUpUsed = 0;
+			this.hygieneUsed = 0;
+			this.repairUsed = 0;
+			DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = '" + this.checkUpUsed 
+				+ "', HygieneUsed = '" + this.hygieneUsed + "', RepairUsed = '" + this.repairUsed +"', DateJoined = '" + this.dateJoined + "'   WHERE PatientID = '" + this.patientID + "'");
+		}
 	}
-
+	
+	/**
+	 * Rests the HealthPlan if a year has passed from when they joined.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	 protected void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+		if(!dbHasPatientID(patientID)){
+			this.healthPlanName = null;
+			this.dateJoined = null;
+			this.checkUpUsed = 0;
+			this.hygieneUsed = 0;
+			this.repairUsed = 0;
+			DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID = " + patientID);
+		} else {
+			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " is not subsrcribed anyway.");
+		}
+	}
 	
 	public static void main(String[] args) {
-		LocalDate dt = LocalDate.of(2016,11, 06);
-		Usage patient1  = new Usage(1, "NHS free plan");
-		Usage patient2 = new Usage(2, "The oral health plan");
-		Usage patientTest = new Usage(1);
+		//LocalDate dt = LocalDate.of(2016,11, 06);
+		//Usage patient1  = new Usage(1, "NHS free plan");
+		//Usage patient2 = new Usage(2, "The oral health plan");
+		//Usage patientTest = new Usage(1);
 		
-		patient2.setHealthPlanName("The dental health plan");
-		patient2.setCheckUpUsed(2);
-		patient2.setHygieneUsed(2);
-		patient2.setRepairUsed(2);
-		patient2.setDateJoined(dt);
-		patient2.resetHealthPlan();
-		patient2.incrementCheckUp();
-		patient2.incrementHygiene();
-		patient2.incrementRepair();
+		//patient2.setHealthPlanName("The dental health plan");
+		//patient2.setCheckUpUsed(2);
+		//patient2.setHygieneUsed(2);
+		//patient2.setRepairUsed(2);
+		//patient2.setDateJoined(dt);
+		//patient2.resetHealthPlan();
+		//patient2.incrementCheckUp();
+		//patient2.incrementHygiene();
+		//patient2.incrementRepair();
 
-		System.out.println(patient1.getPatientID() + patient1.getHealthPlanName() + patient1.getCheckUpUsed() + patient1.getHygieneUsed() + patient1.getRepairUsed() + patient1.getDateJoined());
-		System.out.println(patient2.getPatientID() + patient2.getHealthPlanName() + patient2.getCheckUpUsed() + patient2.getHygieneUsed() + patient2.getRepairUsed() + patient2.getDateJoined());
-		System.out.println(patientTest.getPatientID() + patientTest.getHealthPlanName() + patientTest.getCheckUpUsed() + patientTest.getHygieneUsed() + patientTest.getRepairUsed() + patientTest.getDateJoined());
+		//System.out.println(patient1.getPatientID() + patient1.getHealthPlanName() + patient1.getCheckUpUsed() + patient1.getHygieneUsed() + patient1.getRepairUsed() + patient1.getDateJoined());
+		//System.out.println(patient2.getPatientID() + patient2.getHealthPlanName() + patient2.getCheckUpUsed() + patient2.getHygieneUsed() + patient2.getRepairUsed() + patient2.getDateJoined());
+		//System.out.println(patientTest.getPatientID() + patientTest.getHealthPlanName() + patientTest.getCheckUpUsed() + patientTest.getHygieneUsed() + patientTest.getRepairUsed() + patientTest.getDateJoined());
 		
 	}
 }

@@ -25,7 +25,6 @@ public class DBQueries {
 	 */
 	public static ResultSet execQuery(String query, Connection conn) throws SQLException {
 		ResultSet rs = null;
-		conn = Database.getConnection();
 		Statement stmt = conn.createStatement();
 		rs = stmt.executeQuery(query);
 		return rs;
@@ -38,9 +37,12 @@ public class DBQueries {
 	 */
 	public static void execUpdate(String query) throws SQLException {
 		Connection conn = Database.getConnection();
-		Statement stmt = conn.createStatement();
-		stmt.executeUpdate(query);
-		conn.close();
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(query);
+		} finally {
+			conn.close();
+		}
 	}
 	
 	/**
@@ -49,7 +51,7 @@ public class DBQueries {
 	 * @param table The name of the table you want to search in.
 	 * @param selectCol The name of the column you want check for the WHERE condition.
 	 * @param selectData The String you want to find in the specified column.
-	 * @return
+	 * @return first String value from specified table, column and row.
 	 */
 	public static String getData(String returnCol, String table, String selectCol, String selectData) {
 		String data = "";
