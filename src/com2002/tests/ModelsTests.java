@@ -12,6 +12,7 @@ import org.junit.Test;
 import com2002.models.Address;
 import com2002.models.DBQueries;
 import com2002.models.Doctor;
+import com2002.models.HealthPlan;
 import com2002.models.Role;
 import com2002.models.Secretary;
 import com2002.models.Staff;
@@ -48,6 +49,7 @@ public class ModelsTests {
 		try {
 			DBQueries.execUpdate("DELETE FROM Employees");
 			DBQueries.execUpdate("DELETE FROM Address");
+			DBQueries.execUpdate("DELETE FROM HealthPlans");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("JUnit clear tables failed.");
@@ -144,7 +146,7 @@ public class ModelsTests {
 			}
 		}
 		
-		// tests constructor for searching existing entry in database
+		// tests constructor for searching existing entry in address
 		@Test
 		public void addressConstructExisting() {
 			try {
@@ -193,5 +195,74 @@ public class ModelsTests {
 			}
 		}
 		
-	
+		// tests constructors for creating new type of a Health Plan
+		@Test
+		public void healthPlanConstructNew() {
+			try {
+				HealthPlan healthPlan1 = new HealthPlan("NHS free plan", 0.00,  2, 2, 6);
+				assertTrue("HealthPlan name set to " + healthPlan1.getName() + ", should be NHS free plan.", 
+						healthPlan1.getName().equals("NHS free plan"));
+				assertTrue("HealthPlan price set to " + healthPlan1.getPrice() + ", should be 0.00.", 
+						healthPlan1.getPrice().equals(0.00));
+				assertTrue("HealthPlan check up level set to " + healthPlan1.getCheckUpLevel() + ", should be 2.", 
+						healthPlan1.getCheckUpLevel() == 2);
+				assertTrue("HealthPlan hygiene level set to " + healthPlan1.getHygieneLevel() + ", should be 2.", 
+						healthPlan1.getHygieneLevel() == 2);
+				assertTrue("HealthPlan repair level set to " + healthPlan1.getRepairLevel() + ", should be 6.", 
+						healthPlan1.getRepairLevel() == 6);			
+				} catch (SQLException e) {
+					e.printStackTrace();
+					fail("Exception thrown: " + e.getMessage());
+				}
+		}
+		
+
+		// tests constructor for searching existing health plan
+		@Test
+		public void HealthPlanConstructExisting() {
+			try {
+				DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
+				HealthPlan healthPlanD = new HealthPlan("NHS free plan");
+				assertTrue("HealthPlan name set to " + healthPlanD.getName() + ", should be NHS free plan.", 
+						healthPlanD.getName().equals("NHS free plan"));
+				assertTrue("HealthPlan price set to " + healthPlanD.getPrice() + ", should be 0.00.", 
+						healthPlanD.getPrice().equals(0.00));
+				assertTrue("HealthPlan check up level set to " + healthPlanD.getCheckUpLevel() + ", should be 2.", 
+						healthPlanD.getCheckUpLevel() == 2);
+				assertTrue("HealthPlan hygiene level set to " + healthPlanD.getHygieneLevel() + ", should be 2.", 
+						healthPlanD.getHygieneLevel() == 2);
+				assertTrue("HealthPlan repair level set to " + healthPlanD.getRepairLevel() + ", should be 6.", 
+						healthPlanD.getRepairLevel() == 6);			
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+		}
+		
+		// tests HealthPlan set methods
+		@Test
+		public void healthPlanSetMethods() {
+			try {
+				DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
+				HealthPlan healthPlanDS = new HealthPlan("NHS free plan");
+				healthPlanDS.setName("The maintenance plan");
+				healthPlanDS.setPrice(15.00);
+				healthPlanDS.setCheckUpLevel(2);
+				healthPlanDS.setHygieneLevel(2);
+				healthPlanDS.setRepairLevel(0);
+				assertTrue("HealthPlan name set to " + healthPlanDS.getName() + ", should be The maintenance plan.", 
+						healthPlanDS.getName().equals("The maintenance plan"));
+				assertTrue("HealthPlan price set to " + healthPlanDS.getPrice() + ", should be 15.00.", 
+						healthPlanDS.getPrice().equals(15.00));
+				assertTrue("HealthPlan check up level set to " + healthPlanDS.getCheckUpLevel() + ", should be 2.", 
+						healthPlanDS.getCheckUpLevel() == 2);
+				assertTrue("HealthPlan hygiene level set to " + healthPlanDS.getHygieneLevel() + ", should be 2.", 
+						healthPlanDS.getHygieneLevel() == 2);
+				assertTrue("HealthPlan repair level set to " + healthPlanDS.getRepairLevel() + ", should be 0.", 
+						healthPlanDS.getRepairLevel() == 0);				
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+		}
 }

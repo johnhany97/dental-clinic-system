@@ -30,7 +30,8 @@ public class HealthPlan {
 	 * @throws MySQLIntegrityConstraintViolationException if health plan name already exists
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public HealthPlan(String name, Double price, int checkUpLevel, int hygieneLevel, int repairLevel) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
+	public HealthPlan(String name, Double price, int checkUpLevel, int hygieneLevel, int repairLevel) 
+			throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
 		this.name = name;
 		this.price  = price;
 		this.checkUpLevel = checkUpLevel;
@@ -91,7 +92,7 @@ public class HealthPlan {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 * @throws MySQLIntegrityConstraintViolationException if health plan name already exists
 	 */
-	protected void setName(String name) throws CommunicationsException, SQLException, MySQLIntegrityConstraintViolationException {
+	public void setName(String name) throws CommunicationsException, SQLException, MySQLIntegrityConstraintViolationException {
 		DBQueries.execUpdate("UPDATE HealthPlans SET Name = '" + name 
 			+ "' WHERE Name = '" + this.name + "'");
 		this.name = name;
@@ -111,7 +112,7 @@ public class HealthPlan {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setPrice(double price) throws CommunicationsException, SQLException {
+	public void setPrice(double price) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE HealthPlans SET Price = '" + price 
 			+ "' WHERE Name = '" + this.name + "'");
 		this.price = price;
@@ -131,7 +132,7 @@ public class HealthPlan {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setCheckUpLevel(int checkUpLevel) throws CommunicationsException, SQLException {
+	public void setCheckUpLevel(int checkUpLevel) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE HealthPlans SET CheckUpLevel = '" + checkUpLevel
 			+ "' WHERE Name = '" + this.name + "'");
 		this.checkUpLevel = checkUpLevel;
@@ -151,7 +152,7 @@ public class HealthPlan {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setHygieneLevel(int hygieneLevel) throws CommunicationsException, SQLException {
+	public void setHygieneLevel(int hygieneLevel) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE HealthPlans SET HygieneLevel = '" + hygieneLevel
 			+ "' WHERE Name = '" + this.name + "'");
 		this.hygieneLevel = hygieneLevel;
@@ -171,7 +172,7 @@ public class HealthPlan {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setRepairLevel(int repairLevel) throws CommunicationsException, SQLException  {
+	public void setRepairLevel(int repairLevel) throws CommunicationsException, SQLException  {
 		DBQueries.execUpdate("UPDATE HealthPlans SET RepairLevel = '" + repairLevel
 			+ "' WHERE Name = '" + this.name + "'");
 		this.repairLevel = repairLevel;
@@ -180,21 +181,6 @@ public class HealthPlan {
 	public static void main(String[] args) {
 		//HealthPlan nhs  = new HealthPlan("NHS free plan", 0.00,  2, 2, 6);
 		//HealthPlan maintenance  = new HealthPlan("The maintenance plan", 15.00,  2, 2, 0);
-		//HealthPlan oral  = new HealthPlan("The oral health plan", 21.00,  2, 4, 0);
-		//HealthPlan dental  = new HealthPlan("The health plan", 26.00,  0, 0, 0);
-		//HealthPlan find = new HealthPlan("NHS free plan");
-		
-		//dental.setName("The dental health plan");
-		//dental.setPrice(36.00);
-		//dental.setCheckUpLevel(2);
-		//dental.setHygieneLevel(2);
-		//dental.setRepairLevel(2);
-
-		//System.out.println(nhs.getName() + nhs.getPrice() + nhs.getCheckUpLevel() + nhs.getHygieneLevel() + nhs.getRepairLevel());
-		//System.out.println(maintenance.getName() + maintenance.getPrice() + maintenance.getCheckUpLevel() + maintenance.getHygieneLevel() + maintenance.getRepairLevel());
-		//System.out.println(oral.getName() + oral.getPrice() + oral.getCheckUpLevel() + oral.getHygieneLevel() + oral.getRepairLevel());
-		//System.out.println(dental.getName() + dental.getPrice() + dental.getCheckUpLevel() + dental.getHygieneLevel() + dental.getRepairLevel());
-		//System.out.println(find.getName() + find.getPrice() + find.getCheckUpLevel() + find.getHygieneLevel() + find.getRepairLevel());
 	}
 	
 }
