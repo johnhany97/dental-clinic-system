@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com2002.models.Address;
 import com2002.models.DBQueries;
 import com2002.models.Doctor;
 import com2002.models.Role;
@@ -46,6 +47,7 @@ public class ModelsTests {
 	public void clearTables() {
 		try {
 			DBQueries.execUpdate("DELETE FROM Employees");
+			DBQueries.execUpdate("DELETE FROM Address");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("JUnit clear tables failed.");
@@ -120,5 +122,76 @@ public class ModelsTests {
 			fail("Exception thrown: " + e.getMessage());
 		}
 	}
+	
+	// tests constructors for creating new type of address member
+		@Test
+		public void addressConstructNew() {
+			try {
+				Address address1 = new Address("57", "Mulgrave road", "Middlesex", "London", "W5 1LF");
+				assertTrue("House number set to " + address1.getHouseNumber() + ", should be 57.", 
+						address1.getHouseNumber().equals("57"));
+				assertTrue("Street name set to " + address1.getStreetName() + ", should be Mulgrave road.", 
+						address1.getStreetName().equals("Mulgrave road"));
+				assertTrue("District set to " + address1.getDistrict() + ", should be middlesex.", 
+						address1.getDistrict().equals("Middlesex"));
+				assertTrue("City set to " + address1.getCity() + ", should be London.", 
+						address1.getCity().equals("London"));
+				assertTrue("Postcode set to " + address1.getPostcode() + ", should be London.", 
+						address1.getPostcode().equals("W5 1LF"));
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+		}
+		
+		// tests constructor for searching existing entry in database
+		@Test
+		public void addressConstructExisting() {
+			try {
+				DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave Road', 'Middlesex', 'London', 'W5 1LF')");
+				Address addressD = new Address("57", "W5 1LF");
+				assertTrue("House number set to " + addressD.getHouseNumber() + ", should be 57.", 
+						addressD.getHouseNumber().equals("57"));
+				assertTrue("Street name set to " + addressD.getStreetName() + ", should be Mulgrave Road.", 
+						addressD.getStreetName().equals("Mulgrave Road"));
+				assertTrue("District set to " + addressD.getDistrict() + ", should be Middlesex.", 
+						addressD.getDistrict().equals("Middlesex"));
+				assertTrue("City set to " + addressD.getCity() + ", should be London.", 
+						addressD.getCity().equals("London"));
+				assertTrue("Postcode set to " + addressD.getPostcode() + ", should be W5 1LF.", 
+						addressD.getPostcode().equals("W5 1LF"));
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+		}
+		
+		// tests address set methods
+		@Test
+		public void addressSetMethods() {
+			try {
+				DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+				Address addressDS = new Address("57", "W5 1LF");
+				addressDS.setHouseNumber("67");
+				addressDS.setStreetName("Lynwood Road");
+				addressDS.setDistrict("South Yorkshire");
+				addressDS.setCity("Sheffield");
+				addressDS.setPostcode("S10 3AN");
+				assertTrue("House number set to " + addressDS.getHouseNumber() + ", should be 67.", 
+						addressDS.getHouseNumber().equals("67"));
+				assertTrue("Street name set to " + addressDS.getStreetName() + ", should be Lynwood Road.", 
+						addressDS.getStreetName().equals("Lynwood Road"));
+				assertTrue("District set to " + addressDS.getDistrict() + ", should be South Yorkshire.", 
+						addressDS.getDistrict().equals("South Yorkshire"));
+				assertTrue("City set to " + addressDS.getCity() + ", should be Sheffield.", 
+						addressDS.getCity().equals("Sheffield"));
+				assertTrue("Postcode set to " + addressDS.getPostcode() + ", should be S10 3AN.", 
+						addressDS.getPostcode().equals("S10 3AN"));
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+		}
+		
 	
 }

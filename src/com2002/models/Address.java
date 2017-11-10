@@ -180,13 +180,12 @@ public class Address {
 	}
 	
 	public static void main(String[] args) {
-		//Address nur = new Address("57", "Mulgrave road", "middlesex", "London", "w5 1lf");
+		
 		//nur.setHouseNumber("59");
 		//nur.setStreetName("Lynwood Road");
 		//nur.setDistrict("South Yorkshire");
 		//nur.setCity("Sheffield");
 		//nur.setPostcode("S10 3an");
-		//System.out.println(nur.getHouseNumber() + nur.getStreetName() + nur.getDistrict() + nur.getCity() + nur.getPostcode());
 	}
 	
 }
