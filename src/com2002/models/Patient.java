@@ -12,6 +12,7 @@ import com2002.utils.Database;
 
 public class Patient {
 	
+	private Usage usage;
 	private int patientID;
 	private String firstName;
 	private String lastName;
@@ -254,6 +255,14 @@ public class Patient {
 	protected void setPostcode(String postcode) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE Patients SET Postcode = '" + postcode + "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		this.postcode = postcode;
+	}
+	
+	protected void subscribePatient(String healthPlanName) throws CommunicationsException, SQLException {
+		this.usage =  new Usage(this.patientID, healthPlanName);
+	}
+	
+	protected void unsubscribePatient() throws CommunicationsException, SQLException {
+		this.usage.unsubscribePatient();
 	}
 	
 	public static void main(String[] args) {

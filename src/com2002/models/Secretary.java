@@ -32,15 +32,12 @@ public class Secretary extends Staff {
 		return patient;
 	}
 	
-	protected Usage subscribePatient(Patient patient, HealthPlan healthPlan) throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
-		int patientID = patient.getPatientID();
-		String healthPlanName = healthPlan.getName();
-		Usage usage = new Usage(patientID, healthPlanName);
-		return usage;
+	protected void subscribePatient(Patient patient, String healthPlanName) throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
+		patient.subscribePatient(healthPlanName);
 	}
 	
-	protected void unsubscribePatient(Patient patient) {
-		patient.unsubscribePatient():
+	protected void unsubscribePatient(Patient patient) throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
+		patient.unsubscribePatient();
 	}
 	
 	/*

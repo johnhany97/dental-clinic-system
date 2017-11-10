@@ -253,7 +253,7 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void UnsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+	 protected void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		if(!dbHasPatientID(patientID)){
 			this.healthPlanName = null;
 			this.dateJoined = null;
