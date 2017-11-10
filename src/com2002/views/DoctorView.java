@@ -2,12 +2,14 @@ package com2002.views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -84,9 +86,10 @@ public class DoctorView implements Screen {
 			leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 			leftPanel.add(new JLabel(patientName));
 			leftPanel.add(new JLabel(appointmentType));
-			this.appointmentCards.get(index).add(leftPanel);
+			this.appointmentCards.get(index).add(leftPanel, Component.LEFT_ALIGNMENT);
+			this.appointmentCards.get(index).add(Box.createHorizontalGlue());
 			// right content
-			this.appointmentCards.get(index).add(new JLabel(appointmentTime));
+			this.appointmentCards.get(index).add(new JLabel(appointmentTime), Component.RIGHT_ALIGNMENT);
 			//event listener
 			this.appointmentsPanel.add(this.appointmentCards.get(index));
 		} catch (SQLException e) {

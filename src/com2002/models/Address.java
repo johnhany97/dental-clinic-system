@@ -28,7 +28,8 @@ public class Address {
 	 * @throws MySQLIntegrityConstraintViolationException if address already exists
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Address(String houseNumber, String streetName, String district, String city, String postcode) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
+	public Address(String houseNumber, String streetName, String district, String city, String postcode)
+			throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
 		if(!dbHasAddress(houseNumber, postcode)){
 			DBQueries.execUpdate("INSERT INTO Address Values('" + houseNumber + "', '" + streetName + "', '" + district + "', '" 
 				+ city + "', '" + postcode + "')");
@@ -40,7 +41,8 @@ public class Address {
 			this.postcode = postcode;
 		} 
 		else {
-			throw new MySQLIntegrityConstraintViolationException("An address with house number " + houseNumber + " and postcode " + postcode + "already exists.");
+			throw new MySQLIntegrityConstraintViolationException("An address with house number " + houseNumber 
+					+ " and postcode " + postcode + "already exists.");
 		}
 	}
 	
@@ -96,7 +98,8 @@ public class Address {
 	 */
 	public void setHouseNumber(String houseNumber) throws SQLException, CommunicationsException {
 		DBQueries.execUpdate("UPDATE Address SET HouseNumber = '" + houseNumber 
-				+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
+				+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" 
+				+ this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		this.houseNumber = houseNumber;
 	}
 	
@@ -116,7 +119,8 @@ public class Address {
 	 */
 	public void setStreetName(String streetName) throws SQLException, CommunicationsException {
 		DBQueries.execUpdate("UPDATE Address SET StreetName = '" + streetName 
-				+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
+				+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" 
+				+ this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		this.streetName = streetName;
 	}
 	
@@ -136,7 +140,8 @@ public class Address {
 	 */
 	public void setDistrict(String district) throws SQLException, CommunicationsException {
 		DBQueries.execUpdate("UPDATE Address SET District = '" + district
-			+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
+			+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber 
+			+ "' AND Postcode = '" + this.postcode +"'");
 		this.district = district;
 	}
 	
@@ -155,7 +160,8 @@ public class Address {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public void setCity(String city) throws SQLException, CommunicationsException  {
-		DBQueries.execUpdate("UPDATE Address SET City = '" + city + "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
+		DBQueries.execUpdate("UPDATE Address SET City = '" + city + "' WHERE StreetName = '" 
+				+ this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		this.city = city;
 	}
 	
@@ -175,18 +181,9 @@ public class Address {
 	 */
 	public void setPostcode(String postcode) throws SQLException, CommunicationsException {
 		DBQueries.execUpdate("UPDATE Address SET PostCode = '" + postcode 
-			+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + this.postcode +"'"); 
+			+ "' WHERE StreetName = '" + this.streetName + "' AND HouseNumber = '" 
+				+ this.houseNumber + "' AND Postcode = '" + this.postcode +"'"); 
 		this.postcode = postcode;
-	}
-	
-	public static void main(String[] args) {
-		//Address nur = new Address("57", "Mulgrave road", "middlesex", "London", "w5 1lf");
-		//nur.setHouseNumber("59");
-		//nur.setStreetName("Lynwood Road");
-		//nur.setDistrict("South Yorkshire");
-		//nur.setCity("Sheffield");
-		//nur.setPostcode("S10 3an");
-		//System.out.println(nur.getHouseNumber() + nur.getStreetName() + nur.getDistrict() + nur.getCity() + nur.getPostcode());
 	}
 	
 }

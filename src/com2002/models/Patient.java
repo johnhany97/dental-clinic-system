@@ -78,7 +78,7 @@ public class Patient {
 				this.firstName = rs.getString("FirstName");
 				this.lastName = rs.getString("LastName");
 				this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
-				this.phoneNumber = rs.getString("LastName");
+				this.phoneNumber = rs.getString("PhoneNumber");
 				this.houseNumber = rs.getString("HouseNumber");
 				this.postcode = rs.getString("Postcode");
 			}
@@ -206,7 +206,7 @@ public class Patient {
 	 * Returns a Phone Number of a particular patient.
 	 * @return phoneNumber The phone number of a patient.
 	 */
-	public String getPhoneNumbere(){
+	public String getPhoneNumber(){
 		return this.phoneNumber;
 	}
 	
@@ -285,7 +285,7 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 * @throws MySQLIntegrityConstraintViolationException  patient already exists 
 	 */
-	protected void subscribePatient(String healthPlanName) throws CommunicationsException, SQLException,  MySQLIntegrityConstraintViolationException {
+	public void subscribePatient(String healthPlanName) throws CommunicationsException, SQLException,  MySQLIntegrityConstraintViolationException {
 		if(!dbHasPatientID(patientID)){
 			this.usage =  new Usage(this.patientID, healthPlanName);
 		} else {
@@ -298,7 +298,7 @@ public class Patient {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void unsubscribePatient() throws CommunicationsException, SQLException {
+	public void unsubscribePatient() throws CommunicationsException, SQLException {
 		if(dbHasPatientID(patientID)){
 			this.usage.unsubscribePatient();
 		}
@@ -309,24 +309,43 @@ public class Patient {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void resetHealthPlan() throws CommunicationsException, SQLException {
+	public void resetHealthPlan() throws CommunicationsException, SQLException {
 		if(dbHasPatientID(patientID)){
 			this.usage.resetHealthPlan();
 		} 
 	}
 	
-	public static void main(String[] args) {
-		//LocalDate dt = LocalDate.of(1997,05, 18);
-		//Patient nur = new Patient("Nur", "Magid", dt, "07543867024", "57", "W5 1LF");
-		// nur.setPatientID(2);
-		// nur.setFirstName("Arthur");
-		// nur.setLastName("Granacher");
-		// nur.setDateOfBirth(newDT);
-		// nur.setPhoneNumber("07543867023");
-		// nur.setHouseNumber("59");
-		// nur.setPostcode("s10 3an");
+	/**
+	 * Increments the check up used of a HealthPlan by 1.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public void incrementCheckUp() throws CommunicationsException, SQLException{
+		if(dbHasPatientID(patientID)){
+			this.usage.incrementCheckUp();
+		} 
+	}
+	
+	/**
+	 * Increments the hygiene used of a HealthPlan by 1.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public void incrementHygiene() throws CommunicationsException, SQLException{
+		if(dbHasPatientID(patientID)){
+			this.usage.incrementHygiene();
+		}
+	}
 
-		//System.out.println(nur.getPatientID() + nur.getFirstName() + nur.getLastName() + nur.getDateOfBirth() + nur.getPhoneNumbere()+nur.getHouseNumber()+ nur.getPostcode());
+	/**
+	 * Increments the repair used of a HealthPlan by 1.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public void incrementRepair() throws CommunicationsException, SQLException{
+		if(dbHasPatientID(patientID)){
+			this.usage.incrementRepair();
+		}
 	}
 	
 }

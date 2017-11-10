@@ -24,6 +24,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -127,8 +128,9 @@ public class TreatmentsScreen implements Screen {
 	    this.buttons.get(1).addActionListener(new ActionListener() {
 	    	@Override
 	    	public void actionPerformed(ActionEvent arg0) {
+	    		Connection conn = null;
 	    		try {
-		    		Connection conn = Database.getConnection();
+		    		conn = Database.getConnection();
 					Statement stmt = conn.createStatement();
 					for (int i = 0; i < fields.size(); i+=2) {
 						String name = fields.get(i).getText();
@@ -136,13 +138,17 @@ public class TreatmentsScreen implements Screen {
 						String sqlQuery = "INSERT INTO Treatments VALUES ('" + name + "', '" + price + "')";
 						stmt.executeUpdate(sqlQuery);
 					}
-					Database.closeDb(conn);
+		    		AppointmentTypesScreen appointmentTypesScreen = new AppointmentTypesScreen(frame);
+			    	frame.setDisplayedPanel(appointmentTypesScreen.getPanel());
+			    	frame.repaint();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(frame,
+							"Error with the database statement execution.",
+							"Error",
+							JOptionPane.ERROR_MESSAGE);
+				} finally {
+					if (conn != null) Database.closeDb(conn);
 				}
-	    		AppointmentTypesScreen appointmentTypesScreen = new AppointmentTypesScreen(frame);
-		    	frame.setDisplayedPanel(appointmentTypesScreen.getPanel());
-		    	frame.repaint();
 	    	}
 	    });
 	    this.screen.add(southPanel, BorderLayout.SOUTH);
