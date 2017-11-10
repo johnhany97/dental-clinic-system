@@ -3,6 +3,7 @@ package com2002.tests;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,6 +14,7 @@ import com2002.models.Address;
 import com2002.models.DBQueries;
 import com2002.models.Doctor;
 import com2002.models.HealthPlan;
+import com2002.models.Patient;
 import com2002.models.Role;
 import com2002.models.Secretary;
 import com2002.models.Staff;
@@ -48,6 +50,7 @@ public class ModelsTests {
 	public void clearTables() {
 		try {
 			DBQueries.execUpdate("DELETE FROM Employees");
+			DBQueries.execUpdate("DELETE FROM Patients");
 			DBQueries.execUpdate("DELETE FROM Address");
 			DBQueries.execUpdate("DELETE FROM HealthPlans");
 		} catch (SQLException e) {
@@ -265,4 +268,54 @@ public class ModelsTests {
 				fail("Exception thrown: " + e.getMessage());
 			}
 		}
+		
+		// tests constructors for creating new type of Patient
+		@Test
+		public void PatientConstructNew() {
+			try {
+				DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+				Patient patient1 = new Patient("Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+				assertTrue("Patient name set to " + patient1.getFirstName() + ", should be Nur.", 
+					patient1.getFirstName().equals("Nur"));
+				assertTrue("Patient name set to " + patient1.getLastName() + ", should be Magid.", 
+					patient1.getLastName().equals("Magid"));
+				assertTrue("Patient set to " + patient1.getDateOfBirth() + ", should be 1997, 05, 18.", 
+					patient1.getDateOfBirth().equals(LocalDate.of(1997, 05, 18)));
+				assertTrue("Patient phone number set to " + patient1.getPhoneNumber() + ", should be 07543867024.", 
+					patient1.getPhoneNumber().equals("07543867024"));
+				assertTrue("Patient house number set to " + patient1.getHouseNumber() + ", should be 57.", 
+					patient1.getHouseNumber().equals("57"));;	
+				assertTrue("Patient phone number set to " + patient1.getPostcode() + ", should be W5 1LF.", 
+					patient1.getPostcode().equals("W5 1LF"));
+				} catch (SQLException e) {
+					e.printStackTrace();
+					fail("Exception thrown: " + e.getMessage());
+			}		
+		}
+		
+		// tests constructor for searching existing entry in address
+		@Test
+		public void patientConstructExisting() {
+			try {
+				DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave Road', 'Middlesex', 'London', 'W5 1LF')");
+				DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+				Patient patientD = new Patient("Nur", "57", "W5 1LF");
+				assertTrue("Patient name set to " + patientD.getFirstName() + ", should be Nur.", 
+					patientD.getFirstName().equals("Nur"));
+				assertTrue("Patient name set to " + patientD.getLastName() + ", should be Magid.", 
+					patientD.getLastName().equals("Magid"));
+				assertTrue("Patient set to " + patientD.getDateOfBirth() + ", should be 1997, 05, 18.", 
+					patientD.getDateOfBirth().equals(LocalDate.of(1997, 05, 18)));
+				assertTrue("Patient phone number set to " + patientD.getPhoneNumber() + ", should be 07543867024.", 
+					patientD.getPhoneNumber().equals("07543867024"));
+				assertTrue("Patient house number set to " + patientD.getHouseNumber() + ", should be 57.", 
+					patientD.getHouseNumber().equals("57"));;	
+				assertTrue("Patient phone number set to " + patientD.getPostcode() + ", should be W5 1LF.", 
+					patientD.getPostcode().equals("W5 1LF"));
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+		}
+		
 }

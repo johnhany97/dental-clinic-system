@@ -178,9 +178,4 @@ public class HealthPlan {
 		this.repairLevel = repairLevel;
 	}
 	
-	public static void main(String[] args) {
-		//HealthPlan nhs  = new HealthPlan("NHS free plan", 0.00,  2, 2, 6);
-		//HealthPlan maintenance  = new HealthPlan("The maintenance plan", 15.00,  2, 2, 0);
-	}
-	
 }
