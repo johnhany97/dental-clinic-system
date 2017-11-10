@@ -14,7 +14,6 @@ import com2002.utils.Database;
 
 public class Schedule {
 
-	@SuppressWarnings("deprecation")
 	public static ArrayList<Appointment> getAppointments() throws Exception {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
