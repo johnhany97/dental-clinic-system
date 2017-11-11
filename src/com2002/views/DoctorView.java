@@ -49,6 +49,8 @@ public class DoctorView implements Screen {
 	}
 
 	private void initializeScreen() {
+		frame.setFrameSize(DisplayFrame.DEFAULT_NUM, DisplayFrame.DEFAULT_NUM);
+		frame.centerFrame();
 		//Main panel
 		this.screen = new JPanel();
 		this.screen.setLayout(new BorderLayout());

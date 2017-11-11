@@ -122,4 +122,15 @@ public class DisplayFrame extends JFrame {
 	    // Prevent resizing
 	    setResizable(false);
 	  }
+	  
+	  /**
+	   * Function used to center frame
+	   */
+	  public void centerFrame() {
+	    Toolkit toolkit = Toolkit.getDefaultToolkit();
+	    Dimension screenDimensions = toolkit.getScreenSize();
+	    int screenLocationX = (screenDimensions.width - this.screenWidth) / 2;
+	    int screenLocationY = (screenDimensions.height - this.screenHeight) / 2;
+	    setLocation(new Point(screenLocationX, screenLocationY));
+	  }
 }

@@ -41,6 +41,8 @@ public class LoginView implements Screen {
 	}
 	
 	private void initializeLogin() {
+		frame.setFrameSize(2, 3);
+		frame.centerFrame();
 		//Main panel
 		this.screen = new JPanel();
 		this.screen.setLayout(new BorderLayout());
@@ -48,7 +50,7 @@ public class LoginView implements Screen {
 		this.labels = new ArrayList<JLabel>();
 		this.labels.add(new JLabel(TITLE, SwingConstants.CENTER));
 		this.labels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
-				DisplayFrame.FONT_SIZE * 2));
+				DisplayFrame.FONT_SIZE));
 		this.screen.add(this.labels.get(0), BorderLayout.NORTH);
 		//Middle panel
 		this.middlePanel = new JPanel();
@@ -80,7 +82,7 @@ public class LoginView implements Screen {
 		//Login Button
 		this.loginButton = new JButton(LOGIN_LABEL);
 		this.loginButton.setFont(new Font("Sans Serif", Font.PLAIN,
-				DisplayFrame.FONT_SIZE));
+				DisplayFrame.FONT_SIZE / 2));
 		this.loginButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
