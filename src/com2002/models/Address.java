@@ -9,6 +9,9 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 import com2002.utils.Database;
 
+/**
+ * The class which handles the address of a patient 
+ */
 public class Address {
 	
 	private String houseNumber;

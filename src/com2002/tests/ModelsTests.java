@@ -2,8 +2,11 @@ package com2002.tests;
 
 import static org.junit.Assert.*;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -326,9 +329,7 @@ public class ModelsTests {
 	public void patientSetMethods() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Address VALUES ('67', 'Mulgrave road', 'Middlesex', 'London', 'S10 3AN')");
 			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
-			Address addressDS = new Address("57", "S10 3AN");
 			Patient patientDS = new Patient("Nur", "57", "W5 1LF");
 			patientDS.setFirstName("Arthur");
 			patientDS.setLastName("Granacher");
@@ -424,6 +425,39 @@ public class ModelsTests {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				fail("Exception thrown: " + e.getMessage());
+		}
+	} 
+	
+	// tests dbqueries search method
+	@Test
+	public void searchMethod() {
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (2, 'Arthur', 'Granacher', '1997-05-17', '07543867023', '57', 'W5 1LF')");
+			String arrayTest[][] = {{"Nur","Magid","1997-05-18","07543867024","57","W5 1LF"},{"Arthur", "Granacher", "1997-05-17","07543867023", "57", "W5 1LF"}};
+			ArrayList<Patient> patients = DBQueries.getPatientsByAddress("57", "W5 1LF");
+			for(int i = 0; i<patients.size(); i++) {
+				Patient patient = patients.get(i);
+				assertTrue("Patient name set to " + patient.getFirstName() + ", should be " + arrayTest[i][0], 
+					patient.getFirstName().equals(arrayTest[i][0]));
+				assertTrue("Patient name set to " + patient.getLastName() + ", should be " + arrayTest[i][1], 
+					patient.getLastName().equals(arrayTest[i][1]));
+				assertTrue("Patient set to " + patient.getDateOfBirth()+ ", should be " +arrayTest[i][2], 
+					patient.getDateOfBirth().equals(LocalDate.parse(arrayTest[i][2])));
+				assertTrue("Patient phone number set to " + patient.getPhoneNumber() + ", should be " + arrayTest[i][3], 
+					patient.getPhoneNumber().equals(arrayTest[i][3]));
+				assertTrue("Patient house number set to " + patient.getHouseNumber() + ", should be " + arrayTest[i][4], 
+					patient.getHouseNumber().equals(arrayTest[i][4]));;	
+				assertTrue("Patient phone number set to " + patient.getPostcode() + ", should be " + arrayTest[i][5], 
+					patient.getPostcode().equals(arrayTest[i][5]));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

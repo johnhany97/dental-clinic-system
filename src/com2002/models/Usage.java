@@ -10,6 +10,9 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 import com2002.utils.Database;
 
+/**
+ * The class which handles the usage of a patients subscribed health plan
+ */
 public class Usage {
 	
 	private int patientID;

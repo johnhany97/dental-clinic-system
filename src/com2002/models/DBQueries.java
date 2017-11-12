@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 import com2002.utils.Database;
 
@@ -78,6 +80,27 @@ public class DBQueries {
 	public static boolean staffUsernameExists(String username) {
 		String found = DBQueries.getData("Username", "Employees", "Username", username);
 		return username.equals(found);
+	}
+	
+	/**
+	 * Returns a list of patients by their address.
+	 * @param houseNumber houseNumber of the address to be searched
+	 * @param postcode postcode of the address to be searched
+	 * @return patients that exist at the address.
+	 */
+	public static ArrayList<Patient> getPatientsByAddress(String houseNumber, String postcode) throws Exception {
+		ArrayList<Patient> patients = new ArrayList<Patient>();
+		Connection conn = Database.getConnection();
+		ResultSet rs = execQuery("SELECT * FROM Patients WHERE HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode + "'", conn);
+		while (rs.next()) {
+			String firstName = rs.getString("FirstName");
+			String lastName = rs.getString("LastName");
+			LocalDate dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
+			String phoneNumber = rs.getString("PhoneNumber");
+			patients.add(new Patient(firstName, lastName, dateOfBirth, phoneNumber, houseNumber, postcode));
+		}
+		conn.close();
+		return patients;
 	}
 	
 	/*

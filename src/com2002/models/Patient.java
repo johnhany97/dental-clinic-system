@@ -9,7 +9,9 @@ import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import com2002.utils.Database;
-
+/**
+ * The class which handles the registration of a patient 
+ */
 public class Patient {
 	
 	private Usage usage;
@@ -356,5 +358,4 @@ public class Patient {
 			this.usage.incrementRepair();
 		}
 	}
-	
 }
