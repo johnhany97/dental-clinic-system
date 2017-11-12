@@ -70,6 +70,24 @@ public class DisplayFrame extends JFrame {
 	  }
 	  
 	  /**
+	   * Function to get screenHeight step size
+	   * 
+	   * @return integer representing the screen height step
+	   */
+	  public int getFrameHeightStep() {
+		  return this.screenHeightStep;
+	  }
+
+	  /**
+	   * Function to get screenWidth step size
+	   * 
+	   * @return integer representing the screen Width step
+	   */
+	  public int getFrameWidthStep() {
+		  return this.screenWidthStep;
+	  }
+	  
+	  /**
 	   * Function to set the current panel on the frame
 	   * 
 	   * @param panel JPanel representing the panel to be displayed on the Frame
@@ -103,5 +121,16 @@ public class DisplayFrame extends JFrame {
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    // Prevent resizing
 	    setResizable(false);
+	  }
+	  
+	  /**
+	   * Function used to center frame
+	   */
+	  public void centerFrame() {
+	    Toolkit toolkit = Toolkit.getDefaultToolkit();
+	    Dimension screenDimensions = toolkit.getScreenSize();
+	    int screenLocationX = (screenDimensions.width - this.screenWidth) / 2;
+	    int screenLocationY = (screenDimensions.height - this.screenHeight) / 2;
+	    setLocation(new Point(screenLocationX, screenLocationY));
 	  }
 }

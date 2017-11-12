@@ -61,7 +61,7 @@ public class Appointment {
 					   AppointmentType treatmentName, int totalAppointments, int currentAppointments)
 							   throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + startTime.toString() + "', '" + endTime.toString() + "', '" + username + "', '" 
-						+ treatmentName + "', '" + patientID + "', '" + notes + "', '" + totalAppointments + "', '" + currentAppointments + "')");
+						+ getAppointmentTypeString(treatmentName) + "', '" + patientID + "', '" + notes + "', '" + totalAppointments + "', '" + currentAppointments + "')");
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.username = username;
