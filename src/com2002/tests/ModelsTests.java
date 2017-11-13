@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com2002.models.Address;
+import com2002.models.Appointment;
+import com2002.models.AppointmentType;
 import com2002.models.DBQueries;
 import com2002.models.Doctor;
 import com2002.models.HealthPlan;
@@ -53,10 +56,12 @@ public class ModelsTests {
 	@Before
 	public void clearTables() {
 		try {
+			DBQueries.execUpdate("DELETE FROM Appointments");
 			DBQueries.execUpdate("DELETE FROM Employees");
 			DBQueries.execUpdate("DELETE FROM PatientHealthPlan");
 			DBQueries.execUpdate("DELETE FROM Patients");
 			DBQueries.execUpdate("DELETE FROM Address");
+			DBQueries.execUpdate("DELETE FROM AppointmentTypes");
 			DBQueries.execUpdate("DELETE FROM HealthPlans");
 
 		} catch (SQLException e) {
@@ -133,6 +138,72 @@ public class ModelsTests {
 			fail("Exception thrown: " + e.getMessage());
 		}
 	}
+	
+	// tests constructor for creating new appointment
+	@Test
+	public void appointmentConstructNew() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			assertTrue("Start time set to " + aptmnt.getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
+					aptmnt.getStartTime().toString().equals("2017-11-13 11:10:00.0"));
+			assertTrue("End time set to " + aptmnt.getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
+					aptmnt.getEndTime().toString().equals("2017-11-13 11:30:00.0"));
+			assertTrue("Username set to " + aptmnt.getUsername() + ", should be dentist", 
+					aptmnt.getUsername().equals("dentist"));
+			assertTrue("PatientID set to " + aptmnt.getPatientID() + ", should be 1", 
+					aptmnt.getPatientID() == 1);
+			assertTrue("Notes set to " + aptmnt.getNotes() + ", should be Notes", 
+					aptmnt.getNotes().equals("Notes"));
+			assertTrue("Appointment type set to " + aptmnt.getAppointmentType() + ", should be Checkup", 
+					aptmnt.getAppointmentType().equals("Checkup"));
+			assertTrue("PatientID set to " + aptmnt.getCurrentAppointment() + ", should be 1", 
+					aptmnt.getCurrentAppointment() == 1);
+			assertTrue("PatientID set to " + aptmnt.getTotalAppointments() + ", should be 1", 
+					aptmnt.getTotalAppointments() == 1);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+		}
+		
+		// tests constructor for existing appointment
+		@Test
+		public void appointmentConstructExisting() {
+			try {
+				DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+				DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+				Patient nur = new Patient("Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+				Staff dentist = new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+				DBQueries.execUpdate("INSERT INTO Appointments VALUES('2017-11-13 11:10:00.0', "
+						+ "'2017-11-13 11:30:00.0', 'dentist', 'Checkup', 1, 'Notes', 1, 1)");
+				Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), "dentist");
+				assertTrue("Start time set to " + aptmnt.getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
+						aptmnt.getStartTime().toString().equals("2017-11-13 11:10:00.0"));
+				assertTrue("End time set to " + aptmnt.getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
+						aptmnt.getEndTime().toString().equals("2017-11-13 11:30:00.0"));
+				assertTrue("Username set to " + aptmnt.getUsername() + ", should be dentist", 
+						aptmnt.getUsername().equals("dentist"));
+				assertTrue("PatientID set to " + aptmnt.getPatientID() + ", should be 1", 
+						aptmnt.getPatientID() == 1);
+				assertTrue("Notes set to " + aptmnt.getNotes() + ", should be Notes", 
+						aptmnt.getNotes().equals("Notes"));
+				assertTrue("Appointment type set to " + aptmnt.getAppointmentType() + ", should be Checkup", 
+						aptmnt.getAppointmentType().equals("Checkup"));
+				assertTrue("PatientID set to " + aptmnt.getCurrentAppointment() + ", should be 1", 
+						aptmnt.getCurrentAppointment() == 1);
+				assertTrue("PatientID set to " + aptmnt.getTotalAppointments() + ", should be 1", 
+						aptmnt.getTotalAppointments() == 1);
+	
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+		}
 	
 	// tests constructors for creating new type of address member
 	@Test
