@@ -39,6 +39,22 @@ public class Schedule {
 		return appointments;
 	}
 	
+	@SuppressWarnings("deprecation")
+	public static ArrayList<Appointment> getAppointmentsByDoctorAndDay(Doctor doctor, Timestamp day) throws Exception {
+		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
+		Connection conn = Database.getConnection();
+		String username = doctor.getUsername();
+		Timestamp startOfDay = new Timestamp(day.getYear(), day.getMonth(), day.getDay(), 0, 0, 0, 0);
+		Timestamp endOfDay = new Timestamp(day.getYear(), day.getMonth(), day.getDay() + 1, 0, 0, 0, 0);
+		ResultSet rs = execQuery("SELECT * FROM Appointments WHERE Username = '" + username + 
+				"' and StartDate >= '" + startOfDay.toString() + "' and StartDate < '" + endOfDay + "'", conn);
+		while (rs.next()) {
+			Timestamp startDate = rs.getTimestamp("StartDate");
+			appointments.add(new Appointment(startDate, username));
+		}
+		return appointments;
+	}
+	
 	public static ResultSet[] getAppointmentsByPatient(int patID) {
 		ResultSet[] schedule = new ResultSet[1000];
 		int count = 0;

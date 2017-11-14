@@ -2,13 +2,14 @@ package com2002.views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -44,7 +45,11 @@ public class DoctorView implements Screen {
 	public DoctorView(DisplayFrame frame, Doctor doctor) throws Exception {
 		this.frame = frame;
 		this.doctor = doctor;
-		this.appointments = Schedule.getAppointmentsByDoctor(this.doctor);
+		//Today
+		Calendar calendar = Calendar.getInstance();
+		Date now = calendar.getTime();
+		Timestamp today = new Timestamp(now.getTime());
+		this.appointments = Schedule.getAppointmentsByDoctorAndDay(this.doctor, today); //Initially only for day 1
 		initializeScreen();
 	}
 

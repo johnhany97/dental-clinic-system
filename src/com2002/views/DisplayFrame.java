@@ -15,6 +15,7 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class DisplayFrame extends JFrame {
 	
 	  /** Defines how many cells to divide width of screen by **/
