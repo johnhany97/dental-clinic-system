@@ -10,6 +10,9 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 import com2002.utils.Database;
 
+/**
+ * The class which handles the usage of a patients subscribed health plan
+ */
 public class Usage {
 	
 	private int patientID;
@@ -110,7 +113,7 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setHealthPlanName(String healthPlanName) throws CommunicationsException, SQLException  {
+	public void setHealthPlanName(String healthPlanName) throws CommunicationsException, SQLException  {
 		DBQueries.execUpdate("UPDATE PatientHealthPlan SET HealthPlanName = '" + healthPlanName + "'"
 			+ " WHERE patientID = " + this.patientID);
 		this.healthPlanName = healthPlanName;
@@ -130,7 +133,7 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setDateJoined(LocalDate dateJoined) throws CommunicationsException, SQLException {
+	public void setDateJoined(LocalDate dateJoined) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE PatientHealthPlan SET DateJoined = '" + dateJoined.toString() + "'"
 			+ " WHERE patientID = " + this.patientID);
 		this.dateJoined = dateJoined;
@@ -150,7 +153,7 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setCheckUpUsed(int checkUpUsed) throws CommunicationsException, SQLException {
+	public void setCheckUpUsed(int checkUpUsed) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed
 			+ " WHERE patientID = " + this.patientID);
 		this.checkUpUsed = checkUpUsed;
@@ -170,7 +173,7 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setHygieneUsed(int hygieneUsed) throws CommunicationsException, SQLException {
+	public void setHygieneUsed(int hygieneUsed) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed
 			+ " WHERE patientID = " + this.patientID);
 		this.hygieneUsed = hygieneUsed;
@@ -191,7 +194,7 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setRepairUsed(int repairUsed) throws CommunicationsException, SQLException{
+	public void setRepairUsed(int repairUsed) throws CommunicationsException, SQLException{
 		DBQueries.execUpdate("UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed
 			+ " WHERE patientID = " + this.patientID);
 		this.repairUsed = repairUsed;
@@ -253,8 +256,8 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	 protected void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
-		if(!dbHasPatientID(patientID)){
+	 public void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+		if(dbHasPatientID(patientID)){
 			this.healthPlanName = null;
 			this.dateJoined = null;
 			this.checkUpUsed = 0;
@@ -264,28 +267,6 @@ public class Usage {
 		} else {
 			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " is not subsrcribed anyway.");
 		}
-	}
-	
-	public static void main(String[] args) {
-		//LocalDate dt = LocalDate.of(2016,11, 06);
-		//Usage patient1  = new Usage(1, "NHS free plan");
-		//Usage patient2 = new Usage(2, "The oral health plan");
-		//Usage patientTest = new Usage(1);
-		
-		//patient2.setHealthPlanName("The dental health plan");
-		//patient2.setCheckUpUsed(2);
-		//patient2.setHygieneUsed(2);
-		//patient2.setRepairUsed(2);
-		//patient2.setDateJoined(dt);
-		//patient2.resetHealthPlan();
-		//patient2.incrementCheckUp();
-		//patient2.incrementHygiene();
-		//patient2.incrementRepair();
-
-		//System.out.println(patient1.getPatientID() + patient1.getHealthPlanName() + patient1.getCheckUpUsed() + patient1.getHygieneUsed() + patient1.getRepairUsed() + patient1.getDateJoined());
-		//System.out.println(patient2.getPatientID() + patient2.getHealthPlanName() + patient2.getCheckUpUsed() + patient2.getHygieneUsed() + patient2.getRepairUsed() + patient2.getDateJoined());
-		//System.out.println(patientTest.getPatientID() + patientTest.getHealthPlanName() + patientTest.getCheckUpUsed() + patientTest.getHygieneUsed() + patientTest.getRepairUsed() + patientTest.getDateJoined());
-		
 	}
 }
 

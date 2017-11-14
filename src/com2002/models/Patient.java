@@ -9,7 +9,9 @@ import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import com2002.utils.Database;
-
+/**
+ * The class which handles the registration of a patient 
+ */
 public class Patient {
 	
 	private Usage usage;
@@ -140,7 +142,7 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 * @throws MySQLIntegrityConstraintViolationException if patientID already exists
 	 */
-	protected void setPatientID(int patientID) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+	public void setPatientID(int patientID) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		DBQueries.execUpdate("UPDATE Patients SET PatientID = '" + patientID + "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		this.patientID = patientID;
 	}
@@ -159,7 +161,7 @@ public class Patient {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setFirstName(String firstName) throws CommunicationsException, SQLException { 
+	public void setFirstName(String firstName) throws CommunicationsException, SQLException { 
 		DBQueries.execUpdate("UPDATE Patients SET FirstName = '" + firstName + "' WHERE FirstName = '" + this.firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		this.firstName = firstName;
 	}
@@ -178,7 +180,7 @@ public class Patient {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setLastName(String lastName) throws CommunicationsException, SQLException{
+	public void setLastName(String lastName) throws CommunicationsException, SQLException{
 		DBQueries.execUpdate("UPDATE Patients SET LastName = '" + lastName + "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		this.lastName = lastName;
 	}
@@ -197,7 +199,7 @@ public class Patient {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setDateOfBirth(LocalDate dateOfBirth) throws CommunicationsException, SQLException {
+	public void setDateOfBirth(LocalDate dateOfBirth) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE Patients SET DateOfBirth = '" + dateOfBirth + "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		this.dateOfBirth = dateOfBirth;
 	}
@@ -216,7 +218,7 @@ public class Patient {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setPhoneNumber(String phoneNumber) throws CommunicationsException, SQLException{
+	public void setPhoneNumber(String phoneNumber) throws CommunicationsException, SQLException{
 		DBQueries.execUpdate("UPDATE Patients SET PhoneNumber = '" + phoneNumber + "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
 		this.phoneNumber = phoneNumber;
 	}
@@ -233,7 +235,7 @@ public class Patient {
 	 * Updates the House Number of a patient to a given value/name.
 	 * @param houseNumber The new house number of a patient.
 	 */
-	protected void setHouseNumber(String houseNumber) throws CommunicationsException, SQLException {
+	public void setHouseNumber(String houseNumber) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE Patients SET HouseNumber = '" + houseNumber + "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + this.houseNumber + "' AND Postcode = '" + postcode +"'");
 		this.houseNumber = houseNumber;
 	}
@@ -252,9 +254,17 @@ public class Patient {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void setPostcode(String postcode) throws CommunicationsException, SQLException {
+	public void setPostcode(String postcode) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE Patients SET Postcode = '" + postcode + "' WHERE FirstName = '" + firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + this.postcode +"'");
 		this.postcode = postcode;
+	}
+	
+	/**
+	 * Returns a Date of Birth of a particular patient.
+	 * @return dateOfBirth The date of birth of a patient.
+	 */
+	public Usage getUsage(){
+		return this.usage;
 	}
 	
 	/**
@@ -301,6 +311,7 @@ public class Patient {
 	public void unsubscribePatient() throws CommunicationsException, SQLException {
 		if(dbHasPatientID(patientID)){
 			this.usage.unsubscribePatient();
+			this.usage = null;
 		}
 	}
 	
@@ -347,5 +358,4 @@ public class Patient {
 			this.usage.incrementRepair();
 		}
 	}
-	
 }

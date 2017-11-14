@@ -10,7 +10,9 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 import com2002.models.DBQueries;
 import com2002.utils.Database;
 
-
+/**
+ * The class which handles Health plans of the clinic
+ */
 public class HealthPlan {
 
 	private String name;
