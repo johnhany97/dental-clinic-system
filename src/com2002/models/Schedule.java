@@ -5,7 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -40,14 +42,21 @@ public class Schedule {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static ArrayList<Appointment> getAppointmentsByDoctorAndDay(Doctor doctor, Timestamp day) throws Exception {
+	public static ArrayList<Appointment> getAppointmentsByDoctorAndDay(Doctor doctor, Date date) throws Exception {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
 		String username = doctor.getUsername();
-		Timestamp startOfDay = new Timestamp(day.getYear(), day.getMonth(), day.getDay(), 0, 0, 0, 0);
-		Timestamp endOfDay = new Timestamp(day.getYear(), day.getMonth(), day.getDay() + 1, 0, 0, 0, 0);
+		Date datePlusOne = new Date(date.getTime() + (1000 * 60 * 60 * 24));
+		date.setHours(0);
+		date.setMinutes(0);
+		date.setSeconds(0);
+		datePlusOne.setHours(0);
+		datePlusOne.setMinutes(0);
+		datePlusOne.setSeconds(0);
+		Timestamp s1 = new Timestamp(date.getTime());
+		Timestamp s2 = new Timestamp(datePlusOne.getTime());
 		ResultSet rs = execQuery("SELECT * FROM Appointments WHERE Username = '" + username + 
-				"' and StartDate >= '" + startOfDay.toString() + "' and StartDate < '" + endOfDay + "'", conn);
+				"' and StartDate >= '" + s1.toString() + "' and StartDate < '" + s2.toString() + "'", conn);
 		while (rs.next()) {
 			Timestamp startDate = rs.getTimestamp("StartDate");
 			appointments.add(new Appointment(startDate, username));

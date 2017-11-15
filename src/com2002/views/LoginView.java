@@ -109,7 +109,6 @@ public class LoginView implements Screen {
 						frame.setDisplayedPanel(docView.getPanel());
 					}
 				} catch (SQLException e) {
-					e.printStackTrace();
 					JOptionPane.showMessageDialog(frame,
 						    "Database error. Check your internet connnection",
 						    "Error",

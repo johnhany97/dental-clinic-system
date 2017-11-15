@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -48,8 +50,7 @@ public class DoctorView implements Screen {
 		//Today
 		Calendar calendar = Calendar.getInstance();
 		Date now = calendar.getTime();
-		Timestamp today = new Timestamp(now.getTime());
-		this.appointments = Schedule.getAppointmentsByDoctorAndDay(this.doctor, today); //Initially only for day 1
+		this.appointments = Schedule.getAppointmentsByDoctorAndDay(this.doctor, now); //Initially only for day 1
 		initializeScreen();
 	}
 
@@ -67,7 +68,7 @@ public class DoctorView implements Screen {
 		//AppointmentsPanel
 		this.appointmentsPanel = new JPanel();
 		this.appointmentsPanel.setLayout(new BoxLayout(this.appointmentsPanel, BoxLayout.Y_AXIS));
-		//We want to be able to scroll through today's appointmnets
+		//We want to be able to scroll through today's appointments
 		this.appointmentsScrollPane = new JScrollPane(this.appointmentsPanel);
 		this.appointmentsScrollPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20), BorderFactory.createLineBorder(Color.black)));
 		//add it to the main panel
@@ -105,17 +106,12 @@ public class DoctorView implements Screen {
 			String appointmentType = appointment.getAppointmentType();
 			Timestamp startTimeTs = appointment.getStartTime();
 			String startTime = String.valueOf(startTimeTs.getHours()) + ":" + String.valueOf(startTimeTs.getMinutes());
-//			String startTime = "Time";
 			Timestamp endTimeTs = appointment.getEndTime();
 			String endTime = String.valueOf(endTimeTs.getHours()) + ":" + String.valueOf(endTimeTs.getMinutes());
-//			String endTime = "Time2";
 			String appointmentTime = startTime + " - " + endTime;
-			//set props
 			//layout
 			this.appointmentCards.get(index).setLayout(new BoxLayout(this.appointmentCards.get(index), BoxLayout.Y_AXIS));
 			this.appointmentCards.get(index).setMaximumSize(new Dimension(Integer.MAX_VALUE, frame.getFrameHeightStep() / 2));
-			//background
-//			this.appointmentCards.get(index).setBackground(Color.BLACK);
 			// top content
 			JPanel topPanel = new JPanel();
 			topPanel.setLayout(new FlowLayout());
@@ -146,7 +142,14 @@ public class DoctorView implements Screen {
 					DisplayFrame.FONT_SIZE / 2));
 			bottomPanel.add(startAppointment);
 			//event listener for the button
-			
+			startAppointment.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					DisplayFrame newFrame = new DisplayFrame();
+					AppointmentView appointmentView = new AppointmentView(newFrame, appointment);
+					newFrame.setDisplayedPanel(appointmentView.getPanel());
+				}
+			});
 			this.appointmentCards.get(index).add(bottomPanel);
 			//add panel to main panel
 			this.appointmentsPanel.add(this.appointmentCards.get(index));
@@ -156,6 +159,7 @@ public class DoctorView implements Screen {
 			this.appointmentsPanel.add(separator);
 			
 		} catch (SQLException e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,
 				    "Error connecting to the database. Check internet connection.",
 				    "Error",
