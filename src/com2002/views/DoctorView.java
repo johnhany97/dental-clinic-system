@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -77,7 +78,6 @@ public class DoctorView implements Screen {
 		for (int i = 0; i < this.appointments.size(); i++) {
 			addAppointment(this.appointments.get(i));
 		}
-		//for each appointment, add event listener to take you to the appointmentsView
 		//Two buttons in the bottom
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout());
@@ -146,6 +146,7 @@ public class DoctorView implements Screen {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					DisplayFrame newFrame = new DisplayFrame();
+					newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					AppointmentView appointmentView = new AppointmentView(newFrame, appointment);
 					newFrame.setDisplayedPanel(appointmentView.getPanel());
 				}
@@ -159,7 +160,6 @@ public class DoctorView implements Screen {
 			this.appointmentsPanel.add(separator);
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,
 				    "Error connecting to the database. Check internet connection.",
 				    "Error",

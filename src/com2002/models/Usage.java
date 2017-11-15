@@ -40,7 +40,7 @@ public class Usage {
 				this.checkUpUsed = rs.getInt("CheckUpUsed");
 				this.hygieneUsed = rs.getInt("HygieneUsed");
 				this.repairUsed = rs.getInt("RepairUsed");
-				dateJoined = rs.getDate("DateJoined").toLocalDate();	
+				this.dateJoined = rs.getDate("DateJoined").toLocalDate();	
 			}	
 		} finally {
 			conn.close();

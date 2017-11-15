@@ -63,22 +63,46 @@ public class Schedule {
 		}
 		return appointments;
 	}
-	
-	public static ResultSet[] getAppointmentsByPatient(int patID) {
-		ResultSet[] schedule = new ResultSet[1000];
-		int count = 0;
+	public static ArrayList<Appointment> getAppointmentsByPatient(int patientID) throws Exception {
+		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
+		Connection conn = Database.getConnection();
+		int patID = patientID;
 		try {
-			Connection conn = Database.getConnection();
-			ResultSet rs = execQuery("SELECT * FROM Appointments WHERE PatientID = " + patID + "", conn);
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE PatientID = '" + patID + "'", conn);
 			while(rs.next()) {
-				schedule[count] = rs;
-				count++;
+				Timestamp startDate = rs.getTimestamp("StartDate");
+				String username = rs.getString("Username");
+				appointments.add(new Appointment(startDate, username));
 			}
 			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} finally {
+			conn.close();
 		}
-		return schedule;
+		return appointments;
+	}
+	public static ArrayList<Appointment> getDoctorAppointmentsByPatient(String username, Patient patient) throws Exception {
+		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
+		Connection conn = Database.getConnection();
+		String patientId = String.valueOf(patient.getPatientID());
+		ResultSet rs = execQuery("SELECT * FROM Appointments WHERE PatientID = '" + patientId + "' and Username = '" + username + "'", conn);
+		while (rs.next()) {
+			Timestamp startDate = rs.getTimestamp("StartDate");
+			appointments.add(new Appointment(startDate, username));
+		}
+		return appointments;
+	}
+	
+	public static ArrayList<Appointment> getAppointmentsByPatient(Patient patient) throws Exception {
+		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
+		Connection conn = Database.getConnection();
+		String patientId = String.valueOf(patient.getPatientID());
+		ResultSet rs = execQuery("SELECT * FROM Appointments WHERE PatientID = '" + patientId + "'", conn);
+		while (rs.next()) {
+			Timestamp startDate = rs.getTimestamp("StartDate");
+			String username = rs.getString("Username");
+			appointments.add(new Appointment(startDate, username));
+		}
+		return appointments;
 	}
 	
 	public static void setAppointment(Timestamp start, Timestamp end, String userN, int patID, String nts, 
