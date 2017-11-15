@@ -80,6 +80,7 @@ public class Schedule {
 		}
 		return appointments;
 	}
+
 	public static ArrayList<Appointment> getDoctorAppointmentsByPatient(String username, Patient patient) throws Exception {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
@@ -87,19 +88,6 @@ public class Schedule {
 		ResultSet rs = execQuery("SELECT * FROM Appointments WHERE PatientID = '" + patientId + "' and Username = '" + username + "'", conn);
 		while (rs.next()) {
 			Timestamp startDate = rs.getTimestamp("StartDate");
-			appointments.add(new Appointment(startDate, username));
-		}
-		return appointments;
-	}
-	
-	public static ArrayList<Appointment> getAppointmentsByPatient(Patient patient) throws Exception {
-		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
-		Connection conn = Database.getConnection();
-		String patientId = String.valueOf(patient.getPatientID());
-		ResultSet rs = execQuery("SELECT * FROM Appointments WHERE PatientID = '" + patientId + "'", conn);
-		while (rs.next()) {
-			Timestamp startDate = rs.getTimestamp("StartDate");
-			String username = rs.getString("Username");
 			appointments.add(new Appointment(startDate, username));
 		}
 		return appointments;
