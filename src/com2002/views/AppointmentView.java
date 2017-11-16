@@ -53,6 +53,8 @@ public class AppointmentView implements Screen {
 	private ArrayList<Appointment> previousAppointments;
 	private JTextArea notesTextArea;
 	private JPanel activePreviousAppointment;
+	private JScrollPane activePreviousAppointmentScrollPane;
+	private List<JLabel> activePreviousAppointmentLabels;
 
 	public AppointmentView(DisplayFrame frame, Appointment appointment) {
 		try {
@@ -78,6 +80,7 @@ public class AppointmentView implements Screen {
 				    "Error",
 				    JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,
 				    "Error fetching previous appointments.",
 				    "Error",
@@ -207,7 +210,13 @@ public class AppointmentView implements Screen {
 				DisplayFrame.FONT_SIZE));
 		this.rightPanel.add(rightPanelLabel);
 		//top section with the selected appointment's details
-		
+		this.activePreviousAppointment = new JPanel();
+		this.activePreviousAppointment.setLayout(new BoxLayout(this.activePreviousAppointment, BoxLayout.Y_AXIS));
+
+		this.activePreviousAppointmentLabels = new ArrayList<JLabel>();
+		setOldAppointmentInView(this.previousAppointments.get(0));
+		this.activePreviousAppointmentScrollPane = new JScrollPane(this.activePreviousAppointment);
+		this.rightPanel.add(this.activePreviousAppointmentScrollPane);
 		//bottom section consists of list of all this patient's previous appointments if anys
 		this.appointmentsPanel = new JPanel();
 		this.appointmentsPanel.setLayout(new BoxLayout(this.appointmentsPanel, BoxLayout.Y_AXIS));
@@ -217,6 +226,7 @@ public class AppointmentView implements Screen {
 		this.appointmentCards = new ArrayList<JPanel>();
 		for (int i = 0; i < this.previousAppointments.size(); i++) {
 			addAppointment(this.previousAppointments.get(i));
+			
 		}
 		this.rightPanel.add(this.appointmentsScrollPane);
 		this.panel.add(this.rightPanel, BorderLayout.EAST);
@@ -252,16 +262,20 @@ public class AppointmentView implements Screen {
 		// bottom content
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new FlowLayout());
-		JButton startAppointment = new JButton("More details");
-		startAppointment.setFont(new Font("Sans Serif", Font.PLAIN,
+		JButton moreDetailsButton = new JButton("More details");
+		moreDetailsButton.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE / 2));
-		bottomPanel.add(startAppointment);
+		moreDetailsButton.putClientProperty("Appointment", appointment);
+		bottomPanel.add(moreDetailsButton);
 		//event listener for the button
-		startAppointment.addActionListener(new ActionListener() {
+		moreDetailsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO: action when "more details" button is pressed
-				
+				activePreviousAppointment.removeAll();
+				activePreviousAppointment.repaint();
+				Appointment apt = (Appointment) moreDetailsButton.getClientProperty("Appointment");
+				setOldAppointmentInView(apt);
+				frame.revalidate();
 			}
 		});
 		this.appointmentCards.get(index).add(bottomPanel);
@@ -271,6 +285,49 @@ public class AppointmentView implements Screen {
 		separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
 		separator.setBackground(Color.black);
 		this.appointmentsPanel.add(separator);
+	}
+	
+	private void setOldAppointmentInView(Appointment appointment) {
+		//Get details from appointments
+		String appointmentType = appointment.getAppointmentType();
+		Timestamp startTimeTs = appointment.getStartTime();
+		LocalDate startTime = startTimeTs.toLocalDateTime().toLocalDate();
+		String appointmentDay = startTime.toString();
+		String notes = appointment.getNotes();
+		//Push each one of them in the appointments
+		JLabel aptDay = new JLabel(appointmentDay);
+		JLabel aptNotes = new JLabel(notes);
+		JLabel aptType = new JLabel(appointmentType);
+		aptDay.setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE / 2));
+		aptNotes.setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE / 2));
+		aptType.setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE / 2));
+		//titles
+		JLabel dayTitle = new JLabel("Day: ");
+		JLabel notesTitle = new JLabel("Notes (if any): ");
+		JLabel typeTitle = new JLabel("Appointment Type: ");
+		dayTitle.setFont(new Font("Sans Serif", Font.BOLD,
+				DisplayFrame.FONT_SIZE / 2));
+		notesTitle.setFont(new Font("Sans Serif", Font.BOLD,
+				DisplayFrame.FONT_SIZE / 2));
+		typeTitle.setFont(new Font("Sans Serif", Font.BOLD,
+				DisplayFrame.FONT_SIZE / 2));
+		//Add them all
+		for (int i = 0; i < 6; i++) {
+			this.activePreviousAppointmentLabels.add(new JLabel());
+		}
+		this.activePreviousAppointmentLabels.set(0, dayTitle);
+		this.activePreviousAppointmentLabels.set(1, aptDay);
+		this.activePreviousAppointmentLabels.set(2, typeTitle);
+		this.activePreviousAppointmentLabels.set(3, aptType);
+		this.activePreviousAppointmentLabels.set(4, notesTitle);
+		this.activePreviousAppointmentLabels.set(5, aptNotes);
+		this.activePreviousAppointment.removeAll();
+		for (int i = 0; i < 6; i++) {
+			this.activePreviousAppointment.add(this.activePreviousAppointmentLabels.get(i));
+		}
 	}
 	
 	public JPanel getPanel() {
