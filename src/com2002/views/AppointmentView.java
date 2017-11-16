@@ -2,6 +2,7 @@ package com2002.views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -24,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -49,6 +51,8 @@ public class AppointmentView implements Screen {
 	private JScrollPane appointmentsScrollPane;
 	private List<JPanel> appointmentCards;
 	private ArrayList<Appointment> previousAppointments;
+	private JTextArea notesTextArea;
+	private JPanel activePreviousAppointment;
 
 	public AppointmentView(DisplayFrame frame, Appointment appointment) {
 		try {
@@ -59,6 +63,14 @@ public class AppointmentView implements Screen {
 			this.patient = appointment.getPatient();
 			this.usage = new Usage(this.patient.getPatientID());
 			this.previousAppointments = Schedule.getDoctorAppointmentsByPatient(this.appointment.getUsername(), this.patient);
+			//Remove this appointment from list of previous appointments
+			boolean flag = true;
+			for (int i = 0; i < this.previousAppointments.size() && flag; i++) {
+				if (this.appointment.equals(this.previousAppointments.get(i))) {
+					this.previousAppointments.remove(i);
+					flag = false;
+				}
+			}
 			initialize();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
@@ -82,7 +94,7 @@ public class AppointmentView implements Screen {
 		//Left panel consists of two sections
 		//First: patient details
 		JPanel patientDetails = new JPanel();
-		patientDetails.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+		this.leftPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 		//name
 		patientDetails.setLayout(new BoxLayout(patientDetails, BoxLayout.Y_AXIS));
 		String fullName = this.patient.getTitle() + " " + this.patient.getFirstName() + " " + this.patient.getLastName();
@@ -90,7 +102,12 @@ public class AppointmentView implements Screen {
 		patientName.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
 		patientDetails.add(patientName);
-
+	    patientDetails.add(Box.createVerticalStrut(20));
+		//appointment type
+	    JLabel appointmentType = new JLabel(this.appointment.getAppointmentType(), SwingConstants.LEFT);
+	    appointmentType.setFont(new Font("Sans Serif", Font.BOLD,
+	    		DisplayFrame.FONT_SIZE / 2));
+	    patientDetails.add(appointmentType);
 	    patientDetails.add(Box.createVerticalStrut(20));
 		//dob and age
 		String dob = this.patient.getDateOfBirth().toString();
@@ -100,7 +117,6 @@ public class AppointmentView implements Screen {
 		dateOfBirthAndAge.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE / 2));
 		patientDetails.add(dateOfBirthAndAge);
-
 	    patientDetails.add(Box.createVerticalStrut(20));
 		//health plan
 		JPanel hpPanel = new JPanel();
@@ -153,15 +169,38 @@ public class AppointmentView implements Screen {
 				DisplayFrame.FONT_SIZE / 2));
 	    hpPanel.add(hygieneLabel);
 	    patientDetails.add(hpPanel);
-		//Second: this appointment's finishing section
-		
-		//add panels to each other
 		this.leftPanel.add(patientDetails);
+	    this.leftPanel.add(Box.createVerticalStrut(20));
+		this.leftPanel.add(new JSeparator());
+	    this.leftPanel.add(Box.createVerticalStrut(20));
+		//Second: this appointment's finishing section
+		//treatment checkboxes
+	    //notes text area
+		JLabel notesLabel = new JLabel("Notes:");
+		notesLabel.setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE / 2));
+		this.leftPanel.add(notesLabel);
+	    this.notesTextArea = new JTextArea();
+	    this.notesTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+	    this.leftPanel.add(this.notesTextArea);
+	    this.leftPanel.add(Box.createVerticalStrut(20));
+	    //button to finish appointment
+	    JButton finishButton = new JButton("Save appointment");
+	    finishButton.setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE / 2));
+	    finishButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO: Behavior on submit
+			}
+	    });
+		this.leftPanel.add(finishButton);
+		//add panels to each other
 		this.leftPanel.setMaximumSize(new Dimension(frame.getWidth() / 2, Integer.MAX_VALUE));
 		this.panel.add(this.leftPanel, BorderLayout.CENTER);
 		//right panel
 		this.rightPanel = new JPanel();
 		this.rightPanel.setLayout(new BoxLayout(this.rightPanel, BoxLayout.Y_AXIS));
+		this.rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 		//label
 		JLabel rightPanelLabel = new JLabel("Previous Appointments", SwingConstants.LEFT);
 		rightPanelLabel.setFont(new Font("Sans Serif", Font.BOLD,
@@ -190,7 +229,8 @@ public class AppointmentView implements Screen {
 		int index = this.appointmentCards.size() - 1;
 		String appointmentType = appointment.getAppointmentType();
 		Timestamp startTimeTs = appointment.getStartTime();
-		String appointmentDay = String.valueOf(startTimeTs.getDay()) + "/" + String.valueOf(startTimeTs.getMonth()) + "/" + String.valueOf(startTimeTs.getYear());
+		LocalDate startTime = startTimeTs.toLocalDateTime().toLocalDate();
+		String appointmentDay = startTime.toString();
 		//layout
 		this.appointmentCards.get(index).setLayout(new BoxLayout(this.appointmentCards.get(index), BoxLayout.Y_AXIS));
 		this.appointmentCards.get(index).setMaximumSize(new Dimension(Integer.MAX_VALUE, frame.getFrameHeightStep() / 2));
