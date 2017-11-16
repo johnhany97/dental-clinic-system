@@ -184,8 +184,8 @@ public class AppointmentView implements Screen {
 				DisplayFrame.FONT_SIZE / 2));
 		this.leftPanel.add(notesLabel);
 	    this.notesTextArea = new JTextArea();
-	    this.notesTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-	    this.leftPanel.add(this.notesTextArea);
+	    JScrollPane notesTextAreaScrollPane = new JScrollPane(this.notesTextArea);
+	    this.leftPanel.add(notesTextAreaScrollPane);
 	    this.leftPanel.add(Box.createVerticalStrut(20));
 	    //button to finish appointment
 	    JButton finishButton = new JButton("Save appointment");
