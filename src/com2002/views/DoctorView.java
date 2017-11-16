@@ -102,7 +102,7 @@ public class DoctorView implements Screen {
 		Patient patient;
 		try {
 			patient = appointment.getPatient();
-			String patientName = patient.getFirstName() + patient.getLastName();
+			String patientName = patient.getTitle() + " " + patient.getFirstName() + " " + patient.getLastName();
 			String appointmentType = appointment.getAppointmentType();
 			Timestamp startTimeTs = appointment.getStartTime();
 			String startTime = String.valueOf(startTimeTs.getHours()) + ":" + String.valueOf(startTimeTs.getMinutes());
@@ -115,17 +115,24 @@ public class DoctorView implements Screen {
 			// top content
 			JPanel topPanel = new JPanel();
 			topPanel.setLayout(new FlowLayout());
-			JLabel patientNameLabel = new JLabel(patientName);
-			patientNameLabel.setFont(new Font("Sans Serif", Font.PLAIN,
-					DisplayFrame.FONT_SIZE / 2));
-			topPanel.add(patientNameLabel);
-			topPanel.add(Box.createHorizontalStrut(5));
-			topPanel.add(new JSeparator(SwingConstants.VERTICAL));
-			topPanel.add(Box.createHorizontalStrut(5));
-			JLabel appointmentTypeLabel = new JLabel(appointmentType);
-			appointmentTypeLabel.setFont(new Font("Sans Serif", Font.PLAIN,
-					DisplayFrame.FONT_SIZE / 2));
-			topPanel.add(appointmentTypeLabel);
+			if (appointment.getAppointmentType().equals("Empty")) {
+				JLabel emptyLabel = new JLabel("Empty Appointment");
+				emptyLabel.setFont(new Font("Sans Serif", Font.PLAIN, 
+						DisplayFrame.FONT_SIZE / 2));
+				topPanel.add(emptyLabel);
+			} else {
+				JLabel patientNameLabel = new JLabel(patientName);
+				patientNameLabel.setFont(new Font("Sans Serif", Font.PLAIN,
+						DisplayFrame.FONT_SIZE / 2));
+				topPanel.add(patientNameLabel);
+				topPanel.add(Box.createHorizontalStrut(5));
+				topPanel.add(new JSeparator(SwingConstants.VERTICAL));
+				topPanel.add(Box.createHorizontalStrut(5));
+				JLabel appointmentTypeLabel = new JLabel(appointmentType);
+				appointmentTypeLabel.setFont(new Font("Sans Serif", Font.PLAIN,
+						DisplayFrame.FONT_SIZE / 2));
+				topPanel.add(appointmentTypeLabel);
+			}
 			topPanel.add(Box.createHorizontalStrut(5));
 			topPanel.add(new JSeparator(SwingConstants.VERTICAL));
 			topPanel.add(Box.createHorizontalStrut(5));
@@ -151,6 +158,9 @@ public class DoctorView implements Screen {
 					newFrame.setDisplayedPanel(appointmentView.getPanel());
 				}
 			});
+			if (appointment.getAppointmentType().equals("Empty")) {
+				startAppointment.setEnabled(false);
+			}
 			this.appointmentCards.get(index).add(bottomPanel);
 			//add panel to main panel
 			this.appointmentsPanel.add(this.appointmentCards.get(index));

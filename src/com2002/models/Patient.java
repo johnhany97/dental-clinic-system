@@ -16,6 +16,7 @@ public class Patient {
 	
 	private Usage usage;
 	private int patientID;
+	private String title;
 	private String firstName;
 	private String lastName;
 	private LocalDate dateOfBirth;
@@ -25,6 +26,7 @@ public class Patient {
 	
 	/**
 	 * This constructor should be called when creating a new patient
+	 * @param title Title of the patient.
 	 * @param firstName First Name of the patient.
 	 * @param lastName Last Name of the patient.
 	 * @param dateOfBirth Date of Birth of the patient.
@@ -36,7 +38,7 @@ public class Patient {
 	 * @throws MySQLIntegrityConstraintViolationException if patient already exists
 	 */
 	
-	public Patient(String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String houseNumber, String postcode) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
+	public Patient(String title, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String houseNumber, String postcode) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
 		Connection conn = Database.getConnection();
 		try {
 			ResultSet rs = DBQueries.execQuery("SELECT MAX(PatientID) FROM Patients", conn);
@@ -45,6 +47,7 @@ public class Patient {
 			} else if(rs.next()) {
 				patientID = rs.getInt(1) + 1;
 			}
+			this.title = title;
 			this.firstName = firstName;
 			this.lastName = lastName; 
 			this.dateOfBirth = dateOfBirth;
@@ -52,7 +55,7 @@ public class Patient {
 			this.houseNumber = houseNumber;
 			this.postcode = postcode;
 			if(!dbHasPatient(firstName, houseNumber, postcode)){
-				DBQueries.execUpdate("INSERT INTO Patients Values('" + patientID + "', '" + firstName + "', '" + lastName + "', '" 
+				DBQueries.execUpdate("INSERT INTO Patients Values('" + title + "', '" + patientID + "', '" + firstName + "', '" + lastName + "', '" 
 					+ dateOfBirth + "', '" + phoneNumber + "', '" + houseNumber + "', '" + postcode + "')");
 			}else {
 				throw new MySQLIntegrityConstraintViolationException("A patient with first name " + firstName + " house number " + houseNumber + " and postcode " + postcode +" already exists.");
@@ -77,6 +80,7 @@ public class Patient {
 				+ firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode + "'", conn);
 			if(rs.next()) {
 				this.patientID = rs.getInt("PatientID");
+				this.title = rs.getString("Title");
 				this.firstName = rs.getString("FirstName");
 				this.lastName = rs.getString("LastName");
 				this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
@@ -101,6 +105,7 @@ public class Patient {
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients WHERE PatientID = '" + patientId + "'", conn);
 			if (rs.next()) {
 				this.patientID = rs.getInt("PatientID");
+				this.title = rs.getString("Title");
 				this.firstName = rs.getString("FirstName");
 				this.lastName = rs.getString("LastName");
 				this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
@@ -357,5 +362,9 @@ public class Patient {
 		if(dbHasPatientID(patientID)){
 			this.usage.incrementRepair();
 		}
+	}
+	
+	public String getTitle() {
+		return this.title;
 	}
 }

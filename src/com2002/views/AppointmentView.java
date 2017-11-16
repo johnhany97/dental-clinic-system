@@ -85,7 +85,7 @@ public class AppointmentView implements Screen {
 		patientDetails.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 		//name
 		patientDetails.setLayout(new BoxLayout(patientDetails, BoxLayout.Y_AXIS));
-		String fullName = this.patient.getFirstName() + this.patient.getLastName();
+		String fullName = this.patient.getTitle() + " " + this.patient.getFirstName() + " " + this.patient.getLastName();
 		JLabel patientName = new JLabel(fullName, SwingConstants.LEFT);
 		patientName.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
@@ -162,7 +162,13 @@ public class AppointmentView implements Screen {
 		//right panel
 		this.rightPanel = new JPanel();
 		this.rightPanel.setLayout(new BoxLayout(this.rightPanel, BoxLayout.Y_AXIS));
+		//label
+		JLabel rightPanelLabel = new JLabel("Previous Appointments", SwingConstants.LEFT);
+		rightPanelLabel.setFont(new Font("Sans Serif", Font.BOLD,
+				DisplayFrame.FONT_SIZE));
+		this.rightPanel.add(rightPanelLabel);
 		//top section with the selected appointment's details
+		
 		//bottom section consists of list of all this patient's previous appointments if anys
 		this.appointmentsPanel = new JPanel();
 		this.appointmentsPanel.setLayout(new BoxLayout(this.appointmentsPanel, BoxLayout.Y_AXIS));
@@ -215,6 +221,7 @@ public class AppointmentView implements Screen {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO: action when "more details" button is pressed
+				
 			}
 		});
 		this.appointmentCards.get(index).add(bottomPanel);
