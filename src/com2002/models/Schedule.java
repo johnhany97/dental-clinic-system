@@ -121,6 +121,22 @@ public class Schedule {
 		return appointments;
 	}
 	
+ 	public static ArrayList<Appointment> getDoctorAppointmentsByPatient(String username, Patient patient) throws Exception {
+		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
+		Connection conn = Database.getConnection();
+	    String patientId = String.valueOf(patient.getPatientID());
+	    try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE PatientID = '" + patientId + "' and Username = '" + username + "'", conn);
+			while (rs.next()) {
+				Timestamp startDate = rs.getTimestamp("StartDate");
+				appointments.add(new Appointment(startDate, username));
+			}
+	    } finally {
+	    	conn.close();
+	    }
+		return appointments;
+	}
+	
 	/**
 	 * Calls the appointment constructor to create an appointment.
 	 * @param start Timestamp of when the appointment should start.
