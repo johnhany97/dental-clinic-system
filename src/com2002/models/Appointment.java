@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -125,6 +126,14 @@ public class Appointment {
 			conn.close();
 		}
 		return cost;
+	}
+	
+	public void addTreatments(ArrayList<String> treatmentNames) throws SQLException {
+		for(int i = 0; i < treatmentNames.size(); i++) {
+			String name = treatmentNames.get(i);
+			DBQueries.execUpdate("INSERT INTO AppointmentTreatment VALUES ('" + this.startTime.toString() + "', '" 
+																			+ this.username + "', '" + name + "')");
+		}
 	}
 	
 	/**
@@ -318,5 +327,6 @@ public class Appointment {
 		Timestamp startTime2 = app.getStartTime();
 		return username2 == this.username && this.startTime.equals(startTime2);
 	}
+	
 	
 }

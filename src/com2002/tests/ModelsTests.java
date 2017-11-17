@@ -67,10 +67,6 @@ public class ModelsTests {
 			DBQueries.execUpdate("DELETE FROM Address");
 			DBQueries.execUpdate("DELETE FROM AppointmentTypes");
 			DBQueries.execUpdate("DELETE FROM HealthPlans");
-			
-			
-			
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("JUnit clear tables failed.");
