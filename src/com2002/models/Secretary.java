@@ -44,9 +44,9 @@ public class Secretary extends Staff {
 	 * @param houseNumber House Number of the patient
 	 * @param postcode Postcode of the patient 
 	 */
-	protected Patient registerPatient(String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) 
+	protected Patient registerPatient(String title, String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) 
 			throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
-		Patient patient = new Patient(firstName, lastName, dob, phoneNumber, houseNumber, postcode);
+		Patient patient = new Patient(title, firstName, lastName, dob, phoneNumber, houseNumber, postcode);
 		return patient;
 	}
 

@@ -153,6 +153,25 @@ public class Patient {
 	}
 	
 	/**
+	 * Returns a Tile of a particular patient.
+	 * @return title of a patient.
+	 */
+	public String getTitle(){
+		return this.title;
+	}
+	
+	/**
+	 * Updates the First Name of a patient to a given name.
+	 * @param title The new Title of a patient.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public void setTitle(String title) throws CommunicationsException, SQLException { 
+		DBQueries.execUpdate("UPDATE Patients SET Title = '" + title + "' WHERE FirstName = '" + this.firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode +"'");
+		this.title = title;
+	}
+	
+	/**
 	 * Returns a First Name of a particular patient.
 	 * @return firstName of a patient.
 	 */
@@ -364,7 +383,4 @@ public class Patient {
 		}
 	}
 	
-	public String getTitle() {
-		return this.title;
-	}
 }

@@ -147,7 +147,7 @@ public class ModelsTests {
 		try {
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			new Patient("Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
 			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
 			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
 					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
@@ -179,7 +179,7 @@ public class ModelsTests {
 		try {
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			Patient nur = new Patient("Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			Patient nur = new Patient("Mr","Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
 			Staff dentist = new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES('2017-11-13 11:10:00.0', "
 					+ "'2017-11-13 11:30:00.0', 'dentist', 'Checkup', 1, 'Notes', 1, 1)");
@@ -214,7 +214,7 @@ public class ModelsTests {
 		try {
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			new Patient("Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
 			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
 			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
 					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
@@ -245,7 +245,7 @@ public class ModelsTests {
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Cleaning', 60)");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			new Patient("Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
 			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
 			new Doctor("John", "Ayad", "hygienist", "password", Role.HYGIENIST);
 			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
@@ -434,7 +434,7 @@ public class ModelsTests {
 	public void patientConstructNew() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			Patient patient1 = new Patient("Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			Patient patient1 = new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
 			assertTrue("Patient name set to " + patient1.getFirstName() + ", should be Nur.", 
 				patient1.getFirstName().equals("Nur"));
 			assertTrue("Patient name set to " + patient1.getLastName() + ", should be Magid.", 
@@ -458,7 +458,7 @@ public class ModelsTests {
 	public void patientConstructExisting() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave Road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			Patient patientD = new Patient("Nur", "57", "W5 1LF");
 			assertTrue("Patient name set to " + patientD.getFirstName() + ", should be Nur.", 
 				patientD.getFirstName().equals("Nur"));
@@ -483,7 +483,7 @@ public class ModelsTests {
 	public void patientSetMethods() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			Patient patientDS = new Patient("Nur", "57", "W5 1LF");
 			patientDS.setFirstName("Arthur");
 			patientDS.setLastName("Granacher");
@@ -509,7 +509,7 @@ public class ModelsTests {
 	public void subscribePatientMethod() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
 			Patient patientDS = new Patient("Nur", "57", "W5 1LF");
 			patientDS.subscribePatient("NHS free plan");
@@ -526,7 +526,7 @@ public class ModelsTests {
 	public void unsubscribePatientMethod() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
 			Patient patientDS = new Patient("Nur", "57", "W5 1LF");
 			patientDS.subscribePatient("NHS free plan");
@@ -544,7 +544,7 @@ public class ModelsTests {
 	public void incrementalPatientMethod() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
 			Patient patientDS = new Patient("Nur", "57", "W5 1LF");
 			patientDS.subscribePatient("NHS free plan");
@@ -568,7 +568,7 @@ public class ModelsTests {
 	public void resetPatientMethod() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
 			Patient patientDS = new Patient("Nur", "57", "W5 1LF");
 			patientDS.subscribePatient("NHS free plan");
@@ -588,8 +588,8 @@ public class ModelsTests {
 		try {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (2, 'Arthur', 'Granacher', '1997-05-17', '07543867023', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (2, 'Mr', 'Arthur', 'Granacher', '1997-05-17', '07543867023', '57', 'W5 1LF')");
 			String arrayTest[][] = {{"Nur","Magid","1997-05-18","07543867024","57","W5 1LF"},{"Arthur", "Granacher", "1997-05-17","07543867023", "57", "W5 1LF"}};
 			ArrayList<Patient> patients = DBQueries.getPatientsByAddress("57", "W5 1LF");
 			for(int i = 0; i<patients.size(); i++) {
@@ -620,7 +620,7 @@ public class ModelsTests {
 	public void usageConstructExisting() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave Road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
 			Usage usage1 = new Usage(1, "NHS free plan");
 			assertTrue("Usage set to " + usage1.getPatientID() + ", should be 1.", 
@@ -646,7 +646,7 @@ public class ModelsTests {
 	public void usageConstructNew() {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave Road', 'Middlesex', 'London', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1,'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
 			Usage usageD = new Usage(1, "NHS free plan");
 			assertTrue("Usage set to " + usageD.getPatientID() + ", should be 1.", 
@@ -672,7 +672,7 @@ public class ModelsTests {
 		public void usageSetMethods() {
 			try {
 				DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-				DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+				DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 				DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
 				Usage usageDS = new Usage(1, "NHS free plan");
 				usageDS.setCheckUpUsed(1);
