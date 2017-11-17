@@ -198,7 +198,7 @@ public class AppointmentView implements Screen {
 	    });
 		this.leftPanel.add(finishButton);
 		//add panels to each other
-		this.leftPanel.setMaximumSize(new Dimension(frame.getWidth() / 2, Integer.MAX_VALUE));
+		this.leftPanel.setMaximumSize(new Dimension(frame.getWidth() / 2, frame.getHeight()));
 		this.panel.add(this.leftPanel, BorderLayout.CENTER);
 		//right panel
 		this.rightPanel = new JPanel();
@@ -216,6 +216,7 @@ public class AppointmentView implements Screen {
 		this.activePreviousAppointmentLabels = new ArrayList<JLabel>();
 		setOldAppointmentInView(this.previousAppointments.get(0));
 		this.activePreviousAppointmentScrollPane = new JScrollPane(this.activePreviousAppointment);
+		this.activePreviousAppointmentScrollPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20), BorderFactory.createLineBorder(Color.black)));
 		this.rightPanel.add(this.activePreviousAppointmentScrollPane);
 		//bottom section consists of list of all this patient's previous appointments if anys
 		this.appointmentsPanel = new JPanel();
@@ -325,6 +326,7 @@ public class AppointmentView implements Screen {
 		this.activePreviousAppointmentLabels.set(4, notesTitle);
 		this.activePreviousAppointmentLabels.set(5, aptNotes);
 		this.activePreviousAppointment.removeAll();
+		this.activePreviousAppointment.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 		for (int i = 0; i < 6; i++) {
 			this.activePreviousAppointment.add(this.activePreviousAppointmentLabels.get(i));
 		}

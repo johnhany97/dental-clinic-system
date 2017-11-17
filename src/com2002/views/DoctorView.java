@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,6 +28,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+
 import com2002.interfaces.Screen;
 import com2002.models.Appointment;
 import com2002.models.Doctor;
@@ -33,6 +37,7 @@ import com2002.models.Patient;
 import com2002.models.Schedule;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.SqlDateModel;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 public class DoctorView implements Screen {
@@ -63,7 +68,14 @@ public class DoctorView implements Screen {
 		this.screen = new JPanel();
 		this.screen.setLayout(new BorderLayout());
 		//title
-		this.title = new JLabel("Today's Appointments", SwingConstants.CENTER);
+		Calendar calendar = Calendar.getInstance();
+		Date now = calendar.getTime();
+		LocalDate localDate = now.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int year  = localDate.getYear();
+		int month = localDate.getMonthValue();
+		int day   = localDate.getDayOfMonth();
+		String dayString = "Appointments - " + String.valueOf(day) + "/" + String.valueOf(month) + "/" + String.valueOf(year);
+		this.title = new JLabel(dayString, SwingConstants.CENTER);
 		this.title.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
 		this.screen.add(this.title, BorderLayout.NORTH);
@@ -86,15 +98,54 @@ public class DoctorView implements Screen {
 		UtilDateModel model = new UtilDateModel();
 		JDatePanelImpl datePanel = new JDatePanelImpl(model);
 		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+		//set by default today
+		Date today = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(today);
+		model.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+		model.setSelected(true);
 		bottomPanel.add(datePicker);
 		this.changeDayButton = new JButton("Change day");
 		this.changeDayButton.setFont(new Font("Sans Serif", Font.PLAIN,
-				DisplayFrame.FONT_SIZE));
+				DisplayFrame.FONT_SIZE / 2));
 		//add action listener to change day button
+		this.changeDayButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					//get requested day
+					Date selectedDate = (Date) datePicker.getModel().getValue();
+					//change list of appointments
+					appointments = Schedule.getAppointmentsByDoctorAndDay(doctor, selectedDate);
+					//change title
+					LocalDate localDate = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					int year  = localDate.getYear();
+					int month = localDate.getMonthValue();
+					int day   = localDate.getDayOfMonth();
+					String dayString = String.valueOf(day) + "/" + String.valueOf(month) + "/" + String.valueOf(year);
+					title.setText("Appointments - " + dayString);
+					appointmentsPanel.removeAll();
+					appointmentsPanel.setLayout(new BoxLayout(appointmentsPanel, BoxLayout.Y_AXIS));
+					for (int i = appointmentCards.size() - 1; i >= 0; i--) {
+						appointmentCards.remove(i);
+					}
+					for  (int i = 0; i < appointments.size(); i++) {
+						addAppointment(appointments.get(i));
+					}
+					frame.revalidate();
+				} catch (CommunicationsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		bottomPanel.add(this.changeDayButton);
 		this.settingsButton = new JButton("Settings");
 		this.settingsButton.setFont(new Font("Sans Serif", Font.PLAIN,
-				DisplayFrame.FONT_SIZE));
+				DisplayFrame.FONT_SIZE / 2));
 		//add action listener to settings button
 		bottomPanel.add(this.settingsButton);
 		this.screen.add(bottomPanel, BorderLayout.SOUTH);

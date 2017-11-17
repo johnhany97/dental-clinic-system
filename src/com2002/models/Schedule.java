@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -74,18 +76,21 @@ public class Schedule {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
 		String username = doctor.getUsername();
+		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int year  = localDate.getYear();
+		int month = localDate.getMonthValue();
+		int day   = localDate.getDayOfMonth();
+		String s1 = String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day) + " 0:0:0.0";
+		
 		Date datePlusOne = new Date(date.getTime() + (1000 * 60 * 60 * 24));
-		date.setHours(0);
-		date.setMinutes(0);
-		date.setSeconds(0);
-		datePlusOne.setHours(0);
-		datePlusOne.setMinutes(0);
-		datePlusOne.setSeconds(0);
-		Timestamp s1 = new Timestamp(date.getTime());
-		Timestamp s2 = new Timestamp(datePlusOne.getTime());
+		LocalDate localDate2 = datePlusOne.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int year2  = localDate2.getYear();
+		int month2 = localDate2.getMonthValue();
+		int day2   = localDate2.getDayOfMonth();
+		String s2 = String.valueOf(year2) + "-" + String.valueOf(month2) + "-" + String.valueOf(day2) + " 0:0:0.0";
 		try {
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE Username = '" + username + 
-					"' and StartDate >= '" + s1.toString() + "' and StartDate < '" + s2.toString() + "'", conn);
+					"' and StartDate >= '" + s1 + "' and StartDate < '" + s2 + "'", conn);
 			while (rs.next()) {
 				Timestamp startDate = rs.getTimestamp("StartDate");
 				appointments.add(new Appointment(startDate, username));
