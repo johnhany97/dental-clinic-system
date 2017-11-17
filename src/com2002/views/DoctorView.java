@@ -31,6 +31,9 @@ import com2002.models.Appointment;
 import com2002.models.Doctor;
 import com2002.models.Patient;
 import com2002.models.Schedule;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 public class DoctorView implements Screen {
 
@@ -56,8 +59,6 @@ public class DoctorView implements Screen {
 	}
 
 	private void initializeScreen() {
-		frame.setFrameSize(DisplayFrame.DEFAULT_NUM, DisplayFrame.DEFAULT_NUM);
-		frame.centerFrame();
 		//Main panel
 		this.screen = new JPanel();
 		this.screen.setLayout(new BorderLayout());
@@ -79,19 +80,26 @@ public class DoctorView implements Screen {
 			addAppointment(this.appointments.get(i));
 		}
 		//Two buttons in the bottom
-		JPanel buttonsPanel = new JPanel();
-		buttonsPanel.setLayout(new FlowLayout());
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setLayout(new FlowLayout());
+		//date picker
+		UtilDateModel model = new UtilDateModel();
+		JDatePanelImpl datePanel = new JDatePanelImpl(model);
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+		bottomPanel.add(datePicker);
 		this.changeDayButton = new JButton("Change day");
 		this.changeDayButton.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
 		//add action listener to change day button
-		buttonsPanel.add(this.changeDayButton);
+		bottomPanel.add(this.changeDayButton);
 		this.settingsButton = new JButton("Settings");
 		this.settingsButton.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
 		//add action listener to settings button
-		buttonsPanel.add(this.settingsButton);
-		this.screen.add(buttonsPanel, BorderLayout.SOUTH);
+		bottomPanel.add(this.settingsButton);
+		this.screen.add(bottomPanel, BorderLayout.SOUTH);
+		frame.setFrameSize(DisplayFrame.DEFAULT_NUM, DisplayFrame.DEFAULT_NUM);
+		frame.centerFrame();
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -141,7 +149,7 @@ public class DoctorView implements Screen {
 					DisplayFrame.FONT_SIZE / 2));
 			topPanel.add(appointmentTimeLabel);
 			this.appointmentCards.get(index).add(topPanel);
-			// bottom content
+			// bottom content			
 			JPanel bottomPanel = new JPanel();
 			bottomPanel.setLayout(new FlowLayout());
 			JButton startAppointment = new JButton("Start Appointment");
