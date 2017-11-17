@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -19,6 +20,7 @@ public class Appointment {
 	private String appointmentType;
 	private int totalAppointments;
 	private int currentAppointment;
+	private boolean paid = false;
 	
 	/**
 	 * This constructor should be called with inputs which already exist in the Appointments table.
@@ -40,6 +42,10 @@ public class Appointment {
 				this.appointmentType = rs.getString("Type");
 				this.totalAppointments = rs.getInt("TotalAppointments");
 				this.currentAppointment = rs.getInt("CurrentAppointment");
+				int paidBit = rs.getInt("Paid");
+				if(paidBit == 1) {
+					this.paid = true;
+				}
 			}
 		} finally {
 			conn.close();
@@ -61,7 +67,7 @@ public class Appointment {
 					   AppointmentType treatmentName, int totalAppointments, int currentAppointments)
 							   throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + startTime.toString() + "', '" + endTime.toString() + "', '" + username + "', '" 
-						+ getAppointmentTypeString(treatmentName) + "', '" + patientID + "', '" + notes + "', '" + totalAppointments + "', '" + currentAppointments + "')");
+						+ getAppointmentTypeString(treatmentName) + "', '" + patientID + "', '" + notes + "', '" + totalAppointments + "', '" + currentAppointments + "', 0)");
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.username = username;
@@ -120,6 +126,25 @@ public class Appointment {
 			conn.close();
 		}
 		return cost;
+	}
+	
+	public void addTreatments(ArrayList<String> treatmentNames) throws SQLException {
+		for(int i = 0; i < treatmentNames.size(); i++) {
+			String name = treatmentNames.get(i);
+			DBQueries.execUpdate("INSERT INTO AppointmentTreatment VALUES ('" + this.startTime.toString() + "', '" 
+																			+ this.username + "', '" + name + "')");
+		}
+	}
+	
+	/**
+	 * Set the appointment as paid.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error
+	 */
+	public void pay() throws CommunicationsException, SQLException {
+		DBQueries.execUpdate("UPDATE Appointments SET Paid = 1 WHERE StartDate = '" 
+							+ this.startTime.toString() + "' AND Username = '" + this.username + "'");
+		paid = true;
 	}
 	
 	/**
@@ -284,13 +309,24 @@ public class Appointment {
 		return new Patient(this.patientID);
 	}
 	
+	/**
+	 * Checks if appointment has been paid for
+	 * @return true if appointment paid for
+	 */
+	public boolean isPaid() {
+		return this.paid;
+	}
+	
+	/**
+	 * Checks whether a given appointment is the same as this instance of an appointment.
+	 * @param app Appointment instance you want to check against
+	 * @return true if the appointments are the same
+	 */
 	public boolean equals(Appointment app) {
 		String username2 = app.getUsername();
 		Timestamp startTime2 = app.getStartTime();
-		if (username2 == this.username && this.startTime.equals(startTime2)) {
-			return true;
-		}
-		return false;
+		return username2 == this.username && this.startTime.equals(startTime2);
 	}
+	
 	
 }
