@@ -58,6 +58,8 @@ public class ModelsTests {
 	@Before
 	public void clearTables() {
 		try {
+			DBQueries.execUpdate("DELETE FROM AppointmentTreatment");
+			DBQueries.execUpdate("DELETE FROM Treatments");
 			DBQueries.execUpdate("DELETE FROM Appointments");
 			DBQueries.execUpdate("DELETE FROM Employees");
 			DBQueries.execUpdate("DELETE FROM PatientHealthPlan");
@@ -65,6 +67,9 @@ public class ModelsTests {
 			DBQueries.execUpdate("DELETE FROM Address");
 			DBQueries.execUpdate("DELETE FROM AppointmentTypes");
 			DBQueries.execUpdate("DELETE FROM HealthPlans");
+			
+			
+			
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -285,6 +290,65 @@ public class ModelsTests {
 			fail("Exception thrown: " + e.getMessage());
 		} finally {
 			conn.close();
+		}
+	}
+	
+	// tests cost of a remedial appointment
+	@Test
+	public void appointmentRemedialCost() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Remedial', 0)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.REMEDIAL, 1, 1);
+			DBQueries.execUpdate("INSERT INTO Treatments VALUES ('gold crown fitting', 500)");
+			DBQueries.execUpdate("INSERT INTO Treatments VALUES ('silver amalgam filling', 90)");
+			DBQueries.execUpdate("INSERT INTO AppointmentTreatment VALUES ('2017-11-13 11:10:00.0', 'dentist', 'gold crown fitting')");
+			DBQueries.execUpdate("INSERT INTO AppointmentTreatment VALUES ('2017-11-13 11:10:00.0', 'dentist', 'silver amalgam filling')");
+			assertTrue("Remedial cost set to " + aptmnt.calculateCost() + ", should be 590", 
+					aptmnt.calculateCost() == 590.0);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests cost of a cleaning appointment
+	@Test
+	public void appointmentCleaningCost() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Cleaning', 90)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CLEANING, 1, 1);
+			assertTrue("Cleaning cost set to " + aptmnt.calculateCost() + ", should be 90", 
+					aptmnt.calculateCost() == 90.0);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	
+	// tests cost of a cleaning appointment
+	@Test
+	public void appointmentCheckupCost() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 45)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			assertTrue("Appointment checkup cost set to " + aptmnt.calculateCost() + ", should be 45", 
+					aptmnt.calculateCost() == 45.0);
+		} catch(SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
 		}
 	}
 		
