@@ -26,7 +26,7 @@ public class Appointment {
 	 * @param patID The patient's ID
 	 */
 	public Appointment(Timestamp startTime, String username) throws CommunicationsException, SQLException {
-		Connection conn =  Database.getConnection();;
+		Connection conn =  Database.getConnection();
 		ResultSet rs = null;
 		try {
 			rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = '" 
@@ -76,7 +76,7 @@ public class Appointment {
 	 * Removes appointment from Appointments table and sets all instance values to null/defaults.
 	 */
 	public void removeAppointment() throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = " + startTime.toString() + " AND Username = " + username);
+		DBQueries.execUpdate("DELETE FROM Appointments WHERE StartDate = '" + startTime.toString() + "' AND Username = '" + username + "'");
 		this.startTime = null;
 		this.endTime = null;
 		this.username = null;
