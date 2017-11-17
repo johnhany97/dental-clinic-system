@@ -260,22 +260,22 @@ public class ModelsTests {
 			
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments", conn);
 			if(rs.next()) {
-				assertTrue("Start time set to " + aptmnt.getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
-							aptmnt.getStartTime().toString().equals("2017-11-13 11:10:00.0"));
-				assertTrue("End time set to " + aptmnt.getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
-							aptmnt.getEndTime().toString().equals("2017-11-13 11:30:00.0"));
-				assertTrue("Username set to " + aptmnt.getUsername() + ", should be dentist", 
-							aptmnt.getUsername().equals("dentist"));
-				assertTrue("PatientID set to " + aptmnt.getPatientID() + ", should be 1", 
-							aptmnt.getPatientID() == 1);
-				assertTrue("Notes set to " + aptmnt.getNotes() + ", should be Notes", 
-							aptmnt.getNotes().equals("Notes"));
-				assertTrue("Appointment type set to " + aptmnt.getAppointmentType() + ", should be Checkup", 
-							aptmnt.getAppointmentType().equals("Checkup"));
-				assertTrue("PatientID set to " + aptmnt.getCurrentAppointment() + ", should be 1", 
-							aptmnt.getCurrentAppointment() == 1);
-				assertTrue("PatientID set to " + aptmnt.getTotalAppointments() + ", should be 1", 
-							aptmnt.getTotalAppointments() == 1);
+				assertTrue("Start time set to " + aptmnt.getStartTime().toString() + ", should be 2017-11-13 11:20:00.0", 
+							aptmnt.getStartTime().toString().equals("2017-11-13 11:20:00.0"));
+				assertTrue("End time set to " + aptmnt.getEndTime().toString() + ", should be 2017-11-13 11:40:00.0", 
+							aptmnt.getEndTime().toString().equals("2017-11-13 11:40:00.0"));
+				assertTrue("Username set to " + aptmnt.getUsername() + ", should be hygienist", 
+							aptmnt.getUsername().equals("hygienist"));
+				assertTrue("PatientID set to " + aptmnt.getPatientID() + ", should be 2", 
+							aptmnt.getPatientID() == 2);
+				assertTrue("Notes set to " + aptmnt.getNotes() + ", should be New notes", 
+							aptmnt.getNotes().equals("New notes"));
+				assertTrue("Appointment type set to " + aptmnt.getAppointmentType() + ", should be Cleaning", 
+							aptmnt.getAppointmentType().equals("Cleaning"));
+				assertTrue("Current appointment set to " + aptmnt.getCurrentAppointment() + ", should be 2", 
+							aptmnt.getCurrentAppointment() == 2);
+				assertTrue("Total appointments set to " + aptmnt.getTotalAppointments() + ", should be 3", 
+							aptmnt.getTotalAppointments() == 3);
 			} else {
 				fail("Appointment still exists in database.");
 			}
