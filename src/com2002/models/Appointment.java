@@ -144,8 +144,8 @@ public class Appointment {
 	 * @param end The new end timestamp.
 	 */
 	public void setStartEndTime(Timestamp startTime, Timestamp endTime) throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("UPDATE Appointments SET StartDate = " + startTime.toString() + ", EndDate = " + endTime.toString() 
-					+ " WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
+		DBQueries.execUpdate("UPDATE Appointments SET StartDate = '" + startTime.toString() + "', EndDate = '" + endTime.toString() 
+					+ "' WHERE StartDate = '" + this.startTime.toString() + "' AND PatientID = " + this.patientID);
 		this.startTime = startTime;
 		this.endTime = endTime;
 	}
