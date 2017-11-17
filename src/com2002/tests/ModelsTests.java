@@ -435,6 +435,8 @@ public class ModelsTests {
 		try {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
 			Patient patient1 = new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			assertTrue("Patient title set to " + patient1.getTitle() + ", should be Mr.", 
+				patient1.getTitle().equals("Mr"));
 			assertTrue("Patient name set to " + patient1.getFirstName() + ", should be Nur.", 
 				patient1.getFirstName().equals("Nur"));
 			assertTrue("Patient name set to " + patient1.getLastName() + ", should be Magid.", 
@@ -460,6 +462,8 @@ public class ModelsTests {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave Road', 'Middlesex', 'London', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			Patient patientD = new Patient("Nur", "57", "W5 1LF");
+			assertTrue("Patient title set to " + patientD.getTitle() + ", should be Mr.", 
+				patientD.getTitle().equals("Mr"));
 			assertTrue("Patient name set to " + patientD.getFirstName() + ", should be Nur.", 
 				patientD.getFirstName().equals("Nur"));
 			assertTrue("Patient name set to " + patientD.getLastName() + ", should be Magid.", 
@@ -485,10 +489,13 @@ public class ModelsTests {
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			Patient patientDS = new Patient("Nur", "57", "W5 1LF");
+			patientDS.setTitle("Dr");
 			patientDS.setFirstName("Arthur");
 			patientDS.setLastName("Granacher");
 			patientDS.setDateOfBirth(LocalDate.of(1997, 05, 17));
 			patientDS.setPhoneNumber("07543867023");
+			assertTrue("Patient title set to " + patientDS.getTitle() + ", should be Dr.", 
+				patientDS.getTitle().equals("Dr"));
 			assertTrue("First name set to " + patientDS.getFirstName() + ", should be Arthur.", 
 				patientDS.getFirstName().equals("Arthur"));
 			assertTrue("Last name set to " + patientDS.getLastName() + ", should be Granacher.", 
@@ -589,23 +596,25 @@ public class ModelsTests {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
-			DBQueries.execUpdate("INSERT INTO Patients VALUES (2, 'Mr', 'Arthur', 'Granacher', '1997-05-17', '07543867023', '57', 'W5 1LF')");
-			String arrayTest[][] = {{"Nur","Magid","1997-05-18","07543867024","57","W5 1LF"},{"Arthur", "Granacher", "1997-05-17","07543867023", "57", "W5 1LF"}};
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (2, 'Dr', 'Arthur', 'Granacher', '1997-05-17', '07543867023', '57', 'W5 1LF')");
+			String arrayTest[][] = {{"Mr", "Nur","Magid","1997-05-18","07543867024","57","W5 1LF"},{"Dr", "Arthur", "Granacher", "1997-05-17","07543867023", "57", "W5 1LF"}};
 			ArrayList<Patient> patients = DBQueries.getPatientsByAddress("57", "W5 1LF");
 			for(int i = 0; i<patients.size(); i++) {
 				Patient patient = patients.get(i);
-				assertTrue("Patient name set to " + patient.getFirstName() + ", should be " + arrayTest[i][0], 
-					patient.getFirstName().equals(arrayTest[i][0]));
-				assertTrue("Patient name set to " + patient.getLastName() + ", should be " + arrayTest[i][1], 
-					patient.getLastName().equals(arrayTest[i][1]));
-				assertTrue("Patient set to " + patient.getDateOfBirth()+ ", should be " +arrayTest[i][2], 
-					patient.getDateOfBirth().equals(LocalDate.parse(arrayTest[i][2])));
-				assertTrue("Patient phone number set to " + patient.getPhoneNumber() + ", should be " + arrayTest[i][3], 
-					patient.getPhoneNumber().equals(arrayTest[i][3]));
-				assertTrue("Patient house number set to " + patient.getHouseNumber() + ", should be " + arrayTest[i][4], 
-					patient.getHouseNumber().equals(arrayTest[i][4]));;	
-				assertTrue("Patient phone number set to " + patient.getPostcode() + ", should be " + arrayTest[i][5], 
-					patient.getPostcode().equals(arrayTest[i][5]));
+				assertTrue("Patient title set to " + patient.getTitle() + ", should be " + arrayTest[i][0], 
+					patient.getTitle().equals(arrayTest[i][0]));
+				assertTrue("Patient name set to " + patient.getFirstName() + ", should be " + arrayTest[i][1], 
+					patient.getFirstName().equals(arrayTest[i][1]));
+				assertTrue("Patient name set to " + patient.getLastName() + ", should be " + arrayTest[i][2], 
+					patient.getLastName().equals(arrayTest[i][2]));
+				assertTrue("Patient set to " + patient.getDateOfBirth()+ ", should be " +arrayTest[i][3], 
+					patient.getDateOfBirth().equals(LocalDate.parse(arrayTest[i][3])));
+				assertTrue("Patient phone number set to " + patient.getPhoneNumber() + ", should be " + arrayTest[i][4], 
+					patient.getPhoneNumber().equals(arrayTest[i][4]));
+				assertTrue("Patient house number set to " + patient.getHouseNumber() + ", should be " + arrayTest[i][5], 
+					patient.getHouseNumber().equals(arrayTest[i][5]));;	
+				assertTrue("Patient phone number set to " + patient.getPostcode() + ", should be " + arrayTest[i][6], 
+					patient.getPostcode().equals(arrayTest[i][6]));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
