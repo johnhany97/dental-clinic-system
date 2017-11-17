@@ -55,7 +55,7 @@ public class Patient {
 			this.houseNumber = houseNumber;
 			this.postcode = postcode;
 			if(!dbHasPatient(firstName, houseNumber, postcode)){
-				DBQueries.execUpdate("INSERT INTO Patients Values('" + title + "', '" + patientID + "', '" + firstName + "', '" + lastName + "', '" 
+				DBQueries.execUpdate("INSERT INTO Patients Values(" + patientID + ", '" + title + "', '" + firstName + "', '" + lastName + "', '" 
 					+ dateOfBirth + "', '" + phoneNumber + "', '" + houseNumber + "', '" + postcode + "')");
 			}else {
 				throw new MySQLIntegrityConstraintViolationException("A patient with first name " + firstName + " house number " + houseNumber + " and postcode " + postcode +" already exists.");
