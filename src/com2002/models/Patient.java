@@ -161,7 +161,7 @@ public class Patient {
 	}
 	
 	/**
-	 * Updates the First Name of a patient to a given name.
+	 * Updates the Title of a patient to a given title.
 	 * @param title The new Title of a patient.
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
