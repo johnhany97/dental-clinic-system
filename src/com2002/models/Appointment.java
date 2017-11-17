@@ -284,4 +284,13 @@ public class Appointment {
 		return new Patient(this.patientID);
 	}
 	
+	public boolean equals(Appointment app) {
+		String username2 = app.getUsername();
+		Timestamp startTime2 = app.getStartTime();
+		if (username2 == this.username && this.startTime.equals(startTime2)) {
+			return true;
+		}
+		return false;
+	}
+	
 }
