@@ -37,7 +37,6 @@ import com2002.models.Patient;
 import com2002.models.Schedule;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
-import net.sourceforge.jdatepicker.impl.SqlDateModel;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 public class DoctorView implements Screen {
@@ -50,7 +49,6 @@ public class DoctorView implements Screen {
 	private JLabel title;
 	private List<Appointment> appointments;
 	private List<JPanel> appointmentCards;
-	private JButton settingsButton;
 	private JButton changeDayButton;
 	
 	public DoctorView(DisplayFrame frame, Doctor doctor) throws Exception {
@@ -143,11 +141,6 @@ public class DoctorView implements Screen {
 			}
 		});
 		bottomPanel.add(this.changeDayButton);
-		this.settingsButton = new JButton("Settings");
-		this.settingsButton.setFont(new Font("Sans Serif", Font.PLAIN,
-				DisplayFrame.FONT_SIZE / 2));
-		//add action listener to settings button
-		bottomPanel.add(this.settingsButton);
 		this.screen.add(bottomPanel, BorderLayout.SOUTH);
 		frame.setFrameSize(DisplayFrame.DEFAULT_NUM, DisplayFrame.DEFAULT_NUM);
 		frame.centerFrame();

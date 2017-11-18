@@ -2,7 +2,6 @@ package com2002.views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -19,7 +18,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,7 +30,6 @@ import javax.swing.border.TitledBorder;
 
 import com2002.interfaces.Screen;
 import com2002.models.Appointment;
-import com2002.models.Doctor;
 import com2002.models.HealthPlan;
 import com2002.models.Patient;
 import com2002.models.Schedule;
@@ -233,7 +230,6 @@ public class AppointmentView implements Screen {
 		this.panel.add(this.rightPanel, BorderLayout.EAST);
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void addAppointment(Appointment appointment) {
 		//init
 		this.appointmentCards.add(new JPanel());

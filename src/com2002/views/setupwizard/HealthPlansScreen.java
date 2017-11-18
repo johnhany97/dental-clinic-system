@@ -103,6 +103,7 @@ public class HealthPlansScreen implements Screen {
 		this.buttons.get(1).setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
 		this.buttons.get(1).addActionListener(new ActionListener() {
+			@SuppressWarnings("unused")
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//Store new stuff

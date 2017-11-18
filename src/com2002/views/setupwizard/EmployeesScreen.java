@@ -47,7 +47,8 @@ public class EmployeesScreen implements Screen {
 	private List<JLabel> labels;
 	private List<JPanel> panels;
     private List<Object> textFields;
-    private List<JList> rolesLists;
+    @SuppressWarnings("rawtypes")
+	private List<JList> rolesLists;
 	private JButton nextButton;
     private DisplayFrame frame;
 
@@ -65,6 +66,7 @@ public class EmployeesScreen implements Screen {
 	/**
 	 * Function used to initialize panel and components
 	 */
+	@SuppressWarnings("rawtypes")
 	private void initializeEmployees() {
 		this.screen = new JPanel();
 		this.screen.setLayout(new BorderLayout());
@@ -94,7 +96,8 @@ public class EmployeesScreen implements Screen {
 	    this.nextButton.setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE));
 	    this.nextButton.addActionListener(new ActionListener() {
-	      @Override
+	      @SuppressWarnings("unused")
+		@Override
 	      public void actionPerformed(ActionEvent arg0) {
 	    	  //Save data in db
 	    	  int index = 0;
@@ -108,10 +111,9 @@ public class EmployeesScreen implements Screen {
 	    		  String password = String.valueOf(((JPasswordField) textFields.get(index)).getPassword());
 	    		  index++;
 	    		  String role = (String) rolesLists.get(i).getSelectedValue();
-	    		  Staff employee;
 	    		  if (role.equals("Secretary")) {
 	    			  try {
-	    				  employee = new Secretary(firstName, lastName, username, password);
+	    				  Staff employee = new Secretary(firstName, lastName, username, password);
 				    	  //Next screen
 				    	  TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
 				    	  frame.setDisplayedPanel(treatmentsScreen.getPanel());
@@ -125,7 +127,7 @@ public class EmployeesScreen implements Screen {
 	    		  } else {
 	    			  Role r = role.equals("Dentist") ? Role.DENTIST : Role.HYGIENIST;
 	    			  try {
-	    				  employee = new Doctor(firstName, lastName, username, password, r);
+	    				  Staff employee = new Doctor(firstName, lastName, username, password, r);
 				    	  //Next screen
 				    	  TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
 				    	  frame.setDisplayedPanel(treatmentsScreen.getPanel());
@@ -145,6 +147,7 @@ public class EmployeesScreen implements Screen {
 	/**
 	 * Function used to add fields and labels for each employee (3 is the current number)
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addSetOfTextFieldsAndLabels() {
 		//Add a new panel
 		this.panels.add(new JPanel());
