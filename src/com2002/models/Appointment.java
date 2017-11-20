@@ -310,6 +310,15 @@ public class Appointment {
 	}
 	
 	/**
+	 * Function used to return doctor of this appointment
+	 * @return Doctor representing said doctor
+	 * @throws SQLException when error with db connection occurs
+	 */
+	public Doctor getDoctor() throws SQLException {
+		return new Doctor(this.username);
+	}
+	
+	/**
 	 * Checks if appointment has been paid for
 	 * @return true if appointment paid for
 	 */

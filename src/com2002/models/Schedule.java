@@ -39,7 +39,44 @@ public class Schedule {
 		}
 		return appointments;
 	}
-
+	
+	/**
+	 * Returns all the appointments by doctor as an ArrayList of Appointments.
+	 * @param doctor A doctor, either hygienist or dentist.
+	 * @return An ArrayList of all the Appointments by doctor.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection.
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public static ArrayList<Appointment> getAppointmentsByDay(Date date) throws CommunicationsException, SQLException {
+		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
+		Connection conn = Database.getConnection();
+		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int year  = localDate.getYear();
+		int month = localDate.getMonthValue();
+		int day   = localDate.getDayOfMonth();
+		String s1 = String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day) + " 0:0:0.0";
+		
+		Date datePlusOne = new Date(date.getTime() + (1000 * 60 * 60 * 24));
+		LocalDate localDate2 = datePlusOne.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int year2  = localDate2.getYear();
+		int month2 = localDate2.getMonthValue();
+		int day2   = localDate2.getDayOfMonth();
+		String s2 = String.valueOf(year2) + "-" + String.valueOf(month2) + "-" + String.valueOf(day2) + " 0:0:0.0";
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate >= '" 
+					+ s1 + "' and StartDate < '" + s2 + "'", conn);
+			while (rs.next()) {
+				Timestamp startDate = rs.getTimestamp("StartDate");
+				String username = rs.getString("Username");
+				appointments.add(new Appointment(startDate, username));
+			}
+		} finally {
+			conn.close();
+		}
+		return appointments;
+	}
+	
+	
 	/**
 	 * Returns all the appointments by doctor as an ArrayList of Appointments.
 	 * @param doctor A doctor, either hygienist or dentist.

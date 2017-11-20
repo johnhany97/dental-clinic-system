@@ -5,13 +5,17 @@ import java.sql.SQLException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 public class Doctor extends Staff {
+	
+	public Doctor(String username) throws SQLException {
+		super(username);
+	}
 
-	public Doctor(String userN, String pass) throws SQLException {
-		super(userN, pass);
+	public Doctor(String username, String password) throws SQLException {
+		super(username, password);
 	}
 	
-	public Doctor(String firstName, String lastName, String userN, String pass, Role r) throws MySQLIntegrityConstraintViolationException, SQLException {
-		super(firstName, lastName, userN, pass, r);
+	public Doctor(String firstName, String lastName, String username, String password, Role role) throws MySQLIntegrityConstraintViolationException, SQLException {
+		super(firstName, lastName, username, password, role);
 	}
 
 }

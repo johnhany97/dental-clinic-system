@@ -21,6 +21,28 @@ public abstract class Staff {
 	/**
 	 * This constructor should be called with inputs which already exist in the Staff table.
 	 * @param username Username of the staff member.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public Staff(String username) throws CommunicationsException, SQLException  {
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees WHERE username = '" 
+					+ username + "'", conn);
+			if(rs.next()) {
+				this.firstName = rs.getString("FirstName");
+				this.lastName = rs.getString("LastName");
+				this.username = username;
+				this.role = rs.getString("Role");
+			}
+		} finally {
+			conn.close();
+		}
+	}
+	
+	/**
+	 * This constructor should be called with inputs which already exist in the Staff table.
+	 * @param username Username of the staff member.
 	 * @param password Password of the staff member.
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.

@@ -19,8 +19,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import com2002.interfaces.Screen;
+import com2002.models.DBQueries;
 import com2002.models.Doctor;
 import com2002.models.Secretary;
+import com2002.models.Staff;
 
 public class LoginView implements Screen {
 	
@@ -93,19 +95,19 @@ public class LoginView implements Screen {
 				Doctor testDoc;
 				Secretary testSec;
 				try {
-					testSec = new Secretary(name, password);
-					testDoc = new Doctor(name, password);
-					if (testDoc.getFirstName() == null && testSec.getFirstName() == null) { //Not found!
+					Staff staff = DBQueries.constructStaff(name, password);
+					
+					if (staff == null) { //Not found!
 						JOptionPane.showMessageDialog(frame,
 							    "User not found. Check credentials entered.",
 							    "Check username or password",
 							    JOptionPane.ERROR_MESSAGE);
-					} else if (testDoc.getFirstName() == null) { //It's the secretary
-						SecretaryView secView = new SecretaryView(frame, testSec);
+					} else if (staff.getRole().equals("Secretary")) { //It's the secretary
+						SecretaryView secView = new SecretaryView(frame, (Secretary) staff);
 						frame.setDisplayedPanel(secView.getPanel());
 					} else { //It's the doctor
 						DoctorView docView;
-						docView = new DoctorView(frame, testDoc);
+						docView = new DoctorView(frame, (Doctor) staff);
 						frame.setDisplayedPanel(docView.getPanel());
 					}
 				} catch (SQLException e) {
@@ -114,8 +116,9 @@ public class LoginView implements Screen {
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(frame,
-						    "Error showing doctor's screen",
+						    "Error setting up view",
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				}
