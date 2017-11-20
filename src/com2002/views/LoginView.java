@@ -97,7 +97,7 @@ public class LoginView implements Screen {
 					testDoc = new Doctor(name, password);
 					if (testDoc.getFirstName() == null && testSec.getFirstName() == null) { //Not found!
 						JOptionPane.showMessageDialog(frame,
-							    "User not found",
+							    "User not found. Check credentials entered.",
 							    "Check username or password",
 							    JOptionPane.ERROR_MESSAGE);
 					} else if (testDoc.getFirstName() == null) { //It's the secretary

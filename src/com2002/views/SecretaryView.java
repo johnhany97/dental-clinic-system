@@ -19,6 +19,8 @@ public class SecretaryView implements Screen {
 
 	private void initializeScreen() {
 		this.screen = new JPanel();
+		this.frame.setFrameSize(DisplayFrame.DEFAULT_NUM, DisplayFrame.DEFAULT_NUM * 2);
+		this.frame.centerFrame();
 	}
 	
 	@Override
