@@ -56,20 +56,20 @@ public class DBQueries {
 	 * @param selectCol The name of the column you want check for the WHERE condition.
 	 * @param selectData The String you want to find in the specified column.
 	 * @return first String value from specified table, column and row.
+	 * @throws SQLException 
 	 */
-	public static String getData(String returnCol, String table, String selectCol, String selectData) {
+	public static String getData(String returnCol, String table, String selectCol, String selectData) throws SQLException {
 		String data = "";
+		Connection conn = Database.getConnection();
 		try {
-			Connection conn = Database.getConnection();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT " + returnCol + " FROM " + table 
 					+ " WHERE " + selectCol + " = '" + selectData + "'");
 			if(rs.next()) {
 				data = rs.getString(returnCol);
 			}
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} finally {
+			conn.close();;
 		}
 		return data;
 	}
@@ -78,8 +78,9 @@ public class DBQueries {
 	 * Checks whether Employees table contains a specified username.
 	 * @param username Username of staff.
 	 * @return True if username already exists.
+	 * @throws SQLException 
 	 */
-	public static boolean staffUsernameExists(String username) {
+	public static boolean staffUsernameExists(String username) throws SQLException {
 		String found = DBQueries.getData("Username", "Employees", "Username", username);
 		return username.equals(found);
 	}
