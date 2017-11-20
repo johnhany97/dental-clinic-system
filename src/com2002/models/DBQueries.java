@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+
 import com2002.utils.Database;
 
 /**
@@ -104,31 +106,31 @@ public class DBQueries {
 		return patients;
 	}
 	
-	/*
-	 * private static <T> ArrayList<T> getData(String returnCol, String table, String condition, T type) {
-		ArrayList<T> alist = new ArrayList<T>();
+	/**
+	 * Constructs staff member depending on staff member's role.
+	 * @param username of staff member
+	 * @param password of staff member
+	 * @return an instance of either secretary or doctor, or null if username/password not found
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException any other error
+	 */
+	public static Staff constructStaff(String username, String password) throws CommunicationsException, SQLException {
+		Staff staff = null;
+		Connection conn = Database.getConnection();
 		try {
-			Connection conn = Database.getConnection();
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT " + returnCol + " FROM " + table 
-					+ " WHERE " + condition );
-			while(rs.next()) {
-				if(type instanceof String) {
-					alist.add(rs.getString(returnCol));
-				} else if(type instanceof Integer) {
-					
-				} else if(type instanceof Float) {
-					
-				} else if(type instanceof Date) {
-					
+			ResultSet rs = execQuery("SELECT * FROM Employees WHERE username = '" + username + "' AND password = '" + password + "'", conn);
+			if(rs.next()) {
+				String role = rs.getString("Role");
+				if(role.equalsIgnoreCase("secretary")) {
+					staff = new Secretary(username, password);
+				} else {
+					staff = new Doctor(username, password);
 				}
 			}
+		} finally {
 			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
-		return alist;
+		return staff;
 	}
-	 */
 	
 }
