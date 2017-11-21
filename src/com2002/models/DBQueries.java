@@ -141,7 +141,7 @@ public class DBQueries {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException any other error
 	 */
-	public HashMap<String, Double> getTreatments() throws CommunicationsException, SQLException {
+	public static HashMap<String, Double> getTreatments() throws CommunicationsException, SQLException {
 		HashMap<String, Double> treatments = new HashMap<String, Double>();
 		Connection conn = Database.getConnection();
 		try {
