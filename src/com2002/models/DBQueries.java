@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 
@@ -132,6 +133,26 @@ public class DBQueries {
 			conn.close();
 		}
 		return staff;
+	}
+	
+	/**
+	 * Returns a HashMap of all of the treatments and their prices stored in the databse.
+	 * @return HashMap with the treatment name (String) as the key and the price as a value (Double)
+	 * @throws CommunicationsException when an error occurs whilst attempting connection
+	 * @throws SQLException any other error
+	 */
+	public HashMap<String, Double> getTreatments() throws CommunicationsException, SQLException {
+		HashMap<String, Double> treatments = new HashMap<String, Double>();
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = execQuery("SELECT * FROM Treatments", conn);
+			while(rs.next()) {
+				treatments.put(rs.getString("Name"), rs.getDouble("Price"));
+			}
+		} finally {
+			conn.close();
+		}
+		return treatments;
 	}
 	
 }

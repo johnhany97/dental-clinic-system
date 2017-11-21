@@ -71,9 +71,6 @@ public class Appointment {
 							   throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		Connection conn =  Database.getConnection();
 		try {
-			//ResultSet timeCheckRS = DBQueries.execQuery("SELECT * FROM Appointments WHERE (StartDate BETWEEN '" 
-			//		+ startTime.toString() + "' AND '" + endTime.toString() + "') OR (EndDate BETWEEN '" 
-			//		+ startTime.toString() + "' AND '" + endTime.toString() + "') AND Username = '" + username + "'", conn);
 			ResultSet timeCheckRS = DBQueries.execQuery("SELECT * FROM Appointments WHERE (StartDate < '" + endTime.toString() + "' AND EndDate > '" + startTime.toString() + "') AND Username = '" + username + "'", conn);
 			if(timeCheckRS.next()) {
 				throw new MySQLIntegrityConstraintViolationException("Clashing appointment exists.");
