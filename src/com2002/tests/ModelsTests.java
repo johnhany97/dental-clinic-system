@@ -182,8 +182,8 @@ public class ModelsTests {
 		try {
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-			Patient nur = new Patient("Mr","Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
-			Staff dentist = new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Patient("Mr","Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES('2017-11-13 11:10:00.0', "
 					+ "'2017-11-13 11:30:00.0', 'dentist', 'Checkup', 1, 'Notes', 1, 1, 1)");
 			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), "dentist");
@@ -214,19 +214,83 @@ public class ModelsTests {
 	
 	// tests that clashing appointments throw an exception
 	@Test
-	public void appointmentClashTest() {
+	public void appointmentClashTest1() {
 		try {
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
 			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
 			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
-			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
 					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
-			Appointment aptmnt2 = new Appointment(Timestamp.valueOf("2017-11-13 11:20:00.0"), Timestamp.valueOf("2017-11-13 11:25:00.0"), 
+			new Appointment(Timestamp.valueOf("2017-11-13 11:20:00.0"), Timestamp.valueOf("2017-11-13 11:25:00.0"), 
 					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
 			fail("Integrity exception not thrown.");
 		} catch (MySQLIntegrityConstraintViolationException e) {
 			assertTrue(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests that clashing appointments throw an exception
+	@Test
+	public void appointmentClashTest2() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			new Appointment(Timestamp.valueOf("2017-11-10 11:00:00.0"), Timestamp.valueOf("2017-11-13 11:40:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			fail("Integrity exception not thrown.");
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			assertTrue(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests that non-clashing appointments don't throw exception
+	@Test
+	public void appointmentNoClashTest1() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Doctor("Nur", "Magid", "hygienist", "password", Role.HYGIENIST);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"hygienist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:20:00.0"), Timestamp.valueOf("2017-11-13 11:25:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			assertTrue(true);
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			fail("Integrity exception thrown when it shouldn't be.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests that clashing appointments throw an exception
+	@Test
+	public void appointmentNoClashTest2() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:30:00.0"), Timestamp.valueOf("2017-11-13 11:40:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			assertTrue(true);
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			fail("Integrity exception thrown when it shouldn't be.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
