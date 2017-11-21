@@ -303,7 +303,7 @@ public class Patient {
 		Connection conn = Database.getConnection();
 		try {
 			int foundID = -1;
-			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE  PatientID = " + patientID, conn);
+			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE PatientID = " + patientID, conn);
 			if(rs.next()) {
 				foundID = rs.getInt("PatientID");
 			}

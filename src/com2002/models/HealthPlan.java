@@ -55,7 +55,7 @@ public class HealthPlan {
 	public HealthPlan(String name) throws CommunicationsException, SQLException {
 		Connection conn = Database.getConnection();
 		try {
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM HealthPlans WHERE  name LIKE '%" + name + "%'", conn);
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM HealthPlans WHERE name LIKE '%" + name + "%'", conn);
 			if(rs.next()) {
 				this.name = rs.getString("Name");
 				this.price = rs.getDouble("Price");

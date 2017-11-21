@@ -59,8 +59,8 @@ public class Address {
 	public Address(String houseNumber, String postcode) throws SQLException, CommunicationsException {
 		Connection conn = Database.getConnection();
 		try {
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM Address WHERE HouseNumber = '" 
-					+ houseNumber + "' AND Postcode = '" + postcode + "'", conn);
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Address WHERE HouseNumber LIKE '%" 
+					+ houseNumber + "%' AND Postcode LIKE '%" + postcode + "%'", conn);
 			if(rs.next()) {
 				this.houseNumber = rs.getString("HouseNumber");
 				this.streetName = rs.getString("StreetName");

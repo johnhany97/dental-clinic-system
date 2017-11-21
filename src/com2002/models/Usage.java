@@ -31,7 +31,7 @@ public class Usage {
 	public Usage(int patientID) throws CommunicationsException, SQLException {
 		Connection conn = Database.getConnection();
 		try {
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan WHERE  PatientID = '" 
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan WHERE PatientID = '" 
 					+ patientID + "'", conn);
 			this.patientID = patientID;
 			if(rs.next()) {
@@ -81,7 +81,7 @@ public class Usage {
 		Connection conn = Database.getConnection();
 		try {
 			int foundID = -1;
-			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE  PatientID = " + patientID, conn);
+			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE PatientID = " + patientID, conn);
 			if(rs.next()) {
 				foundID = rs.getInt("PatientID");
 			}
