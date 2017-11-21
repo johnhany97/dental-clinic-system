@@ -14,9 +14,8 @@ import com2002.utils.Database;
  * The class which handles the usage of a patients subscribed health plan
  */
 public class Usage {
-	
+	private HealthPlan healthPlan;
 	private int patientID;
-	private String healthPlanName;
 	private int checkUpUsed;
 	private int hygieneUsed;
 	private int repairUsed;
@@ -36,7 +35,7 @@ public class Usage {
 			this.patientID = patientID;
 			if(rs.next()) {
 				this.patientID = rs.getInt("PatientID");
-				this.healthPlanName = rs.getString("HealthPlanName");
+				this.healthPlan = new HealthPlan(rs.getString("HealthPlanName"));
 				this.checkUpUsed = rs.getInt("CheckUpUsed");
 				this.hygieneUsed = rs.getInt("HygieneUsed");
 				this.repairUsed = rs.getInt("RepairUsed");
@@ -47,6 +46,7 @@ public class Usage {
 		}
 	}
 	
+	
 	/**
 	 * This constructor should be called when subscribing a health plan to a patients
 	 * @param patientID patient ID to subscribe the health plan to them
@@ -55,9 +55,9 @@ public class Usage {
 	 * @throws MySQLIntegrityConstraintViolationException if patient id already exists
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Usage(int patientID, String healthPlanName) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
+    public Usage(int patientID, String healthPlanName) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
 		this.patientID = patientID;
-		this.healthPlanName = healthPlanName; 
+		this.healthPlan = new HealthPlan(healthPlanName);
 		this.checkUpUsed = 0;
 		this.hygieneUsed = 0;
 		this.repairUsed = 0;
@@ -97,26 +97,6 @@ public class Usage {
 	 */
 	public int getPatientID(){
 		return this.patientID;
-	}
-	
-	/**
-	 * Returns a name of a particular health plan.
-	 * @return healthPlanName The name of the health plan.
-	 */
-	public String getHealthPlanName() {
-		return this.healthPlanName;
-	}
-
-	/**
-	 * Updates the health plan of a patient to a another health plan name.
-	 * @param healthPlanName The new name of a HealthPlan.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
-	 */
-	public void setHealthPlanName(String healthPlanName) throws CommunicationsException, SQLException  {
-		DBQueries.execUpdate("UPDATE PatientHealthPlan SET HealthPlanName = '" + healthPlanName + "'"
-			+ " WHERE patientID = " + this.patientID);
-		this.healthPlanName = healthPlanName;
 	}
 	
 	/**
@@ -182,7 +162,6 @@ public class Usage {
 	/**
 	 * Returns a number of appointments of repair used of a patients HealthPlan.
 	 * @return hygieneUsed The number of repair appointments of a health plan.
-	
 	 */
 	public int getRepairUsed() {
 		return repairUsed;
@@ -201,14 +180,24 @@ public class Usage {
 	}
 	
 	/**
+	 * Returns a HealthPlan.
+	 * @return healthPlan The health plan.
+	 */
+	public HealthPlan getHealthPlan() {
+		return healthPlan;
+	}
+	
+	/**
 	 * Increments the check up used of a HealthPlan by 1.
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public void incrementCheckUp() throws CommunicationsException, SQLException{
-		checkUpUsed =+ 1;
-		DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed
-				+ " WHERE patientID = " + this.patientID);
+		if (this.checkUpUsed < this.healthPlan.getCheckUpLevel()) {
+			checkUpUsed =+ 1;
+			DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed
+					+ " WHERE patientID = " + this.patientID);
+		}
 	}
 	
 	/**
@@ -217,10 +206,11 @@ public class Usage {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public void incrementHygiene() throws CommunicationsException, SQLException{
-		hygieneUsed =+ 1;
-		DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed
-			+ " WHERE patientID = " + this.patientID);
-			
+		if (this.hygieneUsed < this.healthPlan.getHygieneLevel()) {
+			hygieneUsed =+ 1;
+			DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed
+				+ " WHERE patientID = " + this.patientID);
+		}	
 	}
 
 	/**
@@ -229,9 +219,11 @@ public class Usage {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public void incrementRepair() throws CommunicationsException, SQLException{
-		repairUsed =+ 1;
-		DBQueries.execUpdate("UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed
-			+ " WHERE patientID = " + this.patientID);
+		if (this.repairUsed < this.healthPlan.getRepairLevel()) {
+			repairUsed =+ 1;
+			DBQueries.execUpdate("UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed
+				+ " WHERE patientID = " + this.patientID);
+		}
 	}
 
 	/**
@@ -256,9 +248,9 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	 public void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+    public void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		if(dbHasPatientID(patientID)){
-			this.healthPlanName = null;
+			this.healthPlan = null;
 			this.dateJoined = null;
 			this.checkUpUsed = 0;
 			this.hygieneUsed = 0;
@@ -267,6 +259,15 @@ public class Usage {
 		} else {
 			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " is not subsrcribed anyway.");
 		}
-	}
+    }
+	
+    /**
+	 * Delete the usage of a patient 
+	 * @param patientID to distinguish the patient to be deleted
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public void deleteUsage(int patientID) throws SQLException {
+		DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID LIKE '%" + patientID + "%'"); 
+    }
 }
 

@@ -384,4 +384,14 @@ public class Patient {
 		}
 	}
 	
+	/**
+	 * Deletes a patient 
+	 * @param patientID to distinguish the patient to be deleted
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public void deletePatient(int patientID) throws SQLException {
+		DBQueries.execUpdate("DELETE FROM Patients WHERE PatientID = '" + patientID + "'"); 
+	}		
+		
+	
 }
