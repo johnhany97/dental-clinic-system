@@ -15,7 +15,7 @@ import com2002.utils.Database;
  */
 public class Usage {
 	
-	private int patientID;
+    private int patientID;
 	private String healthPlanName;
 	private int checkUpUsed;
 	private int hygieneUsed;
@@ -55,7 +55,7 @@ public class Usage {
 	 * @throws MySQLIntegrityConstraintViolationException if patient id already exists
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public Usage(int patientID, String healthPlanName) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
+    public Usage(int patientID, String healthPlanName) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
 		this.patientID = patientID;
 		this.healthPlanName = healthPlanName; 
 		this.checkUpUsed = 0;
@@ -256,7 +256,7 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	 public void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+    public void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		if(dbHasPatientID(patientID)){
 			this.healthPlanName = null;
 			this.dateJoined = null;
@@ -267,6 +267,15 @@ public class Usage {
 		} else {
 			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " is not subsrcribed anyway.");
 		}
-	}
+    }
+	
+    /**
+	 * Delete the usage of a patient 
+	 * @param patientID to distinguish the patient to be deleted
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public void deleteUsage(int patientID) throws SQLException {
+		DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID LIKE '%" + patientID + "%'"); 
+    }
 }
 

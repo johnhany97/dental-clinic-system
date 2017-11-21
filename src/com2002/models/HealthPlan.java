@@ -180,4 +180,13 @@ public class HealthPlan {
 		this.repairLevel = repairLevel;
 	}
 	
+	/**
+	 * Delete a treatment plan
+	 * @param name name of plan to be deleted 
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public void deleteHealthPlan(String name) throws SQLException {
+		DBQueries.execUpdate("DELETE FROM HealthPlans WHERE HealthPlanName LIKE '%" + name + "%'"); 
+	}
+	
 }
