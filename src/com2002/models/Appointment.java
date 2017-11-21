@@ -46,6 +46,9 @@ public class Appointment {
 				if(paidBit == 1) {
 					this.paid = true;
 				}
+			} else {
+				throw new SQLException("Appointment with start time " + startTime.toString() 
+									+ " and doctor username " + username + " does not exist.");
 			}
 		} finally {
 			conn.close();
@@ -66,16 +69,29 @@ public class Appointment {
 	public Appointment(Timestamp startTime, Timestamp endTime, String username, int patientID, String notes,
 					   AppointmentType treatmentName, int totalAppointments, int currentAppointments)
 							   throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
-		DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + startTime.toString() + "', '" + endTime.toString() + "', '" + username + "', '" 
-						+ getAppointmentTypeString(treatmentName) + "', '" + patientID + "', '" + notes + "', '" + totalAppointments + "', '" + currentAppointments + "', 0)");
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.username = username;
-		this.patientID = patientID;
-		this.notes = notes;
-		this.appointmentType = getAppointmentTypeString(treatmentName);
-		this.totalAppointments = totalAppointments;
-		this.currentAppointment = currentAppointments;
+		Connection conn =  Database.getConnection();
+		try {
+			ResultSet timeCheckRS = DBQueries.execQuery("SELECT * FROM Appointments WHERE (StartDate BETWEEN '" 
+					+ startTime.toString() + "' AND '" + endTime.toString() + "') OR (EndDate BETWEEN '" 
+					+ startTime.toString() + "' AND '" + endTime.toString() + "') AND Username = '" + username + "'", conn);
+			if(timeCheckRS.next()) {
+				throw new MySQLIntegrityConstraintViolationException("Clashing appointment exists.");
+			}
+			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + startTime.toString() + "', '" + endTime.toString() + "', '" + username + "', '" 
+							+ getAppointmentTypeString(treatmentName) + "', '" + patientID + "', '" + notes + "', '" + totalAppointments + "', '" + currentAppointments + "', 0)");
+			
+			this.startTime = startTime;
+			this.endTime = endTime;
+			this.username = username;
+			this.patientID = patientID;
+			this.notes = notes;
+			this.appointmentType = getAppointmentTypeString(treatmentName);
+			this.totalAppointments = totalAppointments;
+			this.currentAppointment = currentAppointments;
+		} finally {
+			conn.close();
+		}
+		
 	}
 	
 	/**

@@ -15,6 +15,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import com2002.models.Address;
 import com2002.models.Appointment;
 import com2002.models.AppointmentType;
@@ -204,6 +206,27 @@ public class ModelsTests {
 			assertTrue("Paid set to " + aptmnt.isPaid() + ", should be true", 
 					aptmnt.isPaid());
 	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests that clashing appointments throw an exception
+	@Test
+	public void appointmentClashTest() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			Appointment aptmnt2 = new Appointment(Timestamp.valueOf("2017-11-13 11:20:00.0"), Timestamp.valueOf("2017-11-13 11:25:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			fail("Integrity exception not thrown.");
+		} catch (MySQLIntegrityConstraintViolationException e) {
+			assertTrue(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
