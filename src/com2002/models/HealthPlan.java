@@ -188,5 +188,4 @@ public class HealthPlan {
 	public void deleteHealthPlan(String name) throws SQLException {
 		DBQueries.execUpdate("DELETE FROM HealthPlans WHERE HealthPlanName LIKE '%" + name + "%'"); 
 	}
-	
 }

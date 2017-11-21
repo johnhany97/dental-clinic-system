@@ -626,8 +626,8 @@ public class ModelsTests {
 			DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
 			Patient patientDS = new Patient("Nur", "57", "W5 1LF");
 			patientDS.subscribePatient("NHS free plan");
-			assertTrue("Usage set to " + patientDS.getUsage().getHealthPlanName() + ", should be NHS free plan.", 
-				patientDS.getUsage().getHealthPlanName().equals("NHS free plan"));
+			assertTrue("Usage set to " + patientDS.getUsage().getHealthPlan().getName() + ", should be NHS free plan.", 
+				patientDS.getUsage().getHealthPlan().getName().equals("NHS free plan"));
 			} catch (SQLException e) {
 				e.printStackTrace();
 				fail("Exception thrown: " + e.getMessage());
@@ -740,8 +740,6 @@ public class ModelsTests {
 			Usage usage1 = new Usage(1, "NHS free plan");
 			assertTrue("Usage set to " + usage1.getPatientID() + ", should be 1.", 
 					usage1.getPatientID() == (1));
-			assertTrue("Usage set to " + usage1.getHealthPlanName() + ", should be NHS free plan.", 
-				usage1.getHealthPlanName().equals("NHS free plan"));
 			assertTrue("Usage set to " + usage1.getCheckUpUsed() + ", should be 0.", 
 				usage1.getCheckUpUsed() == (0));
 			assertTrue("Usage set to " + usage1.getHygieneUsed() + ", should be 0.", 
@@ -766,8 +764,6 @@ public class ModelsTests {
 			Usage usageD = new Usage(1, "NHS free plan");
 			assertTrue("Usage set to " + usageD.getPatientID() + ", should be 1.", 
 				usageD.getPatientID() == (1));
-			assertTrue("Usage set to " + usageD.getHealthPlanName() + ", should be NHS free plan.", 
-				usageD.getHealthPlanName().equals("NHS free plan"));
 			assertTrue("Usage set to " + usageD.getCheckUpUsed() + ", should be 0.", 
 				usageD.getCheckUpUsed() == (0));
 			assertTrue("Usage set to " + usageD.getHygieneUsed() + ", should be 0.", 
