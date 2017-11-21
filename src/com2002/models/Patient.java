@@ -76,8 +76,8 @@ public class Patient {
 	public Patient(String firstName, String houseNumber, String postcode) throws CommunicationsException, SQLException{
 		Connection conn = Database.getConnection();
 		try {
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients WHERE  FirstName = '" 
-				+ firstName + "' AND HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode + "'", conn);
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients WHERE  FirstName Like '%" 
+				+ firstName + "%' AND HouseNumber LIKE '%" + houseNumber + "%' AND Postcode LIKE '%" + postcode + "%'", conn);
 			if(rs.next()) {
 				this.patientID = rs.getInt("PatientID");
 				this.title = rs.getString("Title");
@@ -124,8 +124,9 @@ public class Patient {
 	 * @param lastName Last Name of the patient.
 	 * @param postcode Postcode of the patient 
 	 * @return True if patient already exists.
+	 * @throws SQLException 
 	 */
-	private boolean dbHasPatient(String firstName, String houseNumber, String postcode) {
+	private boolean dbHasPatient(String firstName, String houseNumber, String postcode) throws SQLException {
 		String found_name = DBQueries.getData("FirstName", "Patients", "FirstName", firstName);
 		String found_house = DBQueries.getData("HouseNumber", "Patients", "HouseNumber", houseNumber);
 		String found_postcode = DBQueries.getData("Postcode", "Patients", "Postcode", postcode);

@@ -55,8 +55,7 @@ public class HealthPlan {
 	public HealthPlan(String name) throws CommunicationsException, SQLException {
 		Connection conn = Database.getConnection();
 		try {
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM HealthPlans WHERE  name = '" 
-				+ name + "'", conn);
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM HealthPlans WHERE  name LIKE '%" + name + "%'", conn);
 			if(rs.next()) {
 				this.name = rs.getString("Name");
 				this.price = rs.getDouble("Price");
@@ -73,8 +72,9 @@ public class HealthPlan {
 	 * Checks whether HealthPlan table contains a particular HealthPlan.
 	 * @param name Name of the HealthPlan.
 	 * @return True if the HealthPlan already exists.
+	 * @throws SQLException 
 	 */
-	private boolean dbHasHealthPlan(String name) {
+	private boolean dbHasHealthPlan(String name) throws SQLException {
 		String found_healthP = DBQueries.getData("Name", "HealthPlans", "Name", name);
 		return found_healthP == name;
 	}
