@@ -8,6 +8,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
@@ -22,10 +24,14 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -45,11 +51,15 @@ public class SecretaryView implements Screen {
 	private JPanel screen;
 	private Secretary secretary;
 	private DisplayFrame frame;
+	//left panel
 	private JPanel leftScreen;
-	private JPanel rightScreen;
 	private JPanel appointmentsScreen;
 	private JScrollPane appointmentsScrollPane;
 	private List<JPanel> appointmentCards;
+	//right panel
+	private JPanel rightScreen;
+	private JTabbedPane tabbedPane;
+	private List<JTextField> patientsTabInputs;
 	
 	public SecretaryView(DisplayFrame frame, Secretary secretary) {
 		this.frame = frame;
@@ -150,7 +160,89 @@ public class SecretaryView implements Screen {
 			//right screen
 			this.rightScreen = new JPanel();
 			this.rightScreen.setLayout(new BorderLayout());
+			this.tabbedPane = new JTabbedPane();
+			this.tabbedPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.BLACK), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+			this.rightScreen.add(tabbedPane, BorderLayout.CENTER);
+			this.tabbedPane.setFont(new Font("Sans Serif", Font.PLAIN,
+				    	DisplayFrame.FONT_SIZE / 2));
+			//register tab
+			JPanel registerTab = new JPanel();
+			this.tabbedPane.addTab("Register", registerTab);
+			//patients tab
+			JPanel patientsTab = new JPanel();
+			patientsTab.setLayout(new BorderLayout());
+			patientsTab.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			JPanel patientsTabInputs = new JPanel();
+			patientsTabInputs.setLayout(new GridLayout(2, 2));
+			JPanel patientsInputsAndButtons = new JPanel();
+			patientsInputsAndButtons.setLayout(new FlowLayout());
 			
+			patientsTab.add(patientsInputsAndButtons, BorderLayout.NORTH);
+			//inputs
+			this.patientsTabInputs = new ArrayList<JTextField>();
+			JTextField firstName = new JTextField();
+			firstName.setToolTipText("Patient First Name");
+			firstName.setFont(new Font("Sans Serif", Font.PLAIN,
+				    	DisplayFrame.FONT_SIZE / 2));
+			this.patientsTabInputs.add(firstName);
+			JTextField lastName = new JTextField();
+			lastName.setToolTipText("Patient Last Name");
+			lastName.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			this.patientsTabInputs.add(lastName);
+			JTextField houseNumber = new JTextField();
+			houseNumber.setToolTipText("House number");
+			houseNumber.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			this.patientsTabInputs.add(houseNumber);
+			JTextField postCode = new JTextField();
+			postCode.setToolTipText("Post code");
+			postCode.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			this.patientsTabInputs.add(postCode);
+			//add them to the tab
+			JLabel label1 = new JLabel("First name:");
+			label1.setFont(new Font("Sans Serif", Font.BOLD,
+			    	DisplayFrame.FONT_SIZE / 2));
+			patientsTabInputs.add(label1);
+			patientsTabInputs.add(firstName);
+			JLabel label2 = new JLabel("Last name:");
+			label2.setFont(new Font("Sans Serif", Font.BOLD,
+			    	DisplayFrame.FONT_SIZE / 2));
+			patientsTabInputs.add(label2);
+			patientsTabInputs.add(lastName);
+			JLabel label3 = new JLabel("House Number:");
+			label3.setFont(new Font("Sans Serif", Font.BOLD,
+			    	DisplayFrame.FONT_SIZE / 2));
+			patientsTabInputs.add(label3);
+			patientsTabInputs.add(houseNumber);
+			JLabel label4 = new JLabel("Postcode:");
+			label4.setFont(new Font("Sans Serif", Font.BOLD,
+			    	DisplayFrame.FONT_SIZE / 2));
+			patientsTabInputs.add(label4);
+			patientsTabInputs.add(postCode);
+			patientsInputsAndButtons.add(patientsTabInputs);
+			//button
+			JButton searchPatientsButton = new JButton("Search");
+			searchPatientsButton.setFont(new Font("Sans Serif", Font.PLAIN,
+					DisplayFrame.FONT_SIZE / 2));
+			searchPatientsButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					// Search and return list of patients
+					
+				}
+			});
+			patientsInputsAndButtons.add(searchPatientsButton);
+			//actual patients
+			JTable patientsTable = new JTable();
+			JScrollPane patientsScrollPane = new JScrollPane(patientsTable);
+			patientsTable.setFillsViewportHeight(true);
+			patientsTab.add(patientsScrollPane, BorderLayout.CENTER);
+			this.tabbedPane.addTab("Patients", patientsTab);
+			//addresses tab
+			JPanel addressesTab = new JPanel();
+			this.tabbedPane.addTab("Addresses", addressesTab);
 			//Add both to main screen
 			this.screen.add(this.leftScreen);
 			this.screen.add(this.rightScreen);
