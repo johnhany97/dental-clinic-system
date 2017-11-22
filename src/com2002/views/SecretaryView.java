@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
@@ -22,8 +23,10 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,10 +36,17 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 
 import com2002.interfaces.Screen;
+import com2002.models.Address;
 import com2002.models.Appointment;
 import com2002.models.Doctor;
 import com2002.models.Patient;
@@ -59,7 +69,16 @@ public class SecretaryView implements Screen {
 	//right panel
 	private JPanel rightScreen;
 	private JTabbedPane tabbedPane;
+	//patients tab
 	private List<JTextField> patientsTabInputs;
+	private Object[][] addressList;
+	private JTable patientsTable;
+	private DefaultTableModel addressesTableModel;
+	//addresses tab
+	private List<JTextField> addressesTabInputs;
+	private Object[][] addressesLlist;
+	private JTable addressesTable;
+	private DefaultTableModel addressesTableMode;
 	
 	public SecretaryView(DisplayFrame frame, Secretary secretary) {
 		this.frame = frame;
@@ -70,7 +89,18 @@ public class SecretaryView implements Screen {
 	}
 
 	private void initializeScreen() {
+		//left screen
+		initializeLeftScreen();
+		//right screen
+		initializeRightScreen();
+		//Add both to main screen
+		this.screen.add(this.leftScreen);
+		this.screen.add(this.rightScreen);
+	}
+	
+	private void initializeLeftScreen() {
 		try {
+			//left screen
 			List<Appointment> todayAppointments;
 			//get today's appointments
 			Calendar calendar = Calendar.getInstance();
@@ -112,7 +142,7 @@ public class SecretaryView implements Screen {
 			UtilDateModel model = new UtilDateModel();
 			JDatePanelImpl datePanel = new JDatePanelImpl(model);
 			JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
-
+	
 			//set by default today
 			Date today = new Date();
 			Calendar cal = Calendar.getInstance();
@@ -157,27 +187,214 @@ public class SecretaryView implements Screen {
 			bottomLeftPanel.add(newAppointmentButton, BorderLayout.EAST);
 			bottomLeftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			this.leftScreen.add(bottomLeftPanel, BorderLayout.SOUTH);
-			//right screen
-			this.rightScreen = new JPanel();
-			this.rightScreen.setLayout(new BorderLayout());
-			this.tabbedPane = new JTabbedPane();
-			this.tabbedPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.BLACK), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-			this.rightScreen.add(tabbedPane, BorderLayout.CENTER);
-			this.tabbedPane.setFont(new Font("Sans Serif", Font.PLAIN,
-				    	DisplayFrame.FONT_SIZE / 2));
-			//register tab
-			JPanel registerTab = new JPanel();
-			this.tabbedPane.addTab("Register", registerTab);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(frame,
+				    "Database error. Check your internet connnection.",
+				    "Error fetching appointments",
+				    JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private void initializeRightScreen() {
+		//right screen
+		this.rightScreen = new JPanel();
+		this.rightScreen.setLayout(new BorderLayout());
+		this.tabbedPane = new JTabbedPane();
+		this.tabbedPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.BLACK), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+		this.rightScreen.add(tabbedPane, BorderLayout.CENTER);
+		this.tabbedPane.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+		//Register tab
+		initializeRegisterTab();
+		//Patients tab
+		initializePatientsTab();
+		//Addresses tab
+		initializeAddressesTab();
+	}
+	
+	private void initializeRegisterTab() {
+		//register tab
+		JPanel registerTab = new JPanel();
+		this.tabbedPane.addTab("Register", registerTab);
+	}
+	
+	@SuppressWarnings("serial")
+	private void initializeAddressesTab() {
+		try {
+			//addresses tab
+			JPanel addressesTab = new JPanel();
+			this.tabbedPane.addTab("Addresses", addressesTab);
+			addressesTab.setLayout(new BorderLayout());
+			addressesTab.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			//searching
+			JPanel addressesTabSearchPanel = new JPanel();
+			addressesTabSearchPanel.setLayout(new GridLayout(0,2));
+			JPanel inputsAndButtons = new JPanel();
+			inputsAndButtons.setLayout(new FlowLayout());
+			addressesTab.add(inputsAndButtons, BorderLayout.NORTH);
+			//inputs
+			this.addressesTabInputs = new ArrayList<JTextField>();
+			JTextField houseNumber = new JTextField();
+			houseNumber.setToolTipText("House number");
+			houseNumber.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			this.addressesTabInputs.add(houseNumber);
+			JTextField streetName = new JTextField();
+			streetName.setToolTipText("Street name");
+			streetName.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			this.addressesTabInputs.add(streetName);
+			JTextField district = new JTextField();
+			district.setToolTipText("District");
+			district.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			this.addressesTabInputs.add(district);
+			JTextField city = new JTextField();
+			city.setToolTipText("City");
+			city.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			this.addressesTabInputs.add(city);
+			JTextField postcode = new JTextField();
+			postcode.setToolTipText("Post code");
+			postcode.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			this.addressesTabInputs.add(postcode);
+			//add them to the tab
+			JLabel label1 = new JLabel("House number:");
+			label1.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			addressesTabSearchPanel.add(label1);
+			addressesTabSearchPanel.add(houseNumber);
+			JLabel label2 = new JLabel("Street name:");
+			label2.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			addressesTabSearchPanel.add(label2);
+			addressesTabSearchPanel.add(streetName);
+			JLabel label3 = new JLabel("District:");
+			label3.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			addressesTabSearchPanel.add(label3);
+			addressesTabSearchPanel.add(district);
+			JLabel label4 = new JLabel("City:");
+			label4.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			addressesTabSearchPanel.add(label4);
+			addressesTabSearchPanel.add(city);
+			JLabel label5 = new JLabel("Postcode:");
+			label5.setFont(new Font("Sans Serif", Font.PLAIN,
+			    	DisplayFrame.FONT_SIZE / 2));
+			addressesTabSearchPanel.add(label5);
+			addressesTabSearchPanel.add(postcode);
+			inputsAndButtons.add(addressesTabSearchPanel);
+			//button
+			JButton searchAddressesButton = new JButton("Search");
+			searchAddressesButton.setFont(new Font("Sans Serif", Font.PLAIN,
+					DisplayFrame.FONT_SIZE / 2));
+			searchAddressesButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					// Search and return list of patients
+					String hnum = addressesTabInputs.get(0).getText();
+					String sname = addressesTabInputs.get(1).getText();
+					String dist = addressesTabInputs.get(2).getText();
+					String city = addressesTabInputs.get(3).getText();
+					String pcode = addressesTabInputs.get(4).getText();
+					try {
+						ArrayList<Address> addressesFound = secretary.searchAddresses(hnum, sname, dist, city, pcode);
+						addressList = addressListConverter(addressesFound);
+						addressesTableModel.setRowCount(0);
+						for (int i = 0; i < addressList.length; i++) {
+							addressesTableModel.addRow(addressList[i]);
+						}
+						frame.revalidate();
+					} catch (Exception e) {
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(frame,
+							    e.getMessage(),
+							    "Error fetching addresses",
+							    JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
+			searchAddressesButton.setMnemonic(KeyEvent.VK_ENTER);
+			inputsAndButtons.add(searchAddressesButton);
+			//view all button
+			JButton viewAllButton = new JButton("View all");
+			viewAllButton.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
+			viewAllButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+						ArrayList<Address> addressesFound = Address.getAllAddresses();
+						addressList = addressListConverter(addressesFound);
+						addressesTableModel.setRowCount(0);
+						for (int i = 0; i < addressList.length; i++) {
+							addressesTableModel.addRow(addressList[i]);
+						}
+						addressesTabInputs.get(0).setText("");
+						addressesTabInputs.get(1).setText("");
+						addressesTabInputs.get(2).setText("");
+						addressesTabInputs.get(3).setText("");
+						addressesTabInputs.get(4).setText("");
+						frame.revalidate();
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(frame,
+							    e.getMessage(),
+							    "Error fetching addresses",
+							    JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
+			inputsAndButtons.add(viewAllButton);
+			//new address
+			JButton newButton = new JButton("New");
+			newButton.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
+			newButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}				
+			});
+			inputsAndButtons.add(newButton);
+			//actual addresses
+			this.addressList = addressListConverter(Address.getAllAddresses());
+			String[] columnTitles = {"House Number", "Street Name", "District", "City", "Postcode", "Actions"};
+			this.addressesTableModel = new DefaultTableModel(this.addressList, columnTitles) {
+				@Override
+				public boolean isCellEditable(int row, int col) {
+					//only the last column
+					return col == 5;
+				}
+			};
+			this.addressesTable = new JTable(this.addressesTableModel);
+			this.addressesTable.getColumn("Actions").setCellRenderer(new ButtonRenderer());
+			this.addressesTable.getColumn("Actions").setCellEditor(
+			        new ButtonEditor(new JCheckBox(), this.frame));
+			JScrollPane addressesScrollPane = new JScrollPane(this.addressesTable);
+			this.addressesTable.setFillsViewportHeight(true);
+			addressesTab.add(addressesScrollPane, BorderLayout.CENTER);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(frame,
+				    e.getMessage(),
+				    "Error fetching addresses",
+				    JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	private void initializePatientsTab() {
+		try {
 			//patients tab
 			JPanel patientsTab = new JPanel();
 			patientsTab.setLayout(new BorderLayout());
 			patientsTab.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			JPanel patientsTabInputs = new JPanel();
-			patientsTabInputs.setLayout(new GridLayout(2, 2));
-			JPanel patientsInputsAndButtons = new JPanel();
-			patientsInputsAndButtons.setLayout(new FlowLayout());
-			
-			patientsTab.add(patientsInputsAndButtons, BorderLayout.NORTH);
+			//searching
+			JPanel patientsTabSearchPanel = new JPanel();
+			patientsTabSearchPanel.setLayout(new GridLayout(2, 2));
+			JPanel inputsAndButtons = new JPanel();
+			inputsAndButtons.setLayout(new FlowLayout());
+			patientsTab.add(inputsAndButtons, BorderLayout.NORTH);
 			//inputs
 			this.patientsTabInputs = new ArrayList<JTextField>();
 			JTextField firstName = new JTextField();
@@ -204,24 +421,24 @@ public class SecretaryView implements Screen {
 			JLabel label1 = new JLabel("First name:");
 			label1.setFont(new Font("Sans Serif", Font.BOLD,
 			    	DisplayFrame.FONT_SIZE / 2));
-			patientsTabInputs.add(label1);
-			patientsTabInputs.add(firstName);
+			patientsTabSearchPanel.add(label1);
+			patientsTabSearchPanel.add(firstName);
 			JLabel label2 = new JLabel("Last name:");
 			label2.setFont(new Font("Sans Serif", Font.BOLD,
 			    	DisplayFrame.FONT_SIZE / 2));
-			patientsTabInputs.add(label2);
-			patientsTabInputs.add(lastName);
+			patientsTabSearchPanel.add(label2);
+			patientsTabSearchPanel.add(lastName);
 			JLabel label3 = new JLabel("House Number:");
 			label3.setFont(new Font("Sans Serif", Font.BOLD,
 			    	DisplayFrame.FONT_SIZE / 2));
-			patientsTabInputs.add(label3);
-			patientsTabInputs.add(houseNumber);
+			patientsTabSearchPanel.add(label3);
+			patientsTabSearchPanel.add(houseNumber);
 			JLabel label4 = new JLabel("Postcode:");
 			label4.setFont(new Font("Sans Serif", Font.BOLD,
 			    	DisplayFrame.FONT_SIZE / 2));
-			patientsTabInputs.add(label4);
-			patientsTabInputs.add(postCode);
-			patientsInputsAndButtons.add(patientsTabInputs);
+			patientsTabSearchPanel.add(label4);
+			patientsTabSearchPanel.add(postCode);
+			inputsAndButtons.add(patientsTabSearchPanel);
 			//button
 			JButton searchPatientsButton = new JButton("Search");
 			searchPatientsButton.setFont(new Font("Sans Serif", Font.PLAIN,
@@ -230,26 +447,78 @@ public class SecretaryView implements Screen {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					// Search and return list of patients
-					
+					String fname = patientsTabInputs.get(0).getText();
+					String lname = patientsTabInputs.get(1).getText();
+					String hnum = patientsTabInputs.get(2).getText();
+					String pcode = patientsTabInputs.get(3).getText();
+					try {
+						ArrayList<Patient> patientsFound = secretary.searchPatients(fname, lname, hnum, pcode);
+						addressList = patientListConverter(patientsFound);
+						addressesTableModel.setRowCount(0);
+						for (int i = 0; i < addressList.length; i++) {
+							addressesTableModel.addRow(addressList[i]);
+						}
+						frame.revalidate();
+					} catch (Exception e) {
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(frame,
+							    e.getMessage(),
+							    "Error fetching appointments",
+							    JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
-			patientsInputsAndButtons.add(searchPatientsButton);
+			inputsAndButtons.add(searchPatientsButton);
+			//view all button
+			JButton viewAllPatientsButton = new JButton("View all");
+			viewAllPatientsButton.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
+			viewAllPatientsButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+						ArrayList<Patient> patientsFound = Patient.getAllPatients();
+						addressList = patientListConverter(patientsFound);
+						addressesTableModel.setRowCount(0);
+						for (int i = 0; i < addressList.length; i++) {
+							addressesTableModel.addRow(addressList[i]);
+						}
+						patientsTabInputs.get(0).setText("");
+						patientsTabInputs.get(1).setText("");
+						patientsTabInputs.get(2).setText("");
+						patientsTabInputs.get(3).setText("");
+						frame.revalidate();
+					} catch (Exception e) {
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(frame,
+							    e.getMessage(),
+							    "Error fetching patients",
+							    JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
+			inputsAndButtons.add(viewAllPatientsButton);
 			//actual patients
-			JTable patientsTable = new JTable();
+			this.addressList = patientListConverter(Patient.getAllPatients());
+			String[] columnTitlesPatients = {"ID", "Title", "First Name", "Last Name", "Date Of Birth", "House Number", "Postcode", "Telephone", "Actions"};
+			this.addressesTableModel = new DefaultTableModel(this.addressList, columnTitlesPatients) {
+				@Override
+				public boolean isCellEditable(int row, int col) {
+					//only the last column
+					return col == 8;
+				}
+			};;
+			this.patientsTable = new JTable(this.addressesTableModel);
+			this.patientsTable.getColumn("Actions").setCellRenderer(new ButtonRenderer());
+			this.patientsTable.getColumn("Actions").setCellEditor(
+			        new ButtonEditor(new JCheckBox(), this.frame));
 			JScrollPane patientsScrollPane = new JScrollPane(patientsTable);
-			patientsTable.setFillsViewportHeight(true);
+			this.patientsTable.setFillsViewportHeight(true);
 			patientsTab.add(patientsScrollPane, BorderLayout.CENTER);
 			this.tabbedPane.addTab("Patients", patientsTab);
-			//addresses tab
-			JPanel addressesTab = new JPanel();
-			this.tabbedPane.addTab("Addresses", addressesTab);
-			//Add both to main screen
-			this.screen.add(this.leftScreen);
-			this.screen.add(this.rightScreen);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
 				    "Database error. Check your internet connnection.",
-				    "Error fetching appointments",
+				    "Error fetching patients",
 				    JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -341,12 +610,162 @@ public class SecretaryView implements Screen {
 				    "Error fetching patient",
 				    JOptionPane.ERROR_MESSAGE);
 		}
-		
 	}
-	
+
+	private Object[][] patientListConverter(ArrayList<Patient> givenList) {
+		Object[][] patientArr = new Object[givenList.size()][9];
+		for (int i = 0; i < givenList.size(); i++) {
+			patientArr[i] = new Object[9];
+			patientArr[i][0] = String.valueOf(givenList.get(i).getPatientID());
+			patientArr[i][1] = givenList.get(i).getTitle();
+			patientArr[i][2] = givenList.get(i).getFirstName();
+			patientArr[i][3] = givenList.get(i).getLastName();
+			patientArr[i][4] = givenList.get(i).getDateOfBirth().toString();
+			patientArr[i][5] = givenList.get(i).getHouseNumber();
+			patientArr[i][6] = givenList.get(i).getPostcode();
+			patientArr[i][7] = givenList.get(i).getPhoneNumber();
+			patientArr[i][8] = "View";
+		}
+		return patientArr;
+	}
+
+	private Object[][] addressListConverter(ArrayList<Address> givenList) {
+		Object[][] addressArr = new Object[givenList.size()][6];
+		for (int i = 0; i < givenList.size(); i++) {
+			addressArr[i] = new String[6];
+			addressArr[i][0] = givenList.get(i).getHouseNumber();
+			addressArr[i][1] = givenList.get(i).getStreetName();
+			addressArr[i][2] = givenList.get(i).getDistrict();
+			addressArr[i][3] = givenList.get(i).getCity();
+			addressArr[i][4] = givenList.get(i).getPostcode();
+			addressArr[i][5] = "View";
+		}
+		return addressArr;
+	}
+
 	@Override
 	public JPanel getPanel() {
 		return this.screen;
 	}
 
 }
+
+/**
+ * Code snippet from following tutorial
+ * http://www.java2s.com/Code/Java/Swing-Components/ButtonTableExample.htm
+ */
+@SuppressWarnings("serial")
+class ButtonRenderer extends JButton implements TableCellRenderer {
+	public ButtonRenderer() {
+		setOpaque(true);
+	}
+
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		if (isSelected) {
+			setForeground(table.getSelectionForeground());
+			setBackground(table.getSelectionBackground());
+		} else {
+			setForeground(table.getForeground());
+			setBackground(UIManager.getColor("Button.background"));
+		}
+		setText((value == null) ? "" : value.toString());
+		return this;
+	}
+}
+/**
+ * Code snippet from following tutorial
+ * http://www.java2s.com/Code/Java/Swing-Components/ButtonTableExample.htm
+ */
+@SuppressWarnings("serial")
+class ButtonEditor extends DefaultCellEditor {
+	protected JButton button;
+	private String label;
+	private boolean isPushed;
+	private JTable table;
+	private int row;
+	private DisplayFrame frame;
+
+	public ButtonEditor(JCheckBox checkBox, DisplayFrame frame) {
+		super(checkBox);
+		button = new JButton();
+		button.setOpaque(true);
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fireEditingStopped();
+			}
+		});
+		this.frame = frame;
+	}
+	
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+		this.table = table;
+		if (isSelected) {
+			button.setForeground(table.getSelectionForeground());
+			button.setBackground(table.getSelectionBackground());
+		} else {
+			button.setForeground(table.getForeground());
+			button.setBackground(table.getBackground());
+		}
+		this.row = row;
+		label = (value == null) ? "" : value.toString();
+		button.setText(label);
+		isPushed = true;
+		return button;
+	}
+
+	public Object getCellEditorValue() {
+		if (isPushed) {
+			if (label.equals("View")) { //Patients action listener
+				try {
+					Patient patient = new Patient(Integer.valueOf((String) this.table.getValueAt(this.row, 0)));
+					DisplayFrame patientViewFrame = new DisplayFrame();
+					PatientView patientView = new PatientView(patientViewFrame, patient);
+					patientViewFrame.setDisplayedPanel(patientView.getPanel());
+				} catch (CommunicationsException e) {
+					JOptionPane.showMessageDialog(this.frame,
+						    "Error connecting to the database. Check internet connection.",
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(this.frame,
+						    "Error fetching the information from the database",
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			} else { //Addresses action listener
+				try {
+					String hnum = (String) this.table.getValueAt(this.row, 0);
+					String pcode = (String) this.table.getValueAt(this.row, 4);
+					Address address = new Address(hnum, pcode);
+					DisplayFrame addressViewFrame = new DisplayFrame();
+					AddressView addressView = new AddressView(addressViewFrame, address);
+					addressViewFrame.setDisplayedPanel(addressView.getPanel());
+				} catch (CommunicationsException e) {
+					JOptionPane.showMessageDialog(this.frame,
+						    "Error connecting to the database. Check internet connection.",
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(this.frame,
+						    "Error fetching the information from the database",
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+				}				
+			}
+	    }
+	    isPushed = false;
+	    return new String(label);
+	}
+
+	public boolean stopCellEditing() {
+		isPushed = false;
+		return super.stopCellEditing();
+	}
+
+	protected void fireEditingStopped() {
+		super.fireEditingStopped();
+	}
+}
+
+
+

@@ -135,8 +135,33 @@ public class DBQueries {
 		return staff;
 	}
 	
+	public static ArrayList<Patient> searchPatients(String firstName, String lastName, String houseNumber, String postcode) throws Exception {
+		ArrayList<Patient> patients = new ArrayList<Patient>();
+		Connection conn = Database.getConnection();
+		ResultSet rs = execQuery("SELECT * FROM Patients WHERE FirstName LIKE '%" + firstName + "%' AND LastName LIKE '%" + lastName +"%' AND HouseNumber LIKE '%" + houseNumber + "%' AND Postcode LIKE '%" + postcode + "%'", conn);
+		while (rs.next()) {
+			int id = rs.getInt("PatientID");
+			patients.add(new Patient(id));
+		}
+		conn.close();
+		return patients;
+	}
+	
+	public static ArrayList<Address> searchAddresses(String houseNumber, String streetName, String district, String city, String postcode) throws SQLException {
+		ArrayList<Address> addresses = new ArrayList<Address>();
+		Connection conn = Database.getConnection();
+		ResultSet rs = execQuery("SELECT * FROM Address WHERE HouseNumber LIKE '%" + houseNumber + "%' AND StreetName LIKE '%" + streetName + "%' AND District LIKE '%" + district + "%' AND City LIKE '%" + city + "%' AND Postcode LIKE '%" + postcode + "%'", conn);
+		while (rs.next()) {
+			String hnum = rs.getString("HouseNumber");
+			String pcode = rs.getString("Postcode");
+			addresses.add(new Address(hnum, pcode));
+		}
+		conn.close();
+		return addresses;
+	}
+	
 	/**
-	 * Returns a HashMap of all of the treatments and their prices stored in the databse.
+	 * Returns a HashMap of all of the treatments and their prices stored in the database.
 	 * @return HashMap with the treatment name (String) as the key and the price as a value (Double)
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException any other error

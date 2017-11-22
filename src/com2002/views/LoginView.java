@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,15 +86,13 @@ public class LoginView implements Screen {
 		this.loginButton = new JButton(LOGIN_LABEL);
 		this.loginButton.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE / 2));
+		this.loginButton.setMnemonic(KeyEvent.VK_ENTER);
 		this.loginButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//Check username and password in db by creating an instance of staff
+				//Check user name and password in db by creating an instance of staff
 				String name = ((JTextField) fields.get(0)).getText();
 				String password = String.valueOf(((JPasswordField) fields.get(1)).getPassword());
-				//TODO: Attempt doctor and attempt secretary.. 
-				Doctor testDoc;
-				Secretary testSec;
 				try {
 					Staff staff = DBQueries.constructStaff(name, password);
 					

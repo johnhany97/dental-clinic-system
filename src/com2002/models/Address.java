@@ -3,6 +3,7 @@ package com2002.models;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -199,6 +200,22 @@ public class Address {
 	public void deleteAddress(String houseNumber, String postcode) throws SQLException {
 		DBQueries.execUpdate("DELETE FROM Address WHERE PostCode LIKE '%" + postcode 
 				+ "%' AND HouseNumber LIKE '%" + houseNumber + "%'"); 
+	}
+
+	public static ArrayList<Address> getAllAddresses() throws SQLException {
+		ArrayList<Address> addresses = new ArrayList<Address>();
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Address", conn);
+			while (rs.next()) {
+				String hnum = rs.getString("HouseNumber");
+				String pcode = rs.getString("Postcode");
+				addresses.add(new Address(hnum, pcode));
+			}
+		} finally {
+			conn.close();
+		}
+		return addresses;
 	}
 	
 }

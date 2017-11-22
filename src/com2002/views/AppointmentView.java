@@ -128,7 +128,7 @@ public class AppointmentView implements Screen {
 		if (this.usage != null) {
 			//hp name
 			try {
-				nameString = this.usage.getHealthPlanName();
+				nameString = this.usage.getHealthPlan().getName();
 				HealthPlan hp;
 				hp = new HealthPlan(nameString);
 				//usage

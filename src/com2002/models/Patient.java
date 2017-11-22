@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -392,6 +393,20 @@ public class Patient {
 	public void deletePatient(int patientID) throws SQLException {
 		DBQueries.execUpdate("DELETE FROM Patients WHERE PatientID = '" + patientID + "'"); 
 	}		
-		
+	
+	public static ArrayList<Patient> getAllPatients() throws CommunicationsException, SQLException {
+		ArrayList<Patient> patients = new ArrayList<Patient>();
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Patients", conn);
+			while (rs.next()) {
+				int patientId = rs.getInt("PatientID");
+				patients.add(new Patient(patientId));
+			}
+		} finally {
+			conn.close();
+		}
+		return patients;
+	}
 	
 }

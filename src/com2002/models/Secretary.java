@@ -2,10 +2,10 @@ package com2002.models;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
-
 
 public class Secretary extends Staff {
 
@@ -29,7 +29,7 @@ public class Secretary extends Staff {
 	 * @param city City of the address
 	 * @param postcode Postcode of the address 
 	 */
-	protected Address registerAddress(String houseNumber, String streetName, String district, String city, String postcode) 
+	public Address registerAddress(String houseNumber, String streetName, String district, String city, String postcode) 
 			throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
 		Address address = new Address(houseNumber, streetName, district, city, postcode);
 		return address;
@@ -44,7 +44,7 @@ public class Secretary extends Staff {
 	 * @param houseNumber House Number of the patient
 	 * @param postcode Postcode of the patient 
 	 */
-	protected Patient registerPatient(String title, String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) 
+	public Patient registerPatient(String title, String firstName, String lastName, LocalDate dob, String phoneNumber, String houseNumber, String postcode) 
 			throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
 		Patient patient = new Patient(title, firstName, lastName, dob, phoneNumber, houseNumber, postcode);
 		return patient;
@@ -58,7 +58,7 @@ public class Secretary extends Staff {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void subscribePatient(Patient patient, String healthPlanName) throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
+	public void subscribePatient(Patient patient, String healthPlanName) throws MySQLIntegrityConstraintViolationException, CommunicationsException, SQLException {
 		patient.subscribePatient(healthPlanName);
 	}
 	
@@ -68,7 +68,7 @@ public class Secretary extends Staff {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void unsubscribePatient(Patient patient) throws CommunicationsException, SQLException {
+	public void unsubscribePatient(Patient patient) throws CommunicationsException, SQLException {
 		patient.unsubscribePatient();
 	}
 	
@@ -78,7 +78,7 @@ public class Secretary extends Staff {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	protected void resetHealthPlan(Patient patient) throws CommunicationsException, SQLException {
+	public void resetHealthPlan(Patient patient) throws CommunicationsException, SQLException {
 		patient.resetHealthPlan();
 	}
 	
@@ -86,16 +86,19 @@ public class Secretary extends Staff {
 	 * Searches for patients of a particular address
 	 * @param houseNumber The houseNumber of the address search 
 	 * @param postcode The postcode of the address search
+	 * @return 
 	 * @throws Check exceptions from patients class
 	 */
-	protected void searchByAddress(String houseNumber, String postcode ) throws Exception {
-		DBQueries.getPatientsByAddress(houseNumber, postcode);
+	public ArrayList<Patient> searchByAddress(String houseNumber, String postcode ) throws Exception {
+		return DBQueries.getPatientsByAddress(houseNumber, postcode);
 	}
 	
-	/*
-	protected [Appointment] viewSchedule() {
-		return schedule.getAppointments();
+	public ArrayList<Patient> searchPatients(String firstName, String lastName, String houseNumber, String postcode) throws Exception {
+		return DBQueries.searchPatients(firstName, lastName, houseNumber, postcode);
 	}
-	*/
+	
+	public ArrayList<Address> searchAddresses(String houseNumber, String streetName, String district, String city, String postcode) throws SQLException {
+		return DBQueries.searchAddresses(houseNumber, streetName, district, city, postcode);
+	}
 	
 }
