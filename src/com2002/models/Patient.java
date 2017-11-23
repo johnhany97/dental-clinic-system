@@ -89,6 +89,9 @@ public class Patient {
 				this.phoneNumber = rs.getString("PhoneNumber");
 				this.houseNumber = rs.getString("HouseNumber");
 				this.postcode = rs.getString("Postcode");
+				if(Usage.hasPatientID(patientID)){
+					this.usage = new Usage(patientID);
+				}
 			}
 		} finally {
 			conn.close();
@@ -294,26 +297,6 @@ public class Patient {
 		return this.usage;
 	}
 	
-	/**
-	 * Checks whether PatientHealthPlan table contains a specified patientID.
-	 * @param patientID checks if the patient you supply has a health plan
-	 * @return True if a HealthPlan already exists.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
-	 */
-	private boolean dbHasPatientID(int patientID) throws CommunicationsException, SQLException {
-		Connection conn = Database.getConnection();
-		try {
-			int foundID = -1;
-			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE PatientID = " + patientID, conn);
-			if(rs.next()) {
-				foundID = rs.getInt("PatientID");
-			}
-			return foundID == patientID;
-		} finally {
-			conn.close();
-		}
-	}
 	
 	/**
 	 * Subscribe the patient to a health plan.
@@ -323,7 +306,7 @@ public class Patient {
 	 * @throws MySQLIntegrityConstraintViolationException  patient already exists 
 	 */
 	public void subscribePatient(String healthPlanName) throws CommunicationsException, SQLException,  MySQLIntegrityConstraintViolationException {
-		if(!dbHasPatientID(patientID)){
+		if(!Usage.hasPatientID(patientID)){
 			this.usage =  new Usage(this.patientID, healthPlanName);
 		} else {
 			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " is already subsrcribed.");
@@ -336,7 +319,7 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public void unsubscribePatient() throws CommunicationsException, SQLException {
-		if(dbHasPatientID(patientID)){
+		if(Usage.hasPatientID(patientID)){
 			this.usage.unsubscribePatient();
 			this.usage = null;
 		}
@@ -348,7 +331,7 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public void resetHealthPlan() throws CommunicationsException, SQLException {
-		if(dbHasPatientID(patientID)){
+		if(Usage.hasPatientID(patientID)){
 			this.usage.resetHealthPlan();
 		} 
 	}
@@ -359,7 +342,7 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public void incrementCheckUp() throws CommunicationsException, SQLException{
-		if(dbHasPatientID(patientID)){
+		if(Usage.hasPatientID(patientID)){
 			this.usage.incrementCheckUp();
 		} 
 	}
@@ -370,7 +353,7 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public void incrementHygiene() throws CommunicationsException, SQLException{
-		if(dbHasPatientID(patientID)){
+		if(Usage.hasPatientID(patientID)){
 			this.usage.incrementHygiene();
 		}
 	}
@@ -381,7 +364,7 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public void incrementRepair() throws CommunicationsException, SQLException{
-		if(dbHasPatientID(patientID)){
+		if(Usage.hasPatientID(patientID)){
 			this.usage.incrementRepair();
 		}
 	}

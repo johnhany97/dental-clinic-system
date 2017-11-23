@@ -62,7 +62,7 @@ public class Usage {
 		this.hygieneUsed = 0;
 		this.repairUsed = 0;
 		this.dateJoined = LocalDate.now();
-		if(!dbHasPatientID(patientID)){
+		if(!Usage.hasPatientID(patientID)){
 			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName + "', '" + this.checkUpUsed + "', '" +
 				this.hygieneUsed + "', '" + this.repairUsed + "', '" + this.dateJoined + "')");
 		} else {
@@ -77,7 +77,7 @@ public class Usage {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	private boolean dbHasPatientID(int patientID) throws CommunicationsException, SQLException {
+	public static boolean hasPatientID(int patientID) throws CommunicationsException, SQLException {
 		Connection conn = Database.getConnection();
 		try {
 			int foundID = -1;
@@ -249,7 +249,7 @@ public class Usage {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
     public void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
-		if(dbHasPatientID(patientID)){
+		if(Usage.hasPatientID(patientID)){
 			this.healthPlan = null;
 			this.dateJoined = null;
 			this.checkUpUsed = 0;
