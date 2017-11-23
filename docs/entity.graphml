@@ -44,14 +44,15 @@ Price : Money<y:LabelModel>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="77.376953125" x="62.3115234375" y="4.0">&lt;&lt;table&gt;&gt;
 Appointments</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="121.609375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="194.775390625" x="2.0" y="45.40234375">StartDate : Date &lt;&lt;PK&gt;&gt;
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="136.310546875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="194.775390625" x="2.0" y="45.40234375">StartDate : Date &lt;&lt;PK&gt;&gt;
 EndDate : Date
 Username : String &lt;&lt;FK&gt;&gt; &lt;&lt;PK&gt;&gt;
 Type: String &lt;&lt;FK&gt;&gt;
 PatientID : Int &lt;&lt;FK&gt;&gt;
 Notes : String
 TotalAppointments : Int
-CurrentAppointment : Int<y:LabelModel>
+CurrentAppointment : Int
+Paid: Boolean<y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -217,7 +218,6 @@ TreatmentName: String &lt;&lt;FK&gt;&gt;<y:LabelModel>
       </data>
     </node>
     <node id="n8">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="90.0" width="140.9999999999999" x="466.21479159375394" y="-198.8"/>
@@ -369,7 +369,6 @@ Price: Money<y:LabelModel>
       </data>
     </edge>
     <edge id="e7" source="n8" target="n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
