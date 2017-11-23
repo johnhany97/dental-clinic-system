@@ -149,15 +149,15 @@ public class DatabaseTables {
 				"   `Paid`  BIT DEFAULT 0,\r\n" +
 				"	PRIMARY KEY(`StartDate`,`Username`),\r\n" + 
 				"	FOREIGN KEY(`Username`) REFERENCES Employees(Username),\r\n" + 
-				"	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID),\r\n" + 
-				"   FOREIGN KEY(`Type`) REFERENCES AppointmentTypes(Name)" +
+				"	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID) ON DELETE CASCADE,\r\n" + 
+				"   FOREIGN KEY(`Type`) REFERENCES AppointmentTypes(Name) ON DELETE CASCADE" +
 				")";
 		String appointmentTreatmentTable = "CREATE TABLE `AppointmentTreatment` (\r\n" +
 				"   `StartDate`     TIMESTAMP NOT NULL,\r\n" +
 				"   `Username`      VARCHAR(15) NOT NULL,\r\n" +
 				"   `TreatmentName` VARCHAR(30) NOT NULL,\r\n" +
-				"   FOREIGN KEY(`StartDate`, `Username`) References Appointments(StartDate, Username),\r\n" +
-				"   FOREIGN KEY(`TreatmentName`) References Treatments(Name)\r\n" +
+				"   FOREIGN KEY(`StartDate`, `Username`) References Appointments(StartDate, Username) ON DELETE CASCADE,\r\n" +
+				"   FOREIGN KEY(`TreatmentName`) References Treatments(Name) ON DELETE CASCADE\r\n" +
 				")";
 		String appointmentTypesTable = "CREATE TABLE `AppointmentTypes` (\r\n" +
 				"   `Name`      VARCHAR(30) NOT NULL,\r\n" +
@@ -188,8 +188,8 @@ public class DatabaseTables {
 				"	`RepairUsed`	INTEGER DEFAULT 0,\r\n" + 
 				"	`DateJoined`	DATE NOT NULL,\r\n" + 
 				"	PRIMARY KEY(`PatientID`,`HealthPlanName`),\r\n" + 
-				"	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID),\r\n" + 
-				"	FOREIGN KEY(`HealthPlanName`) REFERENCES HealthPlans(Name)\r\n" + 
+				"	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID) ON DELETE CASCADE,\r\n" + 
+				"	FOREIGN KEY(`HealthPlanName`) REFERENCES HealthPlans(Name) ON DELETE CASCADE\r\n" + 
 				")";
 		String patientsTable = "CREATE TABLE `Patients` (\r\n" + 
 				"	`PatientID`	INTEGER,\r\n" + 
@@ -201,7 +201,7 @@ public class DatabaseTables {
 				"	`HouseNumber`	VARCHAR(30) NOT NULL,\r\n" + 
 				"	`Postcode`	VARCHAR(8) NOT NULL,\r\n" + 
 				"   PRIMARY KEY (`PatientID`),\r\n" +
-				"	FOREIGN KEY(`HouseNumber`, `Postcode`) REFERENCES Address(HouseNumber, Postcode)\r\n" + 
+				"	FOREIGN KEY(`HouseNumber`, `Postcode`) REFERENCES Address(HouseNumber, Postcode) ON DELETE CASCADE\r\n" + 
 				");";
 		String addressTable = "CREATE TABLE `Address` (\r\n" + 
 				"	`HouseNumber`	VARCHAR(30) NOT NULL,\r\n" + 

@@ -396,11 +396,11 @@ public class Patient {
 		Timestamp startTime;
 		String username;
 		try{
-		ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE  PatientID = '" + patientID + "", conn);
+		ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE  PatientID = '" + patientID + "'", conn);
 		while (rs.next()) {
 			username = rs.getString("Username");
 			startTime = rs.getTimestamp("StartDate");
-			DBQueries.execUpdate("DELETE FROM AppointmentTreatments WHERE Username = '" + username + "' AND StartDate = '" + startTime.toString() +"'");		
+			DBQueries.execUpdate("DELETE FROM AppointmentTreatment WHERE Username = '" + username + "' AND StartDate = '" + startTime.toString() +"'");		
 		}
 		DBQueries.execUpdate("DELETE FROM Appointments WHERE PatientID = '" + patientID + "'");
 		DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID = '" + patientID + "'");
