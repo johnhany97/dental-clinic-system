@@ -197,7 +197,7 @@ public class Address {
 	 * @param postcode to distinguish the address to be deleted 
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void deleteAddress(String houseNumber, String postcode) throws SQLException {
+	public static void deleteAddress(String houseNumber, String postcode) throws SQLException {
 		DBQueries.execUpdate("DELETE FROM Address WHERE PostCode LIKE '%" + postcode 
 				+ "%' AND HouseNumber LIKE '%" + houseNumber + "%'"); 
 	}

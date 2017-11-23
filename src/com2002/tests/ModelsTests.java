@@ -527,6 +527,21 @@ public class ModelsTests {
 			fail("Exception thrown: " + e.getMessage());
 		}
 	}
+	
+	// tests patients delete patient method
+	@Test
+	public void deleteAddressMethod() {
+		try {
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			Address.deleteAddress("57","W5 1LF");
+			Address addressDS = new Address("57", "W5 1LF");
+			assertTrue("Date set to " + addressDS.getHouseNumber() + ", should be null.", 
+				addressDS.getHouseNumber() == null);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+	}
 		
 	// tests constructors for creating new type of a Health Plan
 	@Test
@@ -759,6 +774,23 @@ public class ModelsTests {
 		}
 	} 
 	
+	// tests patients delete patient method
+	@Test
+	public void deletePatientMethod() {
+		try {
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			Patient.deletePatient(1);
+			Patient patientDS = new Patient("Nur", "57", "W5 1LF");
+			assertTrue("Date set to " + patientDS.getFirstName() + ", should be null.", 
+				patientDS.getFirstName() == null);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				fail("Exception thrown: " + e.getMessage());
+			}
+	}
+	
+	
 	// tests dbqueries search method
 	@Test
 	public void searchMethod() {
@@ -843,27 +875,27 @@ public class ModelsTests {
 	}
 	
 	// tests patients set methods
-		@Test
-		public void usageSetMethods() {
-			try {
-				DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
-				DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
-				DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
-				Usage usageDS = new Usage(1, "NHS free plan");
-				usageDS.setCheckUpUsed(1);
-				usageDS.setHygieneUsed(2);
-				usageDS.setRepairUsed(3);
-				usageDS.setDateJoined(LocalDate.of(2017, 10, 18));
-				assertTrue("Usage set to " + usageDS.getPatientID() + ", should be 1.", 
-					usageDS.getPatientID() == (1));
-				assertTrue("Usage set to " + usageDS.getCheckUpUsed() + ", should be 1.", 
-					usageDS.getCheckUpUsed() == (1));
-				assertTrue("Usage set to " + usageDS.getHygieneUsed() + ", should be 2.", 
-					usageDS.getHygieneUsed() == (2));
-				assertTrue("Usage set to " + usageDS.getRepairUsed() + ", should be 3.", 
-					usageDS.getRepairUsed() == (3));
-				assertTrue("Usage set to " + usageDS.getDateJoined() + ", should be 2017-10-18.", 
-					usageDS.getDateJoined().equals(LocalDate.of(2017, 10, 18)));
+	@Test
+	public void usageSetMethods() {
+		try {
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
+			DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
+			Usage usageDS = new Usage(1, "NHS free plan");
+			usageDS.setCheckUpUsed(1);
+			usageDS.setHygieneUsed(2);
+			usageDS.setRepairUsed(3);
+			usageDS.setDateJoined(LocalDate.of(2017, 10, 18));
+			assertTrue("Usage set to " + usageDS.getPatientID() + ", should be 1.", 
+				usageDS.getPatientID() == (1));
+			assertTrue("Usage set to " + usageDS.getCheckUpUsed() + ", should be 1.", 
+				usageDS.getCheckUpUsed() == (1));
+			assertTrue("Usage set to " + usageDS.getHygieneUsed() + ", should be 2.", 
+				usageDS.getHygieneUsed() == (2));
+			assertTrue("Usage set to " + usageDS.getRepairUsed() + ", should be 3.", 
+				usageDS.getRepairUsed() == (3));
+			assertTrue("Usage set to " + usageDS.getDateJoined() + ", should be 2017-10-18.", 
+				usageDS.getDateJoined().equals(LocalDate.of(2017, 10, 18)));
 			} catch (SQLException e) {
 				e.printStackTrace();
 				fail("Exception thrown: " + e.getMessage());
