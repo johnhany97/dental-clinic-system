@@ -591,11 +591,36 @@ public class SecretaryView implements Screen {
 			detailsButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));
 			bottomRightSection.add(detailsButton);
-			//TODO: Action listener
 			JButton patientInfoButton = new JButton("Patient Info");
 			patientInfoButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));
+			patientInfoButton.putClientProperty("id", patient.getPatientID());
+			patientInfoButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+						Patient patient = new Patient((int) patientInfoButton.getClientProperty("id"));
+						DisplayFrame patientViewFrame = new DisplayFrame();
+						PatientView patientView = new PatientView(patientViewFrame, patient);
+						patientViewFrame.setDisplayedPanel(patientView.getPanel());
+					} catch (CommunicationsException e) {
+						JOptionPane.showMessageDialog(frame,
+							    "Database error. Check your internet connnection.",
+							    "Error fetching patient",
+							    JOptionPane.ERROR_MESSAGE);
+					} catch (SQLException e) {
+						JOptionPane.showMessageDialog(frame,
+							    e.getMessage(),
+							    "Error fetching patient",
+							    JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
 			bottomRightSection.add(patientInfoButton);
+			if (app.getAppointmentType().equals("Empty")) {
+				detailsButton.setEnabled(false);
+				patientInfoButton.setEnabled(false);
+			}
 			bottomRightSection.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 			//TODO: Action listener
 			JPanel rightSection = new JPanel();
