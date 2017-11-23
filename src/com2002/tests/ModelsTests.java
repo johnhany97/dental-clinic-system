@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,6 +26,7 @@ import com2002.models.Doctor;
 import com2002.models.HealthPlan;
 import com2002.models.Patient;
 import com2002.models.Role;
+import com2002.models.Schedule;
 import com2002.models.Secretary;
 import com2002.models.Staff;
 import com2002.models.Usage;
@@ -901,5 +903,272 @@ public class ModelsTests {
 				fail("Exception thrown: " + e.getMessage());
 			}
 		}
+	
+	// tests schedule for returning all appointments
+	@Test
+	public void testGetAppointments() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			ArrayList<Appointment> test = Schedule.getAppointments();
+			assertTrue("Start time set to " + test.get(0).getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
+					test.get(0).getStartTime().toString().equals("2017-11-13 11:10:00.0"));
+			assertTrue("End time set to " + test.get(0).getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
+					test.get(0).getEndTime().toString().equals("2017-11-13 11:30:00.0"));
+			assertTrue("Username set to " + test.get(0).getUsername() + ", should be dentist", 
+					test.get(0).getUsername().equals("dentist"));
+			assertTrue("PatientID set to " + test.get(0).getPatientID() + ", should be 1", 
+					test.get(0).getPatientID() == 1);
+			assertTrue("Notes set to " + test.get(0).getNotes() + ", should be Notes", 
+					test.get(0).getNotes().equals("Notes"));
+			assertTrue("Appointment type set to " + test.get(0).getAppointmentType() + ", should be Checkup", 
+					test.get(0).getAppointmentType().equals("Checkup"));
+			assertTrue("PatientID set to " + test.get(0).getCurrentAppointment() + ", should be 1", 
+					test.get(0).getCurrentAppointment() == 1);
+			assertTrue("PatientID set to " + test.get(0).getTotalAppointments() + ", should be 1", 
+					test.get(0).getTotalAppointments() == 1);
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests schedule for returning all appointments by day
+	@Test
+	public void testGetAppointmentsByDay() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			ArrayList<Appointment> test = Schedule.getAppointmentsByDay(Timestamp.valueOf("2017-11-13 11:10:00.0"));
+			assertTrue("Start time set to " + test.get(0).getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
+					test.get(0).getStartTime().toString().equals("2017-11-13 11:10:00.0"));
+			assertTrue("End time set to " + test.get(0).getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
+					test.get(0).getEndTime().toString().equals("2017-11-13 11:30:00.0"));
+			assertTrue("Username set to " + test.get(0).getUsername() + ", should be dentist", 
+					test.get(0).getUsername().equals("dentist"));
+			assertTrue("PatientID set to " + test.get(0).getPatientID() + ", should be 1", 
+					test.get(0).getPatientID() == 1);
+			assertTrue("Notes set to " + test.get(0).getNotes() + ", should be Notes", 
+					test.get(0).getNotes().equals("Notes"));
+			assertTrue("Appointment type set to " + test.get(0).getAppointmentType() + ", should be Checkup", 
+					test.get(0).getAppointmentType().equals("Checkup"));
+			assertTrue("PatientID set to " + test.get(0).getCurrentAppointment() + ", should be 1", 
+					test.get(0).getCurrentAppointment() == 1);
+			assertTrue("PatientID set to " + test.get(0).getTotalAppointments() + ", should be 1", 
+					test.get(0).getTotalAppointments() == 1);
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests schedule for returning all appointments by doctor
+	@Test
+	public void testGetAppointmentsByDoctor() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			Doctor dentist = new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			ArrayList<Appointment> test = Schedule.getAppointmentsByDoctor(dentist);
+			assertTrue("Start time set to " + test.get(0).getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
+					test.get(0).getStartTime().toString().equals("2017-11-13 11:10:00.0"));
+			assertTrue("End time set to " + test.get(0).getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
+					test.get(0).getEndTime().toString().equals("2017-11-13 11:30:00.0"));
+			assertTrue("Username set to " + test.get(0).getUsername() + ", should be dentist", 
+					test.get(0).getUsername().equals("dentist"));
+			assertTrue("PatientID set to " + test.get(0).getPatientID() + ", should be 1", 
+					test.get(0).getPatientID() == 1);
+			assertTrue("Notes set to " + test.get(0).getNotes() + ", should be Notes", 
+					test.get(0).getNotes().equals("Notes"));
+			assertTrue("Appointment type set to " + test.get(0).getAppointmentType() + ", should be Checkup", 
+					test.get(0).getAppointmentType().equals("Checkup"));
+			assertTrue("PatientID set to " + test.get(0).getCurrentAppointment() + ", should be 1", 
+					test.get(0).getCurrentAppointment() == 1);
+			assertTrue("PatientID set to " + test.get(0).getTotalAppointments() + ", should be 1", 
+					test.get(0).getTotalAppointments() == 1);
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests schedule for returning all appointments by doctor and day
+	@Test
+	public void testGetAppointmentsByDoctorAndDay() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			Doctor dentist = new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			ArrayList<Appointment> test = Schedule.getAppointmentsByDoctorAndDay(dentist, Timestamp.valueOf("2017-11-13 11:10:00.0"));
+			assertTrue("Start time set to " + test.get(0).getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
+					test.get(0).getStartTime().toString().equals("2017-11-13 11:10:00.0"));
+			assertTrue("End time set to " + test.get(0).getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
+					test.get(0).getEndTime().toString().equals("2017-11-13 11:30:00.0"));
+			assertTrue("Username set to " + test.get(0).getUsername() + ", should be dentist", 
+					test.get(0).getUsername().equals("dentist"));
+			assertTrue("PatientID set to " + test.get(0).getPatientID() + ", should be 1", 
+					test.get(0).getPatientID() == 1);
+			assertTrue("Notes set to " + test.get(0).getNotes() + ", should be Notes", 
+					test.get(0).getNotes().equals("Notes"));
+			assertTrue("Appointment type set to " + test.get(0).getAppointmentType() + ", should be Checkup", 
+					test.get(0).getAppointmentType().equals("Checkup"));
+			assertTrue("PatientID set to " + test.get(0).getCurrentAppointment() + ", should be 1", 
+					test.get(0).getCurrentAppointment() == 1);
+			assertTrue("PatientID set to " + test.get(0).getTotalAppointments() + ", should be 1", 
+					test.get(0).getTotalAppointments() == 1);
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+
+	// tests schedule for returning all appointments by patient
+	@Test
+	public void testGetAppointmentsByPatient() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			Patient Nur = new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			ArrayList<Appointment> test = Schedule.getAppointmentsByPatient(Nur.getPatientID());
+			assertTrue("Start time set to " + test.get(0).getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
+					test.get(0).getStartTime().toString().equals("2017-11-13 11:10:00.0"));
+			assertTrue("End time set to " + test.get(0).getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
+					test.get(0).getEndTime().toString().equals("2017-11-13 11:30:00.0"));
+			assertTrue("Username set to " + test.get(0).getUsername() + ", should be dentist", 
+					test.get(0).getUsername().equals("dentist"));
+			assertTrue("PatientID set to " + test.get(0).getPatientID() + ", should be 1", 
+					test.get(0).getPatientID() == 1);
+			assertTrue("Notes set to " + test.get(0).getNotes() + ", should be Notes", 
+					test.get(0).getNotes().equals("Notes"));
+			assertTrue("Appointment type set to " + test.get(0).getAppointmentType() + ", should be Checkup", 
+					test.get(0).getAppointmentType().equals("Checkup"));
+			assertTrue("PatientID set to " + test.get(0).getCurrentAppointment() + ", should be 1", 
+					test.get(0).getCurrentAppointment() == 1);
+			assertTrue("PatientID set to " + test.get(0).getTotalAppointments() + ", should be 1", 
+					test.get(0).getTotalAppointments() == 1);
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests schedule for returning a doctor's appointments by patient
+	@Test
+	public void testGetDoctorAppointmentsByPatient() throws Exception {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			Patient Nur = new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			Staff dentist = new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			ArrayList<Appointment> test = Schedule.getDoctorAppointmentsByPatient(dentist.getUsername(), Nur);
+			assertTrue("Start time set to " + test.get(0).getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
+					test.get(0).getStartTime().toString().equals("2017-11-13 11:10:00.0"));
+			assertTrue("End time set to " + test.get(0).getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
+					test.get(0).getEndTime().toString().equals("2017-11-13 11:30:00.0"));
+			assertTrue("Username set to " + test.get(0).getUsername() + ", should be dentist", 
+					test.get(0).getUsername().equals("dentist"));
+			assertTrue("PatientID set to " + test.get(0).getPatientID() + ", should be 1", 
+					test.get(0).getPatientID() == 1);
+			assertTrue("Notes set to " + test.get(0).getNotes() + ", should be Notes", 
+					test.get(0).getNotes().equals("Notes"));
+			assertTrue("Appointment type set to " + test.get(0).getAppointmentType() + ", should be Checkup", 
+					test.get(0).getAppointmentType().equals("Checkup"));
+			assertTrue("PatientID set to " + test.get(0).getCurrentAppointment() + ", should be 1", 
+					test.get(0).getCurrentAppointment() == 1);
+			assertTrue("PatientID set to " + test.get(0).getTotalAppointments() + ", should be 1", 
+					test.get(0).getTotalAppointments() == 1);
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests schedule for setting a new appointment
+	@Test
+	public void testSetAppointment() {
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			Schedule.setAppointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), "dentist");
+			assertTrue("Start time set to " + aptmnt.getStartTime().toString() + ", should be 2017-11-13 11:10:00.0", 
+					aptmnt.getStartTime().toString().equals("2017-11-13 11:10:00.0"));
+			assertTrue("End time set to " + aptmnt.getEndTime().toString() + ", should be 2017-11-13 11:30:00.0", 
+					aptmnt.getEndTime().toString().equals("2017-11-13 11:30:00.0"));
+			assertTrue("Username set to " + aptmnt.getUsername() + ", should be dentist", 
+					aptmnt.getUsername().equals("dentist"));
+			assertTrue("PatientID set to " + aptmnt.getPatientID() + ", should be 1", 
+					aptmnt.getPatientID() == 1);
+			assertTrue("Notes set to " + aptmnt.getNotes() + ", should be Notes", 
+					aptmnt.getNotes().equals("Notes"));
+			assertTrue("Appointment type set to " + aptmnt.getAppointmentType() + ", should be Checkup", 
+					aptmnt.getAppointmentType().equals("Checkup"));
+			assertTrue("PatientID set to " + aptmnt.getCurrentAppointment() + ", should be 1", 
+					aptmnt.getCurrentAppointment() == 1);
+			assertTrue("PatientID set to " + aptmnt.getTotalAppointments() + ", should be 1", 
+					aptmnt.getTotalAppointments() == 1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+	}
+	
+	// tests schedule for deleting an appointment
+	@Test
+	public void testDeleteAppointment() throws SQLException {
+		Connection conn =  Database.getConnection();
+		try {
+			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
+			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
+			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
+			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
+					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
+			Schedule.deleteAppointment(aptmnt);
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments", conn);
+			if(rs.next()) {
+				fail("Appointment still exists in database.");
+			} else {
+				assertTrue("Username set to " + aptmnt.getUsername() + ", should be null.", 
+						aptmnt.getUsername() == null);
+				assertTrue("Start time set to " + aptmnt.getStartTime() + ", should be null.", 
+						aptmnt.getStartTime() == null);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		} finally {
+			conn.close();
+		}
+	}
 	
 }

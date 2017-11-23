@@ -41,9 +41,9 @@ public class Schedule {
 	}
 	
 	/**
-	 * Returns all the appointments by doctor as an ArrayList of Appointments.
-	 * @param doctor A doctor, either hygienist or dentist.
-	 * @return An ArrayList of all the Appointments by doctor.
+	 * Returns all the appointments by day as an ArrayList of Appointments.
+	 * @param date A date of the java class Date.
+	 * @return An ArrayList of all the Appointments by day.
 	 * @throws CommunicationsException when an error occurs whilst attempting connection.
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
@@ -108,7 +108,6 @@ public class Schedule {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection.
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	@SuppressWarnings("deprecation")
 	public static ArrayList<Appointment> getAppointmentsByDoctorAndDay(Doctor doctor, Date date) throws CommunicationsException, SQLException   {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
@@ -141,7 +140,7 @@ public class Schedule {
 	/**
 	 * Returns all the appointments by patient as an ArrayList of Appointments.
 	 * @param patientID The Patient ID of a patient.
-	 * @return Returns all the appointments by patient as an ArrayList of Appointments.
+	 * @return An ArrayList of all the Appointments by patient.
 	 * @throws CommunicationsException when an error occurs whilst attempting connection.
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
@@ -163,7 +162,15 @@ public class Schedule {
 		return appointments;
 	}
 	
- 	public static ArrayList<Appointment> getDoctorAppointmentsByPatient(String username, Patient patient) throws Exception {
+	/**
+	 * Returns a doctor's appointments by patient as an ArrayList of Appointments.
+	 * @param username The username of a doctor.
+	 * @param patient An instance of a particular Patient.
+	 * @return An ArrayList of a doctor's appointments by patient.
+	 * @throws CommunicationsException when an error occurs whilst attempting connection.
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+ 	public static ArrayList<Appointment> getDoctorAppointmentsByPatient(String username, Patient patient) throws CommunicationsException, SQLException {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
 	    String patientId = String.valueOf(patient.getPatientID());
@@ -200,13 +207,11 @@ public class Schedule {
 	
 	/**
 	 * Deletes an appointment from the Appointments Table.
-	 * @param start Timestamp of when the appointment should start.
-	 * @param userN Username of staff member conducting the appointment.
+	 * @param appointment An instance of a particular Appointment.
 	 * @throws CommunicationsException when an error occurs whilst attempting connection.
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public void deleteAppointment(Timestamp start, String userN) throws CommunicationsException, SQLException  {
-		Appointment app = new Appointment(start, userN);
-		app.removeAppointment();
+	public static void deleteAppointment(Appointment appointment) throws CommunicationsException, SQLException  {
+		appointment.removeAppointment();
 	}
 }
