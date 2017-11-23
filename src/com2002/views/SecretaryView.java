@@ -3,18 +3,15 @@ package com2002.views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,7 +24,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -37,11 +33,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 
@@ -71,14 +64,14 @@ public class SecretaryView implements Screen {
 	private JTabbedPane tabbedPane;
 	//patients tab
 	private List<JTextField> patientsTabInputs;
-	private Object[][] addressList;
+	private Object[][] patientsList;
 	private JTable patientsTable;
-	private DefaultTableModel addressesTableModel;
+	private DefaultTableModel patientsTableModel;
 	//addresses tab
 	private List<JTextField> addressesTabInputs;
-	private Object[][] addressesLlist;
+	private Object[][] addressesList;
 	private JTable addressesTable;
-	private DefaultTableModel addressesTableMode;
+	private DefaultTableModel addressesTableModel;
 	
 	public SecretaryView(DisplayFrame frame, Secretary secretary) {
 		this.frame = frame;
@@ -301,10 +294,10 @@ public class SecretaryView implements Screen {
 					String pcode = addressesTabInputs.get(4).getText();
 					try {
 						ArrayList<Address> addressesFound = secretary.searchAddresses(hnum, sname, dist, city, pcode);
-						addressList = addressListConverter(addressesFound);
+						addressesList = addressListConverter(addressesFound);
 						addressesTableModel.setRowCount(0);
-						for (int i = 0; i < addressList.length; i++) {
-							addressesTableModel.addRow(addressList[i]);
+						for (int i = 0; i < addressesList.length; i++) {
+							addressesTableModel.addRow(addressesList[i]);
 						}
 						frame.revalidate();
 					} catch (Exception e) {
@@ -326,10 +319,10 @@ public class SecretaryView implements Screen {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
 						ArrayList<Address> addressesFound = Address.getAllAddresses();
-						addressList = addressListConverter(addressesFound);
+						addressesList = addressListConverter(addressesFound);
 						addressesTableModel.setRowCount(0);
-						for (int i = 0; i < addressList.length; i++) {
-							addressesTableModel.addRow(addressList[i]);
+						for (int i = 0; i < addressesList.length; i++) {
+							addressesTableModel.addRow(addressesList[i]);
 						}
 						addressesTabInputs.get(0).setText("");
 						addressesTabInputs.get(1).setText("");
@@ -358,9 +351,9 @@ public class SecretaryView implements Screen {
 			});
 			inputsAndButtons.add(newButton);
 			//actual addresses
-			this.addressList = addressListConverter(Address.getAllAddresses());
+			this.addressesList = addressListConverter(Address.getAllAddresses());
 			String[] columnTitles = {"House Number", "Street Name", "District", "City", "Postcode", "Actions"};
-			this.addressesTableModel = new DefaultTableModel(this.addressList, columnTitles) {
+			this.addressesTableModel = new DefaultTableModel(this.addressesList, columnTitles) {
 				@Override
 				public boolean isCellEditable(int row, int col) {
 					//only the last column
@@ -453,10 +446,10 @@ public class SecretaryView implements Screen {
 					String pcode = patientsTabInputs.get(3).getText();
 					try {
 						ArrayList<Patient> patientsFound = secretary.searchPatients(fname, lname, hnum, pcode);
-						addressList = patientListConverter(patientsFound);
-						addressesTableModel.setRowCount(0);
-						for (int i = 0; i < addressList.length; i++) {
-							addressesTableModel.addRow(addressList[i]);
+						patientsList = patientListConverter(patientsFound);
+						patientsTableModel.setRowCount(0);
+						for (int i = 0; i < patientsList.length; i++) {
+							patientsTableModel.addRow(patientsList[i]);
 						}
 						frame.revalidate();
 					} catch (Exception e) {
@@ -477,10 +470,10 @@ public class SecretaryView implements Screen {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
 						ArrayList<Patient> patientsFound = Patient.getAllPatients();
-						addressList = patientListConverter(patientsFound);
-						addressesTableModel.setRowCount(0);
-						for (int i = 0; i < addressList.length; i++) {
-							addressesTableModel.addRow(addressList[i]);
+						patientsList = patientListConverter(patientsFound);
+						patientsTableModel.setRowCount(0);
+						for (int i = 0; i < patientsList.length; i++) {
+							patientsTableModel.addRow(patientsList[i]);
 						}
 						patientsTabInputs.get(0).setText("");
 						patientsTabInputs.get(1).setText("");
@@ -498,16 +491,16 @@ public class SecretaryView implements Screen {
 			});
 			inputsAndButtons.add(viewAllPatientsButton);
 			//actual patients
-			this.addressList = patientListConverter(Patient.getAllPatients());
+			this.patientsList = patientListConverter(Patient.getAllPatients());
 			String[] columnTitlesPatients = {"ID", "Title", "First Name", "Last Name", "Date Of Birth", "House Number", "Postcode", "Telephone", "Actions"};
-			this.addressesTableModel = new DefaultTableModel(this.addressList, columnTitlesPatients) {
+			this.patientsTableModel = new DefaultTableModel(this.patientsList, columnTitlesPatients) {
 				@Override
 				public boolean isCellEditable(int row, int col) {
 					//only the last column
 					return col == 8;
 				}
 			};;
-			this.patientsTable = new JTable(this.addressesTableModel);
+			this.patientsTable = new JTable(this.patientsTableModel);
 			this.patientsTable.getColumn("Actions").setCellRenderer(new ButtonRenderer());
 			this.patientsTable.getColumn("Actions").setCellEditor(
 			        new ButtonEditor(new JCheckBox(), this.frame));
