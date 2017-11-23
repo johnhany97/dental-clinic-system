@@ -181,6 +181,7 @@ public class SecretaryView implements Screen {
 			bottomLeftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			this.leftScreen.add(bottomLeftPanel, BorderLayout.SOUTH);
 		} catch (SQLException e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,
 				    "Database error. Check your internet connnection.",
 				    "Error fetching appointments",
@@ -339,17 +340,6 @@ public class SecretaryView implements Screen {
 				}
 			});
 			inputsAndButtons.add(viewAllButton);
-			//new address
-			JButton newButton = new JButton("New");
-			newButton.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
-			newButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}				
-			});
-			inputsAndButtons.add(newButton);
 			//actual addresses
 			this.addressesList = addressListConverter(Address.getAllAddresses());
 			String[] columnTitles = {"House Number", "Street Name", "District", "City", "Postcode", "Actions"};

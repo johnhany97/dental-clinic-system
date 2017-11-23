@@ -114,7 +114,7 @@ public class Patient {
 				this.firstName = rs.getString("FirstName");
 				this.lastName = rs.getString("LastName");
 				this.dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
-				this.phoneNumber = rs.getString("LastName");
+				this.phoneNumber = rs.getString("PhoneNumber");
 				this.houseNumber = rs.getString("HouseNumber");
 				this.postcode = rs.getString("Postcode");
 			}
