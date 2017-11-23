@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -177,12 +179,17 @@ public class PatientView implements Screen {
 							for (int i = 0; i < names.length; i++) {
 								names[i] = healthPlans.get(i).getName();
 							}
-						    JOptionPane.showInputDialog(frame, "Pick a health plan", "Input", JOptionPane.QUESTION_MESSAGE,
-						            	null, names, "HealthPlans");
-							//do something with selection
+						    String input = (String) JOptionPane.showInputDialog(null, "Choose:",
+						        "Subscribe to health plan", JOptionPane.QUESTION_MESSAGE, null,
+						        names, // Array of choices
+						        names[0]); // Initial choice
+							//Subscribe to the health plan chosen
+//						    new Usage
 						} catch (SQLException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							JOptionPane.showMessageDialog(frame,
+								    "Database error.",
+								    "Error while fetching healthplans from db",
+								    JOptionPane.ERROR_MESSAGE);
 						}
 					} else {
 						// unsubscribe and refresh
@@ -210,7 +217,6 @@ public class PatientView implements Screen {
 		    			try {
 							Patient.deletePatient(patient.getPatientID());
 						} catch (SQLException e) {
-							e.printStackTrace();
 							JOptionPane.showMessageDialog(frame,
 								    "Database error.",
 								    "Error while deleting",
@@ -320,6 +326,56 @@ public class PatientView implements Screen {
 					DisplayFrame.FONT_SIZE / 3));
 			bottomRightSection.add(payButton);
 			bottomRightSection.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+			JButton deleteButton = new JButton("Delete");
+			deleteButton.setFont(new Font("Sans Serif", Font.PLAIN, 
+					DisplayFrame.FONT_SIZE / 3));
+			deleteButton.putClientProperty("Appointment", appointment);
+			deleteButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					Appointment appointment = (Appointment) deleteButton.getClientProperty("Appointment");
+					int selectedOption = JOptionPane.showConfirmDialog(null, "Do you wanna delete this appointment?", "Choose", JOptionPane.YES_NO_OPTION); 
+		    		if (selectedOption == JOptionPane.YES_OPTION) {
+		    			try {
+							appointment.removeAppointment();
+							try {
+								//get requested day
+								List<Appointment> appointmentList = Schedule.getAppointmentsByPatient(patient.getPatientID());
+								appointmentCards.clear();
+								appointmentsPanel.removeAll();
+								appointmentsPanel.setLayout(new GridLayout(0,2));
+								if (appointmentList.size() > 0) {
+									for (int i = 0; i < appointmentList.size(); i++) {
+										addAppointment(appointmentList.get(i));
+									}
+								} else {
+									//No appointments for today
+									appointmentsPanel.setLayout(new BorderLayout());
+									JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
+									appointmentsPanel.add(imgLabel, BorderLayout.CENTER);
+								}
+								frame.revalidate();
+							} catch (CommunicationsException e) {
+								JOptionPane.showMessageDialog(frame,
+									    "Check internet connection",
+									    "Error",
+									    JOptionPane.ERROR_MESSAGE);
+							} catch (SQLException e) {
+								JOptionPane.showMessageDialog(frame,
+									    e.getMessage(),
+									    "Error fetching appointments",
+									    JOptionPane.ERROR_MESSAGE);
+							}
+						} catch (SQLException e) {
+							JOptionPane.showMessageDialog(frame,
+								    e.getMessage(),
+								    "Error deleting appointment",
+								    JOptionPane.ERROR_MESSAGE);
+						}
+		    		}
+				}
+			});
+			bottomRightSection.add(deleteButton);
 			//TODO: Action listener
 			JPanel rightSection = new JPanel();
 			rightSection.setLayout(new BoxLayout(rightSection, BoxLayout.Y_AXIS));

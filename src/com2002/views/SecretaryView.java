@@ -59,6 +59,7 @@ public class SecretaryView implements Screen {
 	private JPanel appointmentsScreen;
 	private JScrollPane appointmentsScrollPane;
 	private List<JPanel> appointmentCards;
+	private JDatePickerImpl datePicker;
 	//right panel
 	private JPanel rightScreen;
 	private JTabbedPane tabbedPane;
@@ -134,7 +135,7 @@ public class SecretaryView implements Screen {
 			//date picker
 			UtilDateModel model = new UtilDateModel();
 			JDatePanelImpl datePanel = new JDatePanelImpl(model);
-			JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+			this.datePicker = new JDatePickerImpl(datePanel);
 	
 			//set by default today
 			Date today = new Date();
@@ -181,6 +182,7 @@ public class SecretaryView implements Screen {
 			bottomLeftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			this.leftScreen.add(bottomLeftPanel, BorderLayout.SOUTH);
 		} catch (SQLException e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,
 				    "Database error. Check your internet connnection.",
 				    "Error fetching appointments",
@@ -339,17 +341,6 @@ public class SecretaryView implements Screen {
 				}
 			});
 			inputsAndButtons.add(viewAllButton);
-			//new address
-			JButton newButton = new JButton("New");
-			newButton.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
-			newButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}				
-			});
-			inputsAndButtons.add(newButton);
 			//actual addresses
 			this.addressesList = addressListConverter(Address.getAllAddresses());
 			String[] columnTitles = {"House Number", "Street Name", "District", "City", "Postcode", "Actions"};
@@ -580,10 +571,13 @@ public class SecretaryView implements Screen {
 			JPanel bottomRightSection = new JPanel();
 			bottomRightSection.setLayout(new FlowLayout());
 			bottomRightSection.setAlignmentX(Component.LEFT_ALIGNMENT);
+			//Buttons
+			//Appointment Details Button
 			JButton detailsButton = new JButton("Details");
 			detailsButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));
 			bottomRightSection.add(detailsButton);
+			//Patient Info Button
 			JButton patientInfoButton = new JButton("Patient Info");
 			patientInfoButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));
@@ -609,7 +603,58 @@ public class SecretaryView implements Screen {
 					}
 				}
 			});
+			JButton deleteButton = new JButton("Delete");
+			deleteButton.setFont(new Font("Sans Serif", Font.PLAIN, 
+					DisplayFrame.FONT_SIZE / 3));
+			deleteButton.putClientProperty("Appointment", app);
+			deleteButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					Appointment appointment = (Appointment) deleteButton.getClientProperty("Appointment");
+					int selectedOption = JOptionPane.showConfirmDialog(null, "Do you wanna delete this appointment?", "Choose", JOptionPane.YES_NO_OPTION); 
+		    		if (selectedOption == JOptionPane.YES_OPTION) {
+		    			try {
+							appointment.removeAppointment();
+							try {
+								//get requested day
+								Date selectedDate = (Date) datePicker.getModel().getValue();
+								List<Appointment> appointmentList = Schedule.getAppointmentsByDay(selectedDate);
+								appointmentCards.clear();
+								appointmentsScreen.removeAll();
+								appointmentsScreen.setLayout(new GridLayout(0,2));
+								if (appointmentList.size() > 0) {
+									for (int i = 0; i < appointmentList.size(); i++) {
+										addAppointment(appointmentList.get(i));
+									}
+								} else {
+									//No appointments for today
+									appointmentsScreen.setLayout(new BorderLayout());
+									JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
+									appointmentsScreen.add(imgLabel, BorderLayout.CENTER);
+								}
+								frame.revalidate();
+							} catch (CommunicationsException e) {
+								JOptionPane.showMessageDialog(frame,
+									    "Check internet connection",
+									    "Error",
+									    JOptionPane.ERROR_MESSAGE);
+							} catch (SQLException e) {
+								JOptionPane.showMessageDialog(frame,
+									    e.getMessage(),
+									    "Error fetching appointments",
+									    JOptionPane.ERROR_MESSAGE);
+							}
+						} catch (SQLException e) {
+							JOptionPane.showMessageDialog(frame,
+								    e.getMessage(),
+								    "Error deleting appointment",
+								    JOptionPane.ERROR_MESSAGE);
+						}
+		    		}
+				}
+			});
 			bottomRightSection.add(patientInfoButton);
+			bottomRightSection.add(deleteButton);
 			if (app.getAppointmentType().equals("Empty")) {
 				detailsButton.setEnabled(false);
 				patientInfoButton.setEnabled(false);

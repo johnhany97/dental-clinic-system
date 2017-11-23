@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 
-import com2002.utils.Database;
 import com2002.utils.DatabaseTables;
 import com2002.views.DisplayFrame;
 import com2002.views.LoginView;

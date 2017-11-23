@@ -79,6 +79,7 @@ public class DatabaseTables {
 			stmt.executeUpdate(patient2);
 			
 			String appointment1 = "INSERT INTO Appointments (StartDate, EndDate, Username, Type, TotalAppointments, CurrentAppointment) VALUES ('2017-11-19 01:00:00', '2017-11-19 02:00:00', 'user1', 'Empty', 1, 1)";
+			String appointment17 = "INSERT INTO Appointments (StartDate, EndDate, Username, Type, TotalAppointments, CurrentAppointment) VALUES ('2017-11-15 01:00:00', '2017-11-17 02:00:00', 'user1', 'Empty', 1, 1)";
 			String appointment2 = "INSERT INTO Appointments VALUES ('2017-11-19 2:0:0', '2017-11-19 3:0:0', \"user1\", \"Remedial\", 2, \"a\", 1, 1, 0)";
 			String appointment3 = "INSERT INTO Appointments VALUES ('2017-11-19 3:0:0', '2017-11-19 4:0:0', \"user1\", \"Cleaning\", 1, \"b\", 1, 1, 0)";
 			String appointment4 = "INSERT INTO Appointments VALUES ('2017-11-19 4:0:0', '2017-11-19 5:0:0', \"user1\", \"Remedial\", 2, \"c\", 1, 1, 0)";
@@ -110,6 +111,7 @@ public class DatabaseTables {
 			stmt.executeUpdate(appointment14);
 			stmt.executeUpdate(appointment15);
 			stmt.executeUpdate(appointment16);
+			stmt.executeUpdate(appointment17);
 			
 			String patientHealthPlan1 = "INSERT INTO PatientHealthPlan VALUES (1, \"hp1\", 0, 0, 0, '2017-11-13')";
 			stmt.executeUpdate(patientHealthPlan1);
