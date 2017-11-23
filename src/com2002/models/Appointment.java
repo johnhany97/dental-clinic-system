@@ -69,6 +69,9 @@ public class Appointment {
 	public Appointment(Timestamp startTime, Timestamp endTime, String username, int patientID, String notes,
 					   AppointmentType treatmentName, int totalAppointments, int currentAppointments)
 							   throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+		if(startTime.after(endTime)) {
+			throw new SQLException("End time cannot be before start time.");
+		}
 		Connection conn =  Database.getConnection();
 		try {
 			ResultSet timeCheckRS = DBQueries.execQuery("SELECT * FROM Appointments WHERE (StartDate < '" + endTime.toString() + "' AND EndDate > '" + startTime.toString() + "') AND Username = '" + username + "'", conn);
