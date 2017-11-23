@@ -171,6 +171,19 @@ public class PatientView implements Screen {
 				public void actionPerformed(ActionEvent arg0) {
 					if (hpButton.getText().equals("Subscribe")) {
 						//show options
+						try {
+							ArrayList<HealthPlan> healthPlans = HealthPlan.getAllHealthPlans();
+							String[] names = new String[healthPlans.size()];
+							for (int i = 0; i < names.length; i++) {
+								names[i] = healthPlans.get(i).getName();
+							}
+						    JOptionPane.showInputDialog(frame, "Pick a health plan", "Input", JOptionPane.QUESTION_MESSAGE,
+						            	null, names, "HealthPlans");
+							//do something with selection
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					} else {
 						// unsubscribe and refresh
 					}

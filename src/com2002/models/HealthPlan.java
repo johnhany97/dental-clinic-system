@@ -3,6 +3,7 @@ package com2002.models;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -187,5 +188,20 @@ public class HealthPlan {
 	 */
 	public void deleteHealthPlan(String name) throws SQLException {
 		DBQueries.execUpdate("DELETE FROM HealthPlans WHERE HealthPlanName LIKE '%" + name + "%'"); 
+	}
+	
+	public static ArrayList<HealthPlan> getAllHealthPlans() throws SQLException {
+		ArrayList<HealthPlan> healthplans = new ArrayList<HealthPlan>();
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM HealthPlans", conn);
+			while (rs.next()) {
+				String name = rs.getString("Name");
+				healthplans.add(new HealthPlan(name));
+			}
+		} finally {
+			conn.close();
+		}
+		return healthplans;
 	}
 }
