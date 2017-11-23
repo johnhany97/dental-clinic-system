@@ -3,6 +3,7 @@ package com2002.models;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -391,8 +392,24 @@ public class Patient {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
 	public static void deletePatient(int patientID) throws SQLException {
+		Connection conn = Database.getConnection();
+		Timestamp startTime;
+		String username;
+		try{
+		ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE  PatientID = '" + patientID + "", conn);
+		while (rs.next()) {
+			username = rs.getString("Username");
+			startTime = rs.getTimestamp("StartDate");
+			DBQueries.execUpdate("DELETE FROM AppointmentTreatments WHERE Username = '" + username + "' AND StartDate = '" + startTime.toString() +"'");		
+		}
+		DBQueries.execUpdate("DELETE FROM Appointments WHERE PatientID = '" + patientID + "'");
+		DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID = '" + patientID + "'");
 		DBQueries.execUpdate("DELETE FROM Patients WHERE PatientID = '" + patientID + "'"); 
+		} finally {
+			conn.close();
+		}
 	}		
+			
 	
 	public static ArrayList<Patient> getAllPatients() throws CommunicationsException, SQLException {
 		ArrayList<Patient> patients = new ArrayList<Patient>();
