@@ -119,7 +119,7 @@ public class LoginView implements Screen {
 						frame.dispose();
 					} else { //It's the doctor
 						DisplayFrame newFrame = new DisplayFrame();
-						DoctorView docView = new DoctorView(frame, (Doctor) staff);
+						DoctorView docView = new DoctorView(newFrame, (Doctor) staff);
 						newFrame.setDisplayedPanel(docView.getPanel());
 						frame.dispose();
 					}

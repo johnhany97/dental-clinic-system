@@ -267,6 +267,7 @@ public class BookAppointmentsView implements Screen {
 						month = String.valueOf(localDate.getMonthValue());
 						day   = String.valueOf(localDate.getDayOfMonth());						
 						Timestamp ts2 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeEndString);
+						System.out.println(patient.getPatientID());
 						switch (typeName) {
 						case "Checkup":
 							new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.CHECKUP, totalAppointmentsNum, currentAppointmentNum);

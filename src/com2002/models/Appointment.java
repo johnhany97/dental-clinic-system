@@ -35,6 +35,8 @@ public class Appointment {
 			rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE StartDate = '" 
 					+ startTime.toString() + "' AND Username = '" + username + "'", conn);
 			if(rs.next()) {
+
+
 				this.startTime = startTime;
 				this.endTime = rs.getTimestamp("EndDate");
 				this.username = username;
@@ -86,7 +88,8 @@ public class Appointment {
 			}
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + startTime.toString() + "', '" + endTime.toString() + "', '" + username + "', '" 
 							+ getAppointmentTypeString(treatmentName) + "', '" + patientID + "', '" + notes + "', '" + totalAppointments + "', '" + currentAppointments + "', 0)");
-			
+
+
 			this.startTime = startTime;
 			this.endTime = endTime;
 			this.username = username;
@@ -115,6 +118,8 @@ public class Appointment {
 		this.appointmentType = "";
 		this.totalAppointments = -1;
 		this.currentAppointment = -1;
+		this.treatments.clear();
+		this.treatments = null;
 	}
 	
 	/**
@@ -155,8 +160,8 @@ public class Appointment {
 	public void addTreatments(ArrayList<String> treatmentNames) throws SQLException {
 		for(int i = 0; i < treatmentNames.size(); i++) {
 			String name = treatmentNames.get(i);
-			DBQueries.execUpdate("INSERT INTO AppointmentTreatment VALUES ('" + this.startTime.toString() + "', '" 
-																			+ this.username + "', '" + name + "')");
+			DBQueries.execUpdate("INSERT INTO AppointmentTreatment VALUES('" + this.startTime.toString() + "', '" + this.username + "', '" + name + "')");
+			this.treatments.add(name);
 		}
 	}
 	
@@ -250,7 +255,7 @@ public class Appointment {
 	 */
 	public void setNotes(String notes) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE Appointments SET Notes = '" + notes + "' WHERE StartDate = '"
-					+ this.startTime.toString() + "' AND PatientID = " + this.patientID);
+					+ this.startTime.toString() + "' AND Username = '" + this.username + "' AND PatientID = " + this.patientID);
 		this.notes = notes;
 	}
 	
@@ -355,7 +360,13 @@ public class Appointment {
 	}
 	
 	public void removeTreatment(String toRemove) throws SQLException {
-		DBQueries.execUpdate("DELETE FROM AppointmentTreatments WHERE StartDate = '" + this.startTime.toString() + "' AND Username = '" + this.username + "' AND TreatmentName = '" + toRemove + "'");
+		DBQueries.execUpdate("DELETE FROM AppointmentTreatment WHERE StartDate = '" + this.startTime.toString() + "' AND Username = '" + this.username + "' AND TreatmentName = '" + toRemove + "'");
+		this.treatments.remove(toRemove);
+	}
+	
+	public void removeAllTreatments() throws SQLException {
+		DBQueries.execUpdate("DELETE FROM AppointmentTreatment WHERE StartDate = '" + this.startTime.toString() + "' AND Username = '" + this.username +"'");
+		this.treatments.clear();
 	}
 	
 	/**

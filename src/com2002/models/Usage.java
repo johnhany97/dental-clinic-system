@@ -57,8 +57,7 @@ public class Usage {
 	 */
     public Usage(int patientID, String healthPlanName) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
 		if(!Usage.hasPatientID(patientID)){
-			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName + "', '" + this.checkUpUsed + "', '" +
-				this.hygieneUsed + "', '" + this.repairUsed + "', '" + this.dateJoined + "')");
+			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName + "', 0, 0, 0, '" + LocalDate.now() + "')");
 			this.patientID = patientID;
 			this.healthPlan = new HealthPlan(healthPlanName);
 			this.checkUpUsed = 0;
