@@ -21,6 +21,7 @@ public class Appointment {
 	private int totalAppointments;
 	private int currentAppointment;
 	private boolean paid = false;
+	private ArrayList<String> treatments;
 	
 	/**
 	 * This constructor should be called with inputs which already exist in the Appointments table.
@@ -42,6 +43,11 @@ public class Appointment {
 				this.appointmentType = rs.getString("Type");
 				this.totalAppointments = rs.getInt("TotalAppointments");
 				this.currentAppointment = rs.getInt("CurrentAppointment");
+				this.treatments = new ArrayList<String>();
+				ResultSet treatmentsRS = DBQueries.execQuery("SELECT * FROM AppointmentTreatment WHERE StartDate = '" + this.startTime.toString() + "' AND Username = '" + this.username + "'", conn);
+				while (treatmentsRS.next()) {
+					this.treatments.add(treatmentsRS.getString("TreatmentName"));
+				}
 				int paidBit = rs.getInt("Paid");
 				if(paidBit == 1) {
 					this.paid = true;
@@ -89,6 +95,7 @@ public class Appointment {
 			this.appointmentType = getAppointmentTypeString(treatmentName);
 			this.totalAppointments = totalAppointments;
 			this.currentAppointment = currentAppointments;
+			this.treatments = new ArrayList<String>();
 		} finally {
 			conn.close();
 		}
@@ -341,6 +348,14 @@ public class Appointment {
 	 */
 	public boolean isPaid() {
 		return this.paid;
+	}
+	
+	public ArrayList<String> getTreatments() throws SQLException {
+		return this.treatments;
+	}
+	
+	public void removeTreatment(String toRemove) throws SQLException {
+		DBQueries.execUpdate("DELETE FROM AppointmentTreatments WHERE StartDate = '" + this.startTime.toString() + "' AND Username = '" + this.username + "' AND TreatmentName = '" + toRemove + "'");
 	}
 	
 	/**

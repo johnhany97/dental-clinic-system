@@ -258,7 +258,7 @@ public class DoctorView implements Screen {
 			//Appointment Details Button
 			JButton detailsButton = new JButton("View");
 			detailsButton.setFont(new Font("Sans Serif", Font.PLAIN,
-					DisplayFrame.FONT_SIZE / 3));
+					DisplayFrame.FONT_SIZE / 2));
 			bottomRightSection.add(detailsButton);
 			detailsButton.addActionListener(new ActionListener() {
 				@Override
@@ -272,7 +272,7 @@ public class DoctorView implements Screen {
 			//Patient Info Button
 			JButton patientInfoButton = new JButton("Patient Info");
 			patientInfoButton.setFont(new Font("Sans Serif", Font.PLAIN,
-					DisplayFrame.FONT_SIZE / 3));
+					DisplayFrame.FONT_SIZE / 2));
 			patientInfoButton.putClientProperty("id", patient.getPatientID());
 			patientInfoButton.addActionListener(new ActionListener() {
 				@Override
@@ -299,7 +299,7 @@ public class DoctorView implements Screen {
 			});
 			JButton deleteButton = new JButton("Cancel");
 			deleteButton.setFont(new Font("Sans Serif", Font.PLAIN, 
-					DisplayFrame.FONT_SIZE / 3));
+					DisplayFrame.FONT_SIZE / 2));
 			deleteButton.putClientProperty("Appointment", appointment);
 			deleteButton.addActionListener(new ActionListener() {
 				@Override

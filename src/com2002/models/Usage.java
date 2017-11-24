@@ -56,15 +56,16 @@ public class Usage {
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
     public Usage(int patientID, String healthPlanName) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
-		this.patientID = patientID;
-		this.healthPlan = new HealthPlan(healthPlanName);
-		this.checkUpUsed = 0;
-		this.hygieneUsed = 0;
-		this.repairUsed = 0;
-		this.dateJoined = LocalDate.now();
 		if(!Usage.hasPatientID(patientID)){
 			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName + "', '" + this.checkUpUsed + "', '" +
 				this.hygieneUsed + "', '" + this.repairUsed + "', '" + this.dateJoined + "')");
+			this.patientID = patientID;
+			this.healthPlan = new HealthPlan(healthPlanName);
+			this.checkUpUsed = 0;
+			this.hygieneUsed = 0;
+			this.repairUsed = 0;
+			this.dateJoined = LocalDate.now();
+			this.healthPlan = new HealthPlan(healthPlanName);
 		} else {
 			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " already has a heath plan.");
 		}

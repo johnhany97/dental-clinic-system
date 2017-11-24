@@ -23,13 +23,13 @@ public class Application {
 	    	for (int i = 0; i < Database.TABLE_NAMES.length && flag; i++) {
 	    		flag = flag && Database.dbHasTable(conn, Database.TABLE_NAMES[i]);
 	    	}
+			conn.close();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(window,
 				    e.getMessage(),
 				    "Error checking database",
 				    JOptionPane.ERROR_MESSAGE);
 		} finally {
-			if(conn!= null) Database.closeDb(conn);
 		}
 	    return flag;
 	}

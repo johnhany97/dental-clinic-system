@@ -238,7 +238,7 @@ public class PatientView implements Screen {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					DisplayFrame newFrame = new DisplayFrame();
-					BookAppointmentsView bookView = new BookAppointmentsView(newFrame, patient, frame);
+					BookAppointmentsView bookView = new BookAppointmentsView(newFrame, patient);
 					newFrame.setDisplayedPanel(bookView.getPanel());
 				}
 		    });

@@ -46,13 +46,11 @@ public class BookAppointmentsView implements Screen {
 	private JPanel screen;
 	private DisplayFrame frame;
 	private Patient patient;
-	private DisplayFrame parentFrame;
 	private ArrayList<Object> inputs;
 	
-	public BookAppointmentsView(DisplayFrame frame, Patient patient, DisplayFrame parentFrame) {
+	public BookAppointmentsView(DisplayFrame frame, Patient patient) {
 		this.frame = frame;
 		this.patient = patient;
-		this.parentFrame = parentFrame;
 		initialize();
 	}
 	
@@ -107,7 +105,7 @@ public class BookAppointmentsView implements Screen {
 					DisplayFrame.FONT_SIZE / 2));
 	        this.inputs.add(doctorList);
 			//Types
-	        String[] types = {"Checkup", "Cleaning", "Empty", "Remedial"};
+	        String[] types = {"Checkup", "Cleaning", "Remedial"};
 	        JComboBox typesList = new JComboBox(types);
 	        typesList.setSelectedIndex(0);	      
 	        typesList.setFont(new Font("Sans Serif", Font.PLAIN,
@@ -279,12 +277,8 @@ public class BookAppointmentsView implements Screen {
 						case "Cleaning":
 							new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.CLEANING, totalAppointmentsNum, currentAppointmentNum);
 							break;
-						default:
-							new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.EMPTY, totalAppointmentsNum, currentAppointmentNum);
-							break;
 						}
 						//refresh parent frame
-						parentFrame.refresh();
 						JOptionPane.showMessageDialog (null, "Successfully added appointment", "Success!", JOptionPane.INFORMATION_MESSAGE);
 						frame.dispose();
 					} catch (CommunicationsException e) {
@@ -301,22 +295,6 @@ public class BookAppointmentsView implements Screen {
 				}
 			});
 			this.screen.add(bookButton, BorderLayout.SOUTH);
-			//Validation
-			typesList.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					if (((String) typesList.getSelectedItem()).equals("Empty")) { //Empty appointment
-						//disable all of the other fields
-						currentAppointment.setEnabled(false);
-						totalAppointments.setEnabled(false);
-					} else {
-						//enable input
-						currentAppointment.setEnabled(true);
-						totalAppointments.setEnabled(true);
-					}
-					frame.revalidate();
-				}
-			});
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
 				    e.getMessage(),

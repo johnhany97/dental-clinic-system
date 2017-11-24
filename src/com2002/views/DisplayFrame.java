@@ -44,6 +44,7 @@ public class DisplayFrame extends JFrame {
 	  private int screenWidth;
 	  private int screenWidthStep;
 	  private int screenHeightStep;
+	  private JPanel panel;
 	  
 	  /**
 	   * Constructor
@@ -97,6 +98,7 @@ public class DisplayFrame extends JFrame {
 		  Container contentPane = this.getContentPane();
 		  contentPane.removeAll();
 		  contentPane.add(panel);
+		  this.panel = panel;
 		  repaint();
 		  setVisible(true);
 	  }
@@ -134,9 +136,4 @@ public class DisplayFrame extends JFrame {
 	    int screenLocationY = (screenDimensions.height - this.screenHeight) / 2;
 	    setLocation(new Point(screenLocationX, screenLocationY));
 	  }
-
-	public void refresh() {
-		// TODO Auto-generated method stub
-		
-	}
 }

@@ -191,11 +191,17 @@ public class SecretaryView implements Screen {
 			titleTab.setFont(new Font("Sans Serif", Font.PLAIN, 
 					DisplayFrame.FONT_SIZE));
 			//searching
-			JLabel patientNameLabel = new JLabel("Patient Name:", SwingConstants.CENTER);
-			patientNameLabel.setFont(new Font("Sans Serif", Font.PLAIN, 
+			JLabel patientFirstNameLabel = new JLabel("Patient First Name:", SwingConstants.CENTER);
+			patientFirstNameLabel.setFont(new Font("Sans Serif", Font.PLAIN, 
 					DisplayFrame.FONT_SIZE / 2));
-			JTextField patientNameField = new JTextField(10);
-			patientNameField.setFont(new Font("Sans Serif", Font.PLAIN,
+			JTextField patientFirstNameField = new JTextField(10);
+			patientFirstNameField.setFont(new Font("Sans Serif", Font.PLAIN,
+					DisplayFrame.FONT_SIZE / 2));
+			JLabel patientLastNameLabel = new JLabel("Patient Last Name:", SwingConstants.CENTER);
+			patientLastNameLabel.setFont(new Font("Sans Serif", Font.PLAIN, 
+					DisplayFrame.FONT_SIZE / 2));
+			JTextField patientLastNameField = new JTextField(10);
+			patientLastNameField.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
 			JButton searchButton = new JButton("Search");
 			searchButton.setFont(new Font("Sans Serif", Font.PLAIN,
@@ -204,17 +210,20 @@ public class SecretaryView implements Screen {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					//What are we searching for?
-					String partialPatientName = patientNameField.getText();
+					String partialPatientFirstName = patientFirstNameField.getText();
+					String partialPatientLastName = patientLastNameField.getText();
 					//Search for it
 					//use this list to refresh our tab
 				}
 			});
 			JPanel searchPanel = new JPanel();
-			searchPanel.add(patientNameLabel);
-			searchPanel.add(patientNameField);
+			searchPanel.add(patientFirstNameLabel);
+			searchPanel.add(patientFirstNameField);
+			searchPanel.add(patientLastNameLabel);
+			searchPanel.add(patientLastNameField);
 			searchPanel.add(searchButton);
 			JPanel northPanel = new JPanel();
-			northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
+			northPanel.setLayout(new GridLayout(0, 1));
 			northPanel.add(titleTab);
 			northPanel.add(searchPanel);
 			this.dentistTab.add(northPanel, BorderLayout.NORTH);
@@ -306,11 +315,17 @@ public class SecretaryView implements Screen {
 			titleTab.setFont(new Font("Sans Serif", Font.PLAIN, 
 					DisplayFrame.FONT_SIZE));
 			//searching
-			JLabel patientNameLabel = new JLabel("Patient Name:", SwingConstants.CENTER);
-			patientNameLabel.setFont(new Font("Sans Serif", Font.PLAIN, 
+			JLabel patientFirstNameLabel = new JLabel("Patient First Name:", SwingConstants.CENTER);
+			patientFirstNameLabel.setFont(new Font("Sans Serif", Font.PLAIN, 
 					DisplayFrame.FONT_SIZE / 2));
-			JTextField patientNameField = new JTextField(10);
-			patientNameField.setFont(new Font("Sans Serif", Font.PLAIN,
+			JTextField patientFirstNameField = new JTextField(10);
+			patientFirstNameField.setFont(new Font("Sans Serif", Font.PLAIN,
+					DisplayFrame.FONT_SIZE / 2));
+			JLabel patientLastNameLabel = new JLabel("Patient Last Name:", SwingConstants.CENTER);
+			patientLastNameLabel.setFont(new Font("Sans Serif", Font.PLAIN, 
+					DisplayFrame.FONT_SIZE / 2));
+			JTextField patientLastNameField = new JTextField(10);
+			patientLastNameField.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
 			JButton searchButton = new JButton("Search");
 			searchButton.setFont(new Font("Sans Serif", Font.PLAIN,
@@ -319,17 +334,20 @@ public class SecretaryView implements Screen {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					//What are we searching for?
-					String partialPatientName = patientNameField.getText();
+					String partialPatientFirstName = patientFirstNameField.getText();
+					String partialPatientLastName = patientLastNameField.getText();
 					//Search for it
 					//use this list to refresh our tab
 				}
 			});
 			JPanel searchPanel = new JPanel();
-			searchPanel.add(patientNameLabel);
-			searchPanel.add(patientNameField);
+			searchPanel.add(patientFirstNameLabel);
+			searchPanel.add(patientFirstNameField);
+			searchPanel.add(patientLastNameLabel);
+			searchPanel.add(patientLastNameField);
 			searchPanel.add(searchButton);
 			JPanel northPanel = new JPanel();
-			northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
+			northPanel.setLayout(new GridLayout(0, 1));
 			northPanel.add(titleTab);
 			northPanel.add(searchPanel);
 			this.hygienistTab.add(northPanel, BorderLayout.NORTH);
@@ -613,9 +631,11 @@ public class SecretaryView implements Screen {
 			option1.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					//enable the below two fields
-					currentAppointment.setEnabled(true);
-					totalAppointments.setEnabled(true);
+					if (!((String) typesList.getSelectedItem()).equals("Empty")) { //Not Empty appointment 
+						//enable the below two fields
+						currentAppointment.setEnabled(true);
+						totalAppointments.setEnabled(true);
+					}
 				}
 			});
 			option2.setSelected(true);
@@ -785,6 +805,7 @@ public class SecretaryView implements Screen {
 						firstName.setEnabled(false);
 						houseNumber.setEnabled(false);
 						postCode.setEnabled(false);
+						bookButton.setEnabled(true);
 					} else {
 						//enable input
 						currentAppointment.setEnabled(true);

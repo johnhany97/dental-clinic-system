@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -12,12 +13,16 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,8 +33,11 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+
 import com2002.interfaces.Screen;
 import com2002.models.Appointment;
+import com2002.models.DBQueries;
 import com2002.models.HealthPlan;
 import com2002.models.Patient;
 import com2002.models.Schedule;
@@ -52,6 +60,7 @@ public class AppointmentView implements Screen {
 	private JPanel activePreviousAppointment;
 	private JScrollPane activePreviousAppointmentScrollPane;
 	private List<JLabel> activePreviousAppointmentLabels;
+	private List<JCheckBox> treatmentsInput;
 
 	public AppointmentView(DisplayFrame frame, Appointment appointment) {
 		try {
@@ -85,7 +94,7 @@ public class AppointmentView implements Screen {
 		}
 	}
 	
-	private void initialize() {
+	private void initialize() throws CommunicationsException, SQLException {
 		this.panel = new JPanel();
 		this.panel.setLayout(new BorderLayout());
 		//Left panel
@@ -125,28 +134,20 @@ public class AppointmentView implements Screen {
 		String checkupString = "Checkup: 0 out of 0";
 		String repairString = "Repair: 0 out of 0";
 		String hygieneString = "Hygiene: 0 out of 0";
-		if (this.usage != null) {
-			//hp name
-			try {
-				nameString = this.usage.getHealthPlan().getName();
-				HealthPlan hp;
-				hp = new HealthPlan(nameString);
-				//usage
-				int currentCheckup = this.usage.getCheckUpUsed();
-				int totalCheckup = hp.getCheckUpLevel();
-				checkupString = "<html><strong>Checkup:</strong> " + String.valueOf(currentCheckup) + " out of " + String.valueOf(totalCheckup) + "</html>";
-				int currentRepair = this.usage.getRepairUsed();
-				int totalRepair = hp.getRepairLevel();
-				repairString = "<html><strong>Repair:</strong> " + String.valueOf(currentRepair) + " out of " + String.valueOf(totalRepair) + "</html>";
-				int currentHygiene = this.usage.getHygieneUsed();
-				int totalHygiene = hp.getHygieneLevel();
-				hygieneString = "<html><strong>Hygiene:</strong> " + String.valueOf(currentHygiene) + " out of " + String.valueOf(totalHygiene) + "</html>";
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(frame,
-					    "Error connecting to the database. Check internet connection.",
-					    "Error",
-					    JOptionPane.ERROR_MESSAGE);
-			}
+		if (this.patient.getUsage() != null) {
+			this.usage = this.patient.getUsage();
+			nameString = this.usage.getHealthPlan().getName();
+			HealthPlan hp = this.usage.getHealthPlan();
+			//usage
+			int currentCheckup = this.usage.getCheckUpUsed();
+			int totalCheckup = hp.getCheckUpLevel();
+			checkupString = "<html><strong>Checkup:</strong> " + String.valueOf(currentCheckup) + " out of " + String.valueOf(totalCheckup) + "</html>";
+			int currentRepair = this.usage.getRepairUsed();
+			int totalRepair = hp.getRepairLevel();
+			repairString = "<html><strong>Repair:</strong> " + String.valueOf(currentRepair) + " out of " + String.valueOf(totalRepair) + "</html>";
+			int currentHygiene = this.usage.getHygieneUsed();
+			int totalHygiene = hp.getHygieneLevel();
+			hygieneString = "<html><strong>Hygiene:</strong> " + String.valueOf(currentHygiene) + " out of " + String.valueOf(totalHygiene) + "</html>";
 		}
 		Border border = BorderFactory.createTitledBorder("Health plan");
 		((TitledBorder) border).setTitleFont(new Font("Sans Serif", Font.PLAIN,
@@ -175,12 +176,45 @@ public class AppointmentView implements Screen {
 	    this.leftPanel.add(Box.createVerticalStrut(20));
 		//Second: this appointment's finishing section
 		//treatment checkboxes
+	    HashMap<String, Double> treatments = DBQueries.getTreatments();
+	    this.treatmentsInput = new ArrayList<JCheckBox>();
+	    for (Entry<String, Double> entry : treatments.entrySet()) {
+	        String key = entry.getKey();
+	        Double value = entry.getValue();
+	        JCheckBox cb = new JCheckBox(key);
+	        cb.setFont(new Font("Sans Serif", Font.PLAIN,
+	        		DisplayFrame.FONT_SIZE / 2));
+	        this.treatmentsInput.add(cb);
+	    }
+	    JPanel treatmentsPanel = new JPanel();
+	    treatmentsPanel.setLayout(new GridLayout(0, 2));
+	    JScrollPane treatmentsScrollPane = new JScrollPane(treatmentsPanel);
+	    ArrayList<String> currentAppointmentTreatments = this.appointment.getTreatments();
+	    for (int i = 0; i < this.treatmentsInput.size(); i++) {
+	    	treatmentsPanel.add(this.treatmentsInput.get(i));
+	    }
+	    //make checkboxes selected if already set
+	    for (int i = 0; i < currentAppointmentTreatments.size(); i++) {
+	    	for (int j = 0; j < this.treatmentsInput.size(); j++) {
+	    		if (currentAppointmentTreatments.get(i).equals(this.treatmentsInput.get(j).getText())) {
+	    			this.treatmentsInput.get(j).setSelected(true);
+	    		}
+	    	}
+	    }
+	    JLabel treatmentsLabel = new JLabel("Treatments:");
+	    treatmentsLabel.setFont(new Font("Sans Serif", Font.PLAIN,
+	    		DisplayFrame.FONT_SIZE / 2));
+	    this.leftPanel.add(treatmentsLabel);
+	    this.leftPanel.add(treatmentsScrollPane);
 	    //notes text area
 		JLabel notesLabel = new JLabel("Notes:");
 		notesLabel.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE / 2));
 		this.leftPanel.add(notesLabel);
 	    this.notesTextArea = new JTextArea();
+	    if (this.appointment.getNotes() != null && this.appointment.getNotes() != "") {
+	    	this.notesTextArea.setText(this.appointment.getNotes());
+	    }
 	    JScrollPane notesTextAreaScrollPane = new JScrollPane(this.notesTextArea);
 	    this.leftPanel.add(notesTextAreaScrollPane);
 	    this.leftPanel.add(Box.createVerticalStrut(20));
