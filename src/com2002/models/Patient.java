@@ -117,6 +117,9 @@ public class Patient {
 				this.phoneNumber = rs.getString("PhoneNumber");
 				this.houseNumber = rs.getString("HouseNumber");
 				this.postcode = rs.getString("Postcode");
+				if(Usage.hasPatientID(patientID)){
+					this.usage = new Usage(patientID);
+				}
 			}
 		} finally {
 			conn.close();

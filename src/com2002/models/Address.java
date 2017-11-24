@@ -81,7 +81,7 @@ public class Address {
 	 * @return True if the address already exists.
 	 * @throws SQLException 
 	 */
-	private boolean dbHasAddress(String houseNumber, String postcode) throws SQLException {
+	public static boolean dbHasAddress(String houseNumber, String postcode) throws SQLException {
 		String found_house = DBQueries.getData("HouseNumber", "Address", "HouseNumber", houseNumber);
 		String found_postcode = DBQueries.getData("Postcode", "Address", "Postcode", postcode);
 		return found_house == houseNumber && found_postcode == postcode;

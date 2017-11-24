@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -46,6 +45,10 @@ public class PatientView implements Screen {
 	private Patient patient;
 	private ArrayList<JPanel> appointmentCards;
 	private JPanel appointmentsPanel;
+	private JLabel hpLabel;
+	private JLabel checkupLabel;
+	private JLabel repairLabel;
+	private JLabel hygieneLabel;
 	
 	public PatientView(DisplayFrame frame, Patient patient) {
 		this.frame = frame;
@@ -76,9 +79,12 @@ public class PatientView implements Screen {
 					DisplayFrame.FONT_SIZE));
 			northPanel.add(nameLabel);
 			//center panel
+			JPanel centerPanelHolder = new JPanel();
+			centerPanelHolder.setLayout(new GridLayout(0, 1));
 			JPanel centerPanel = new JPanel();
 			centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-			this.screen.add(centerPanel, BorderLayout.CENTER);
+			centerPanelHolder.add(centerPanel);
+			this.screen.add(centerPanelHolder, BorderLayout.CENTER);
 			//patient details' labels
 			JLabel dobLabel1 = new JLabel("Date Of Birth: ");
 			dobLabel1.setFont(new Font("Sans Serif", Font.BOLD, 
@@ -145,29 +151,29 @@ public class PatientView implements Screen {
 			((TitledBorder) border).setTitleFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
 		    hpPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), border));
-		    JLabel hpLabel = new JLabel(nameString);
-		    hpLabel.setFont(new Font("Sans Serif", Font.BOLD,
+		    this.hpLabel = new JLabel(nameString);
+		    this.hpLabel.setFont(new Font("Sans Serif", Font.BOLD,
 					DisplayFrame.FONT_SIZE / 2));
-		    hpPanel.add(hpLabel);
-		    JLabel checkupLabel = new JLabel(checkupString);
-		    checkupLabel.setFont(new Font("Sans Serif", Font.PLAIN,
+		    hpPanel.add(this.hpLabel);
+		    this.checkupLabel = new JLabel(checkupString);
+		    this.checkupLabel.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
-		    hpPanel.add(checkupLabel);
-		    JLabel repairLabel = new JLabel(repairString);
-		    repairLabel.setFont(new Font("Sans Serif", Font.PLAIN,
+		    hpPanel.add(this.checkupLabel);
+		    this.repairLabel = new JLabel(repairString);
+		    this.repairLabel.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
-		    hpPanel.add(repairLabel);
-		    JLabel hygieneLabel = new JLabel(hygieneString);
-		    hygieneLabel.setFont(new Font("Sans Serif", Font.PLAIN,
+		    hpPanel.add(this.repairLabel);
+		    this.hygieneLabel = new JLabel(hygieneString);
+		    this.hygieneLabel.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
-		    hpPanel.add(hygieneLabel);
+		    hpPanel.add(this.hygieneLabel);
 		    centerPanel.add(hpPanel);
 		    //buttons with patient actions
 		    JPanel buttonsPanel = new JPanel();
 		    buttonsPanel.setLayout(new GridLayout(1, 0));
 		    buttonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		    centerPanel.add(buttonsPanel);
-		    //subscribe/unsubscribe
+		    //subscribe/un-subscribe
 		    hpButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
@@ -183,8 +189,18 @@ public class PatientView implements Screen {
 						        "Subscribe to health plan", JOptionPane.QUESTION_MESSAGE, null,
 						        names, // Array of choices
 						        names[0]); // Initial choice
-							//Subscribe to the health plan chosen
-//						    new Usage
+						    if (input != null) {
+								//Subscribe to the health plan chosen
+							    patient.subscribePatient(input);
+							    //Reload this window
+							    HealthPlan hp = new HealthPlan(input);
+							    hpLabel.setText(hp.getName());
+							    checkupLabel.setText("<html><strong>Checkup:</strong> 0 out of " + String.valueOf(hp.getCheckUpLevel()) + "</html>");
+							    repairLabel.setText("<html><strong>Repair:</strong> 0 out of " + String.valueOf(hp.getRepairLevel()) + "</html>");
+							    hygieneLabel.setText("<html><strong>Hygiene:</strong> 0 out of " + String.valueOf(hp.getHygieneLevel()) + "</html>");
+							    hpButton.setText("Unsubscribe");
+							    frame.revalidate();
+						    }
 						} catch (SQLException e) {
 							JOptionPane.showMessageDialog(frame,
 								    "Database error.",
@@ -193,6 +209,25 @@ public class PatientView implements Screen {
 						}
 					} else {
 						// unsubscribe and refresh
+						int selectedOption = JOptionPane.showConfirmDialog(null, "Do you wanna unsubscribe patient?", "Choose", JOptionPane.YES_NO_OPTION); 
+			    		if (selectedOption == JOptionPane.YES_OPTION) {
+			    			try {
+			    				//unsubscribe
+								patient.unsubscribePatient();
+								//refresh panel
+								hpLabel.setText("No Health Plan");
+								checkupLabel.setText("Checkup: 0 out of 0");
+								repairLabel.setText("Repair: 0 out of 0");
+								hygieneLabel.setText("Hygiene: 0 out of 0");
+								hpButton.setText("Subscribe");
+								frame.revalidate();
+							} catch (SQLException e) {
+								JOptionPane.showMessageDialog(frame,
+									    "Database error.",
+									    "Error while unsubscribing",
+									    JOptionPane.ERROR_MESSAGE);
+							}
+			    		}
 					}
 				}
 		    });
@@ -212,7 +247,7 @@ public class PatientView implements Screen {
 		    deleteButton.addActionListener(new ActionListener() {
 		    	@Override
 		    	public void actionPerformed(ActionEvent arg0) {
-		    		int selectedOption = JOptionPane.showConfirmDialog(null, "Do you wanna delete this patient?", "Choose", JOptionPane.YES_NO_OPTION); 
+		    		int selectedOption = JOptionPane.showConfirmDialog(null, "Do you want to delete this patient?", "Choose", JOptionPane.YES_NO_OPTION); 
 		    		if (selectedOption == JOptionPane.YES_OPTION) {
 		    			try {
 							Patient.deletePatient(patient.getPatientID());
@@ -247,7 +282,7 @@ public class PatientView implements Screen {
 		    for (int i = 0; i < list.size(); i++) {
 		    	addAppointment(list.get(i));
 		    }
-		    centerPanel.add(appointmentsScrollPane);
+		    centerPanelHolder.add(appointmentsScrollPane);
 		} catch (CommunicationsException e) {
 			JOptionPane.showMessageDialog(frame,
 				    "Database error. Check your internet connnection.",
@@ -343,6 +378,7 @@ public class PatientView implements Screen {
 								List<Appointment> appointmentList = Schedule.getAppointmentsByPatient(patient.getPatientID());
 								appointmentCards.clear();
 								appointmentsPanel.removeAll();
+								appointmentsPanel.repaint();
 								appointmentsPanel.setLayout(new GridLayout(0,2));
 								if (appointmentList.size() > 0) {
 									for (int i = 0; i < appointmentList.size(); i++) {
