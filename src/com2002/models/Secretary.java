@@ -100,5 +100,4 @@ public class Secretary extends Staff {
 	public ArrayList<Address> searchAddresses(String houseNumber, String streetName, String district, String city, String postcode) throws SQLException {
 		return DBQueries.searchAddresses(houseNumber, streetName, district, city, postcode);
 	}
-	
 }
