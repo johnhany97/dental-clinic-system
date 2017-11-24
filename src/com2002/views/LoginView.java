@@ -78,7 +78,7 @@ public class LoginView implements Screen {
 			if (LABELS[i] == "Password") {
 				JPasswordField passwordField = new JPasswordField(8);
 				passwordField.setMaximumSize(passwordField.getPreferredSize()); //set max size
-				passwordField.setEchoChar('#');
+				passwordField.setEchoChar('*');
 				this.fields.add(passwordField);
 			} else {
 				JTextField textField = new JTextField(8);

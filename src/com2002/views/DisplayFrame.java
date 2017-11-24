@@ -134,4 +134,9 @@ public class DisplayFrame extends JFrame {
 	    int screenLocationY = (screenDimensions.height - this.screenHeight) / 2;
 	    setLocation(new Point(screenLocationX, screenLocationY));
 	  }
+
+	public void refresh() {
+		// TODO Auto-generated method stub
+		
+	}
 }

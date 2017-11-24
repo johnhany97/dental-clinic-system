@@ -11,17 +11,12 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import com2002.Application;
 import com2002.interfaces.Screen;
 import com2002.views.DisplayFrame;
 import com2002.views.LoginView;
@@ -68,23 +63,9 @@ public class ThanksScreen implements Screen {
 	    this.thanksButton.addActionListener(new ActionListener() {
 		      @Override
 		      public void actionPerformed(ActionEvent arg0) {
-		    	  //update setupDone file
-		    	  FileWriter fw;
-		    	  try {
-		    		  fw = new FileWriter(Application.FILE_NAME);
-		    		  PrintWriter pw = new PrintWriter(fw);
-			    	  pw.write(Application.SETUP);
-			    	  pw.flush(); 
-			    	  pw.close();
-			    	  //Take you to login screen
-			    	  LoginView loginScreen = new LoginView(frame);
-			    	  frame.setDisplayedPanel(loginScreen.getPanel());
-		    	  } catch (IOException e) {
-		    		  JOptionPane.showMessageDialog(frame,
-		    				  "Error finishing setup and updating file",
-							  "Error",
-							  JOptionPane.ERROR_MESSAGE);
-		    	  }
+		    	  //Take you to login screen
+		    	  LoginView loginScreen = new LoginView(frame);
+		    	  frame.setDisplayedPanel(loginScreen.getPanel());
 		      }
 	    });
 	    this.screen.add(this.thanksButton, BorderLayout.SOUTH);

@@ -237,8 +237,9 @@ public class PatientView implements Screen {
 		    bookAppointmentButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					// TODO Auto-generated method stub
-					
+					DisplayFrame newFrame = new DisplayFrame();
+					BookAppointmentsView bookView = new BookAppointmentsView(newFrame, patient, frame);
+					newFrame.setDisplayedPanel(bookView.getPanel());
 				}
 		    });
 		    buttonsPanel.add(bookAppointmentButton);

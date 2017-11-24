@@ -460,6 +460,10 @@ public class SecretaryView implements Screen {
 			UtilDateModel model = new UtilDateModel();
 			JDatePanelImpl datePanel = new JDatePanelImpl(model);
 			JDatePickerImpl startDate = new JDatePickerImpl(datePanel);
+			Date today = new Date();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date(today.getTime() + (1000 * 60 * 60 * 24)));
+			model.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 			this.bookingTabInputs.add(startDate);
 			//time
 			JTimeChooser startTime = new JTimeChooser();
@@ -469,6 +473,7 @@ public class SecretaryView implements Screen {
 			UtilDateModel model2 = new UtilDateModel();
 			JDatePanelImpl datePanel2 = new JDatePanelImpl(model2);
 			JDatePickerImpl endDate = new JDatePickerImpl(datePanel2);
+			model2.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 			this.bookingTabInputs.add(endDate);
 			//time
 			JTimeChooser endTime = new JTimeChooser();
@@ -534,11 +539,13 @@ public class SecretaryView implements Screen {
 	        JFormattedTextField currentAppointment = new JFormattedTextField(numFormatter);
 	        currentAppointment.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
+	        currentAppointment.setText("0");
 	        this.bookingTabInputs.add(currentAppointment);
 			//TotalAppointments
 	        JFormattedTextField totalAppointments = new JFormattedTextField(numFormatter);
 	        totalAppointments.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 2));
+	        totalAppointments.setText("0");
 	        this.bookingTabInputs.add(totalAppointments);
 	        //Add all of the above + labels to the tab's content panel
 	        //start day
@@ -611,7 +618,9 @@ public class SecretaryView implements Screen {
 					totalAppointments.setEnabled(true);
 				}
 			});
-			option1.setSelected(true);
+			option2.setSelected(true);
+			currentAppointment.setEnabled(false);
+			totalAppointments.setEnabled(false);
 			option2.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
@@ -732,7 +741,13 @@ public class SecretaryView implements Screen {
 							firstName.setText("");
 							houseNumber.setText("");
 							postCode.setText("");
+							JOptionPane.showMessageDialog (null, "Successfully added Patient", "Success!", JOptionPane.INFORMATION_MESSAGE);
 							frame.revalidate();
+						} else {
+							JOptionPane.showMessageDialog(frame,
+								    "Patient doesn't exist",
+								    "Error",
+								    JOptionPane.ERROR_MESSAGE);
 						}
 					} catch (CommunicationsException e) {
 						JOptionPane.showMessageDialog(frame,
@@ -1658,8 +1673,6 @@ public class SecretaryView implements Screen {
 						PatientView patientView = new PatientView(patientViewFrame, patient);
 						patientViewFrame.setDisplayedPanel(patientView.getPanel());
 					} catch (CommunicationsException e) {
-
-						e.printStackTrace();
 						JOptionPane.showMessageDialog(frame,
 							    "Database error. Check your internet connnection.",
 							    "Error fetching patient",
