@@ -113,8 +113,8 @@ public class Schedule {
 		String startDay = year + "-" + month + "-" + day + " 00:00:00.0";
 		String endDay = year + "-" + month + "-" + day + " 23:59:59.0";
 		try {
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE (StartDate <= '" + startDay + "' AND EndDate >= '" + startDay + "') "
-					+ "OR (StartDate >= '" + startDay + "' AND StartDate <= '" + endDay + "') AND Username = '" +  username + "'", conn);
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Appointments WHERE ((StartDate <= '" + startDay + "' AND EndDate >= '" + startDay + "') "
+					+ "OR (StartDate >= '" + startDay + "' AND StartDate <= '" + endDay + "')) AND Username = '" +  username + "'", conn);
 			while (rs.next()) {
 				Timestamp startDate = rs.getTimestamp("StartDate");
 				appointments.add(new Appointment(startDate, username));

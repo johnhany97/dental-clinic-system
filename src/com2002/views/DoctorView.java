@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -101,50 +103,49 @@ public class DoctorView implements Screen {
 		JDatePanelImpl datePanel = new JDatePanelImpl(model);
 		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
 		//set by default today
+		JLabel label = new JLabel("Viewing day: ");
+		label.setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE / 2));
+		bottomPanel.add(label);
 		Date today = new Date();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(today);
 		model.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 		model.setSelected(true);
 		bottomPanel.add(datePicker);
-		this.changeDayButton = new JButton("Change day");
-		this.changeDayButton.setFont(new Font("Sans Serif", Font.PLAIN,
-				DisplayFrame.FONT_SIZE / 2));
-		//add action listener to change day button
-		this.changeDayButton.addActionListener(new ActionListener() {
+		model.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					//get requested day
-					Date selectedDate = (Date) datePicker.getModel().getValue();
-					//change list of appointments
-					appointments = Schedule.getAppointmentsByDoctorAndDay(doctor, selectedDate);
-					//change title
-					LocalDate localDate = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-					int year  = localDate.getYear();
-					int month = localDate.getMonthValue();
-					int day   = localDate.getDayOfMonth();
-					String dayString = String.valueOf(day) + "/" + String.valueOf(month) + "/" + String.valueOf(year);
-					title.setText("Appointments - " + dayString);
-					appointmentsPanel.removeAll();
-					appointmentsPanel.setLayout(new BoxLayout(appointmentsPanel, BoxLayout.Y_AXIS));
-					for (int i = appointmentCards.size() - 1; i >= 0; i--) {
-						appointmentCards.remove(i);
+			public void propertyChange(PropertyChangeEvent e) {
+				if (e.getPropertyName().equals("value")) {
+					try {
+						//get requested day
+						Date selectedDate = (Date) datePicker.getModel().getValue();
+						//change list of appointments
+						appointments = Schedule.getAppointmentsByDoctorAndDay(doctor, selectedDate);
+						//change title
+						LocalDate localDate = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+						int year  = localDate.getYear();
+						int month = localDate.getMonthValue();
+						int day   = localDate.getDayOfMonth();
+						String dayString = String.valueOf(day) + "/" + String.valueOf(month) + "/" + String.valueOf(year);
+						title.setText("Appointments - " + dayString);
+						appointmentsPanel.removeAll();
+						appointmentsPanel.repaint();
+						appointmentCards.clear();
+						for  (int i = 0; i < appointments.size(); i++) {
+							addAppointment(appointments.get(i));
+						}
+						frame.revalidate();
+					} catch (CommunicationsException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
-					for  (int i = 0; i < appointments.size(); i++) {
-						addAppointment(appointments.get(i));
-					}
-					frame.revalidate();
-				} catch (CommunicationsException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 		});
-		bottomPanel.add(this.changeDayButton);
 		this.screen.add(bottomPanel, BorderLayout.SOUTH);
 		frame.setFrameSize(DisplayFrame.DEFAULT_NUM, DisplayFrame.DEFAULT_NUM);
 		frame.centerFrame();
