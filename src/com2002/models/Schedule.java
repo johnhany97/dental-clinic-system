@@ -51,9 +51,9 @@ public class Schedule {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
 		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		String year  = String.valueOf(localDate.getYear());
-		String month = String.valueOf(localDate.getMonthValue());
-		String day   = String.valueOf(localDate.getDayOfMonth());
+		int year  = localDate.getYear();
+		int month = localDate.getMonthValue();
+		int day   = localDate.getDayOfMonth();
 		String startDay = year + "-" + month + "-" + day + " 00:00:00.0";
 		String endDay = year + "-" + month + "-" + day + " 23:59:59.0";
 		try {
@@ -107,9 +107,9 @@ public class Schedule {
 		Connection conn = Database.getConnection();
 		String username = doctor.getUsername();
 		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		String year  = String.valueOf(localDate.getYear());
-		String month = String.valueOf(localDate.getMonthValue());
-		String day   = String.valueOf(localDate.getDayOfMonth());
+		int year  = localDate.getYear();
+		int month = localDate.getMonthValue();
+		int day   = localDate.getDayOfMonth();
 		String startDay = year + "-" + month + "-" + day + " 00:00:00.0";
 		String endDay = year + "-" + month + "-" + day + " 23:59:59.0";
 		try {
@@ -143,7 +143,36 @@ public class Schedule {
 				String username = rs.getString("Username");
 				appointments.add(new Appointment(startDate, username));
 			}
+		} finally {
 			conn.close();
+		}
+		return appointments;
+	}
+	
+	/**
+	 * Returns a list of appointments for the given doctor for patients who have similar first and last name to the given parameters.
+	 * @param doctor instance of a doctor
+	 * @param firstName patient's first name, can be partial
+	 * @param lastName patient's last name, can be partial
+	 * @return list of appointments according to the given parameters
+	 * @throws CommunicationsException when an error occurs whilst attempting connection.
+	 * @throws SQLException for any other error, could be incorrect parameters.
+	 */
+	public static  ArrayList<Appointment> getAppointmentsByDocAndName(Doctor doctor, String firstName, String lastName) throws CommunicationsException, SQLException  {
+		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
+		Connection conn = Database.getConnection();
+		try {
+			ResultSet patients = DBQueries.execQuery("SELECT PatientID FROM Patients WHERE FirstName LIKE '" + firstName + "' OR LastName LIKE '" + lastName + "'", conn);
+			while(patients.next()) {
+				int patID = patients.getInt("PatientID");
+				String username = doctor.getUsername();
+				ResultSet apps = DBQueries.execQuery("SELECT * FROM Appointments WHERE PatientID = " + patID + " AND Username = '" + username + "'", conn);
+				while(apps.next()) {
+					Timestamp startDate = apps.getTimestamp("StartDate");
+					appointments.add(new Appointment(startDate, username));
+				}
+				
+			}
 		} finally {
 			conn.close();
 		}
