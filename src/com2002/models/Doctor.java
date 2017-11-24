@@ -30,7 +30,9 @@ public class Doctor extends Staff {
 			conn = Database.getConnection();
 			ResultSet rs = DBQueries.execQuery("SELECT * FROM Employees", conn);
 			while (rs.next()) {
-				list.add(new Doctor(rs.getString("Username")));
+				if (!rs.getString("Role").equals("Secretary")) {
+					list.add(new Doctor(rs.getString("Username")));
+				}
 			}
 		} finally {
 			if (conn != null) conn.close();

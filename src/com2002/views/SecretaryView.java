@@ -14,12 +14,14 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,6 +56,7 @@ import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com2002.interfaces.Screen;
 import com2002.models.Address;
 import com2002.models.Appointment;
+import com2002.models.AppointmentType;
 import com2002.models.DBQueries;
 import com2002.models.Doctor;
 import com2002.models.HealthPlan;
@@ -600,7 +603,7 @@ public class SecretaryView implements Screen {
 			content.add(label8);
 			content.add(totalAppointments);
 			//patient name
-			JLabel label9 = new JLabel("Patient name");
+			JLabel label9 = new JLabel("Patient first name");
 			label9.setFont(new Font("Sans Serif", Font.BOLD,
 					DisplayFrame.FONT_SIZE / 2));
 			label9.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -628,13 +631,96 @@ public class SecretaryView implements Screen {
 			bookButton.setFont(new Font("Sans Serif", Font.BOLD,
 					DisplayFrame.FONT_SIZE));
 			bookButton.setEnabled(false);
+			bookButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					//Attempt registration
+					//Extract details
+					Date selectedStartDay = (Date) startDate.getModel().getValue();
+					Date selectedEndDay = (Date) endDate.getModel().getValue();
+					String timeStartString = startTime.getFormatedTime();
+					String timeEndString = endTime.getFormatedTime();
+					String docName = (String) doctorList.getSelectedItem();
+					String docUsername = "";
+					String typeName = (String) typesList.getSelectedItem();
+					boolean isCourseTreatment = option1.isSelected();
+					int currentAppointmentNum = 0;
+					int totalAppointmentsNum = 0;
+					if (isCourseTreatment) {
+						currentAppointmentNum = Integer.valueOf(currentAppointment.getText());
+						totalAppointmentsNum = Integer.valueOf(totalAppointments.getText());
+					}
+					String patientName = firstName.getText();
+					String patientHouseNum = houseNumber.getText();
+					String patientPostCode = postCode.getText();
+					//1) verify patient exists
+					try {
+						Patient patient = new Patient(patientName, patientHouseNum, patientPostCode);
+						if (patient.getFirstName() != null) { //exists!
+							//2) attempt booking
+							ArrayList<Doctor> listOfDoctors = Doctor.getAll();
+							for (int i = 0; i < listOfDoctors.size(); i++) {
+								String titleOfDoc ="Dr. " + listOfDoctors.get(i).getFirstName() + " " + listOfDoctors.get(i).getLastName();
+								if (titleOfDoc.equals(docName)) {
+									docUsername = listOfDoctors.get(i).getUsername();
+								}
+							}
+							LocalDate localDate = selectedStartDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+							String year  = String.valueOf(localDate.getYear());
+							String month = String.valueOf(localDate.getMonthValue());
+							String day   = String.valueOf(localDate.getDayOfMonth());
+							Timestamp ts1 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeStartString);
+							localDate = selectedEndDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+							year  = String.valueOf(localDate.getYear());
+							month = String.valueOf(localDate.getMonthValue());
+							day   = String.valueOf(localDate.getDayOfMonth());						
+							Timestamp ts2 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeEndString);
+							switch (typeName) {
+							case "Checkup":
+								new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.CHECKUP, totalAppointmentsNum, currentAppointmentNum);
+								break;
+							case "Remedial":
+								new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.REMEDIAL, totalAppointmentsNum, currentAppointmentNum);
+								break;
+							case "Cleaning":
+								new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.CLEANING, totalAppointmentsNum, currentAppointmentNum);
+								break;
+							default:
+								new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.EMPTY, totalAppointmentsNum, currentAppointmentNum);
+								break;
+							}
+							//refresh appointments tab
+							if (new Doctor(docUsername).getRole().equals("Dentist")) {
+								refreshDentistTab();
+							} else {
+								refreshHygienistTab();
+							}
+							currentAppointment.setText("");
+							totalAppointments.setText("");
+							firstName.setText("");
+							houseNumber.setText("");
+							postCode.setText("");
+							frame.revalidate();
+						}
+					} catch (CommunicationsException e) {
+						JOptionPane.showMessageDialog(frame,
+							    e.getMessage(),
+							    "Error connecting to internet",
+							    JOptionPane.ERROR_MESSAGE);
+					} catch (SQLException e) {
+						JOptionPane.showMessageDialog(frame,
+							    e.getMessage(),
+							    "Error fetching data from db",
+							    JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
 			this.bookingTab.add(bookButton, BorderLayout.SOUTH);
 			//Validation
 			for (int i = 6; i < bookingTabInputs.size(); i++) {
 				((Component) bookingTabInputs.get(i)).addKeyListener(new KeyAdapter() {
 					public void keyTyped(KeyEvent e) {
-						if (firstName.getText().length() > 0 && houseNumber.getText().length() > 0 && postCode.getText().length() > 0
-								&& currentAppointment.getText().length() > 0 && totalAppointments.getText().length() > 0) {
+						if (firstName.getText().length() > 0 && houseNumber.getText().length() > 0 && postCode.getText().length() > 0) {
 							bookButton.setEnabled(true);
 						} else {
 							bookButton.setEnabled(false);
