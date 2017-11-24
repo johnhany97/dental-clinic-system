@@ -761,6 +761,27 @@ public class SecretaryView implements Screen {
 					}
 				});
 			}
+			typesList.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					if (((String) typesList.getSelectedItem()).equals("Empty")) { //Empty appointment
+						//disable all of the other fields
+						currentAppointment.setEnabled(false);
+						totalAppointments.setEnabled(false);
+						firstName.setEnabled(false);
+						houseNumber.setEnabled(false);
+						postCode.setEnabled(false);
+					} else {
+						//enable input
+						currentAppointment.setEnabled(true);
+						totalAppointments.setEnabled(true);
+						firstName.setEnabled(true);
+						houseNumber.setEnabled(true);
+						postCode.setEnabled(true);
+					}
+					frame.revalidate();
+				}
+			});
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
 				    e.getMessage(),
@@ -1285,8 +1306,6 @@ public class SecretaryView implements Screen {
 				    JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
-
 	
 	@SuppressWarnings("serial")
 	private void initializePatientsTab() {
