@@ -12,7 +12,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -52,6 +54,7 @@ import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com2002.interfaces.Screen;
 import com2002.models.Address;
 import com2002.models.Appointment;
+import com2002.models.DBQueries;
 import com2002.models.Doctor;
 import com2002.models.HealthPlan;
 import com2002.models.Patient;
@@ -68,13 +71,18 @@ public class SecretaryView implements Screen {
 	private DisplayFrame frame;
 	//left panel
 	private JPanel leftScreen;
-	private JPanel appointmentsScreen;
-	private JScrollPane appointmentsScrollPane;
-	private List<JPanel> appointmentCards;
-	private JDatePickerImpl datePicker;
+	private JTabbedPane leftTabbedPane;
+	//dentist tab
+	private JPanel dentistAppointmentsScreen;
+	private JScrollPane dentistAppointmentsScrollPane;
+	private List<JPanel> dentistAppointmentCards;
+	private JDatePickerImpl dentistDatePicker;
+	private ArrayList<JPanel> dentistAppointmentsCardsColumn;
+	private ArrayList<Appointment> dentistAppointmentsList;
+	private JPanel dentistTab;
 	//right panel
 	private JPanel rightScreen;
-	private JTabbedPane tabbedPane;
+	private JTabbedPane rightTabbedPane;
 	//patients tab
 	private List<JTextField> patientsTabInputs;
 	private Object[][] patientsList;
@@ -108,13 +116,7 @@ public class SecretaryView implements Screen {
 	}
 	
 	private void initializeLeftScreen() {
-		try {
-			//left screen
-			List<Appointment> todayAppointments;
 			//get today's appointments
-			Calendar calendar = Calendar.getInstance();
-			Date now = calendar.getTime();
-			todayAppointments = Schedule.getAppointmentsByDay(now);
 			this.frame.setFrameSize(DisplayFrame.DEFAULT_NUM, DisplayFrame.DEFAULT_NUM * 2);
 			this.frame.centerFrame();
 			//Left screen
@@ -122,35 +124,82 @@ public class SecretaryView implements Screen {
 			this.leftScreen.setLayout(new BorderLayout());
 			this.leftScreen.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.BLACK), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 			//Title
-			JLabel title = new JLabel("Appointments", SwingConstants.CENTER);
-			title.setFont(new Font("Sans Serif", Font.BOLD,
-					DisplayFrame.FONT_SIZE));
-			this.leftScreen.add(title, BorderLayout.NORTH);
+			this.leftTabbedPane = new JTabbedPane();
+			this.leftScreen.add(this.leftTabbedPane, BorderLayout.CENTER);
+			this.leftTabbedPane.setFont(new Font("Sans Serif", Font.PLAIN,
+				    		DisplayFrame.FONT_SIZE / 2));
+			//DENTIST APPOINTMENTS (First tab)
 			//Center of it is the appointments part
-			this.appointmentsScreen = new JPanel();
-			this.appointmentsScrollPane = new JScrollPane(this.appointmentsScreen);
-			this.appointmentsScrollPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createLineBorder(Color.black)));
-			//add it to left screen
-			this.leftScreen.add(this.appointmentsScrollPane, BorderLayout.CENTER);
-			this.appointmentsScreen.setLayout(new GridLayout(0,2));
-			this.appointmentCards = new ArrayList<JPanel>();
-			if (todayAppointments.size() > 0) {
-				for (int i = 0; i < todayAppointments.size(); i++) {
-					addAppointment(todayAppointments.get(i));
+			initializeDentistTab();
+			//HYGIENIST APPOINTMENTS
+
+			//button
+			JButton newAppointmentButton = new JButton("Book Appointment");
+			newAppointmentButton.setFont(new Font("Sans Serif", Font.BOLD,
+					DisplayFrame.FONT_SIZE / 2));
+			this.leftScreen.add(newAppointmentButton, BorderLayout.SOUTH);
+			//TODO: Booking appointments
+	}
+	
+	private void initializeDentistTab() {
+		try {
+			//dentist tab
+			this.dentistTab = new JPanel();
+			this.dentistTab.setLayout(new BorderLayout());
+			this.leftTabbedPane.addTab("Dentist", this.dentistTab);
+			JLabel titleTab = new JLabel("Dentist Appointments", SwingConstants.CENTER);
+			titleTab.setFont(new Font("Sans Serif", Font.PLAIN, 
+					DisplayFrame.FONT_SIZE));
+			this.dentistTab.add(titleTab, BorderLayout.NORTH);
+			this.dentistAppointmentsScreen = new JPanel();
+			this.dentistAppointmentsScrollPane = new JScrollPane(this.dentistAppointmentsScreen);
+			this.dentistAppointmentsScrollPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createLineBorder(Color.black)));
+			this.dentistAppointmentsScreen.setLayout(new GridLayout(1,0));
+			this.dentistAppointmentsCardsColumn = new ArrayList<JPanel>();
+			this.dentistAppointmentCards = new ArrayList<JPanel>();
+			Calendar calendar = Calendar.getInstance();
+			Date dateGiven = calendar.getTime();
+			String dayNames[] = new DateFormatSymbols().getWeekdays();
+			this.dentistAppointmentsList = new ArrayList<Appointment>();
+			for (int i = 0; i < 7; i++) {
+				//initialize appointments list
+				String dentistName = DBQueries.getData("Username", "Employees", "Role", "Dentist");
+				Doctor doc = new Doctor(dentistName);
+				this.dentistAppointmentsList = Schedule.getAppointmentsByDoctorAndDay(doc, new Date(dateGiven.getTime() + ((1000 * 60 * 60 * 24) * i)));
+				//set time of calendar to obtain day name and day number
+				calendar.setTime(new Date(dateGiven.getTime() + ((1000 * 60 * 60 * 24) * i)));
+				//title of each day's column
+				JLabel dayName = new JLabel(dayNames[calendar.get(Calendar.DAY_OF_WEEK)] + " " + calendar.get(Calendar.DAY_OF_MONTH), SwingConstants.CENTER);
+				dayName.setFont(new Font("Sans Serif", Font.BOLD,
+						DisplayFrame.FONT_SIZE));
+				//actual appointments if any
+				this.dentistAppointmentsCardsColumn.add(new JPanel());
+				this.dentistAppointmentsCardsColumn.get(i).setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				if (this.dentistAppointmentsList.size() > 0) {
+					this.dentistAppointmentsCardsColumn.get(i).setLayout(new BoxLayout(this.dentistAppointmentsCardsColumn.get(i), BoxLayout.Y_AXIS));
+					JPanel dayPanel = new JPanel();
+					dayPanel.setLayout(new BorderLayout());
+					dayPanel.add(dayName, BorderLayout.CENTER);
+					this.dentistAppointmentsCardsColumn.get(i).add(dayPanel);
+					for (int j = 0; j < this.dentistAppointmentsList.size(); j++) {
+						addAppointment(this.dentistAppointmentsList.get(j), i);
+					}
+					this.dentistAppointmentsScreen.add(this.dentistAppointmentsCardsColumn.get(i));
+				} else {
+					//No appointments for today
+					this.dentistAppointmentsCardsColumn.get(i).setLayout(new BorderLayout());
+					this.dentistAppointmentsCardsColumn.get(i).add(dayName, BorderLayout.NORTH);
 				}
-			} else {
-				//No appointments for today
-				this.appointmentsScreen.setLayout(new BorderLayout());
-				JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
-				this.appointmentsScreen.add(imgLabel, BorderLayout.CENTER);
+				this.dentistAppointmentsScreen.add(this.dentistAppointmentsCardsColumn.get(i));
 			}
+			this.dentistTab.add(this.dentistAppointmentsScrollPane, BorderLayout.CENTER);
 			//Date picker and new appointment
 			JPanel bottomLeftPanel = new JPanel();
 			bottomLeftPanel.setLayout(new BorderLayout());
 			//date picker
 			UtilDateModel model = new UtilDateModel();
 			JDatePanelImpl datePanel = new JDatePanelImpl(model);
-			this.datePicker = new JDatePickerImpl(datePanel);
+			this.dentistDatePicker = new JDatePickerImpl(datePanel);
 	
 			//set by default today
 			Date today = new Date();
@@ -161,59 +210,37 @@ public class SecretaryView implements Screen {
 			model.addPropertyChangeListener(new PropertyChangeListener() {
 	            public void propertyChange(PropertyChangeEvent e) {
 	            	if (e.getPropertyName().equals("value")) {
-						try {
-							//get requested day
-							Date selectedDate = (Date) datePicker.getModel().getValue();
-							List<Appointment> appointmentList = Schedule.getAppointmentsByDay(selectedDate);
-							appointmentCards.clear();
-							appointmentsScreen.removeAll();
-							appointmentsScreen.repaint();
-							appointmentsScreen.setLayout(new GridLayout(0,2));
-							if (appointmentList.size() > 0) {
-								for (int i = 0; i < appointmentList.size(); i++) {
-									addAppointment(appointmentList.get(i));
-								}
-							} else {
-								//No appointments for today
-								appointmentsScreen.setLayout(new BorderLayout());
-								JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
-								appointmentsScreen.add(imgLabel, BorderLayout.CENTER);
-							}
-							frame.revalidate();
-						} catch (SQLException e1) {
-							JOptionPane.showMessageDialog(frame,
-								    "Database error. Check your internet connnection.",
-								    "Error fetching appointments",
-								    JOptionPane.ERROR_MESSAGE);
-						}
+						//TODO: Update appointments for the dentist when week starting day changes
 	            	}
 	            }
 			});
-			//button
-			JButton newAppointmentButton = new JButton("New Appointment");
-			newAppointmentButton.setFont(new Font("Sans Serif", Font.BOLD,
-					DisplayFrame.FONT_SIZE /2));
-			bottomLeftPanel.add(datePicker,  BorderLayout.WEST);
-			bottomLeftPanel.add(newAppointmentButton, BorderLayout.EAST);
+			//Bottom bit
+			JLabel labelDatePicker = new JLabel("Week from day: ");
+			labelDatePicker.setFont(new Font("Sans Serif", Font.BOLD,
+					DisplayFrame.FONT_SIZE / 2));
+			JPanel datePickerPanel = new JPanel();
+			datePickerPanel.add(labelDatePicker);
+			datePickerPanel.add(this.dentistDatePicker);
+			bottomLeftPanel.add(datePickerPanel,  BorderLayout.WEST);
 			bottomLeftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			this.leftScreen.add(bottomLeftPanel, BorderLayout.SOUTH);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(frame,
-				    "Database error. Check your internet connnection.",
-				    "Error fetching appointments",
-				    JOptionPane.ERROR_MESSAGE);
+			this.dentistTab.add(bottomLeftPanel, BorderLayout.SOUTH);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 		}
+	}
+	
+	private void initializeHygineistTab() {
+		
 	}
 	
 	private void initializeRightScreen() {
 		//right screen
 		this.rightScreen = new JPanel();
 		this.rightScreen.setLayout(new BorderLayout());
-		this.tabbedPane = new JTabbedPane();
-		this.tabbedPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.BLACK), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		this.rightScreen.add(tabbedPane, BorderLayout.CENTER);
-		this.tabbedPane.setFont(new Font("Sans Serif", Font.PLAIN,
+		this.rightTabbedPane = new JTabbedPane();
+		this.rightTabbedPane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.BLACK), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+		this.rightScreen.add(rightTabbedPane, BorderLayout.CENTER);
+		this.rightTabbedPane.setFont(new Font("Sans Serif", Font.PLAIN,
 			    	DisplayFrame.FONT_SIZE / 2));
 		//Register tab
 		initializeRegisterTab();
@@ -229,7 +256,7 @@ public class SecretaryView implements Screen {
 			//register tab
 			this.registerTab = new JPanel();
 			this.registerTab.setLayout(new BorderLayout());
-			this.tabbedPane.addTab("Register", registerTab);
+			this.rightTabbedPane.addTab("Register", this.registerTab);
 			JLabel titleTab = new JLabel("Patient Registration", SwingConstants.CENTER);
 			titleTab.setFont(new Font("Sans Serif", Font.PLAIN, 
 					DisplayFrame.FONT_SIZE));
@@ -592,7 +619,7 @@ public class SecretaryView implements Screen {
 		try {
 			//addresses tab
 			JPanel addressesTab = new JPanel();
-			this.tabbedPane.addTab("Addresses", addressesTab);
+			this.rightTabbedPane.addTab("Addresses", addressesTab);
 			addressesTab.setLayout(new BorderLayout());
 			addressesTab.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			//searching
@@ -871,8 +898,10 @@ public class SecretaryView implements Screen {
 			JScrollPane patientsScrollPane = new JScrollPane(patientsTable);
 			this.patientsTable.setFillsViewportHeight(true);
 			patientsTab.add(patientsScrollPane, BorderLayout.CENTER);
-			this.tabbedPane.addTab("Patients", patientsTab);
+			this.rightTabbedPane.addTab("Patients", patientsTab);
 		} catch (SQLException e) {
+
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,
 				    "Database error. Check your internet connnection.",
 				    "Error fetching patients",
@@ -880,12 +909,12 @@ public class SecretaryView implements Screen {
 		}
 	}
 	
-	private void addAppointment(Appointment app) {
+	private void addAppointment(Appointment app, int col) {
 		try {
-			this.appointmentCards.add(new JPanel());
-			int index = this.appointmentCards.size() - 1;
-			this.appointmentCards.get(index).setLayout(new BorderLayout());
-			this.appointmentCards.get(index).setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createLineBorder(Color.black)));
+			this.dentistAppointmentCards.add(new JPanel());
+			int index = this.dentistAppointmentCards.size() - 1;
+			this.dentistAppointmentCards.get(index).setLayout(new BorderLayout());
+			this.dentistAppointmentCards.get(index).setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createLineBorder(Color.black)));
 			//Get Appointment details
 			Patient patient = app.getPatient();
 			String appointmentType = app.getAppointmentType();
@@ -934,7 +963,7 @@ public class SecretaryView implements Screen {
 					DisplayFrame.FONT_SIZE / 3));
 			leftSection.add(endD);
 			leftSection.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-			this.appointmentCards.get(index).add(leftSection, BorderLayout.WEST);
+			this.dentistAppointmentCards.get(index).add(leftSection, BorderLayout.WEST);
 			//right section (rest of appointment details)
 			JPanel topRightSection = new JPanel();
 			topRightSection.setLayout(new BoxLayout(topRightSection, BoxLayout.Y_AXIS));
@@ -975,6 +1004,8 @@ public class SecretaryView implements Screen {
 						PatientView patientView = new PatientView(patientViewFrame, patient);
 						patientViewFrame.setDisplayedPanel(patientView.getPanel());
 					} catch (CommunicationsException e) {
+
+						e.printStackTrace();
 						JOptionPane.showMessageDialog(frame,
 							    "Database error. Check your internet connnection.",
 							    "Error fetching patient",
@@ -987,35 +1018,35 @@ public class SecretaryView implements Screen {
 					}
 				}
 			});
-			JButton deleteButton = new JButton("Delete");
+			JButton deleteButton = new JButton("Cancel");
 			deleteButton.setFont(new Font("Sans Serif", Font.PLAIN, 
 					DisplayFrame.FONT_SIZE / 3));
 			deleteButton.putClientProperty("Appointment", app);
 			deleteButton.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0) {
+				public void actionPerformed(ActionEvent arg0) { //TODO: REDO IMPLEMENTATION
 					Appointment appointment = (Appointment) deleteButton.getClientProperty("Appointment");
-					int selectedOption = JOptionPane.showConfirmDialog(null, "Do you wanna delete this appointment?", "Choose", JOptionPane.YES_NO_OPTION); 
+					int selectedOption = JOptionPane.showConfirmDialog(null, "Do you wanna cancel this appointment?", "Choose", JOptionPane.YES_NO_OPTION); 
 		    		if (selectedOption == JOptionPane.YES_OPTION) {
 		    			try {
 							appointment.removeAppointment();
 							try {
 								//get requested day
-								Date selectedDate = (Date) datePicker.getModel().getValue();
+								Date selectedDate = (Date) dentistDatePicker.getModel().getValue();
 								List<Appointment> appointmentList = Schedule.getAppointmentsByDay(selectedDate);
-								appointmentCards.clear();
-								appointmentsScreen.removeAll();
-								appointmentsScreen.repaint();
-								appointmentsScreen.setLayout(new GridLayout(0,2));
+								dentistAppointmentCards.clear();
+								dentistAppointmentsScreen.removeAll();
+								dentistAppointmentsScreen.repaint();
+								dentistAppointmentsScreen.setLayout(new GridLayout(0,2));
 								if (appointmentList.size() > 0) {
 									for (int i = 0; i < appointmentList.size(); i++) {
-										addAppointment(appointmentList.get(i));
+//										addAppointment(appointmentList.get(i));
 									}
 								} else {
 									//No appointments for today
-									appointmentsScreen.setLayout(new BorderLayout());
+									dentistAppointmentsScreen.setLayout(new BorderLayout());
 									JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
-									appointmentsScreen.add(imgLabel, BorderLayout.CENTER);
+									dentistAppointmentsScreen.add(imgLabel, BorderLayout.CENTER);
 								}
 								frame.revalidate();
 							} catch (CommunicationsException e) {
@@ -1050,9 +1081,11 @@ public class SecretaryView implements Screen {
 			rightSection.setLayout(new BoxLayout(rightSection, BoxLayout.Y_AXIS));
 			rightSection.add(topRightSection);
 			rightSection.add(bottomRightSection);
-			this.appointmentCards.get(index).add(rightSection, BorderLayout.CENTER);
-			this.appointmentsScreen.add(this.appointmentCards.get(index));
+			this.dentistAppointmentCards.get(index).add(rightSection, BorderLayout.CENTER);
+			this.dentistAppointmentsCardsColumn.get(col).add(this.dentistAppointmentCards.get(index));
 		} catch (SQLException e) {
+
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,
 				    "Database error. Check your internet connnection.",
 				    "Error fetching patient",
