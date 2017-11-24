@@ -554,6 +554,37 @@ public class SecretaryView implements Screen {
 			content.add(label6);
 			content.add(typesList);
 			typesList.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			//Course treatment prompt
+			JRadioButton option1 = new JRadioButton("Course Treatment");
+			option1.setFont(new Font("Sans Serif", Font.BOLD,
+					DisplayFrame.FONT_SIZE / 2));
+			option1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			content.add(option1);
+			JRadioButton option2 = new JRadioButton("Single Appointment");
+			option2.setFont(new Font("Sans Serif", Font.BOLD,
+					DisplayFrame.FONT_SIZE / 2));
+			option2.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			content.add(option2);
+			ButtonGroup group = new ButtonGroup();
+			group.add(option1);
+			group.add(option2);
+			option1.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					//enable the below two fields
+					currentAppointment.setEnabled(true);
+					totalAppointments.setEnabled(true);
+				}
+			});
+			option1.setSelected(true);
+			option2.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					//Disable the below two fields
+					currentAppointment.setEnabled(false);
+					totalAppointments.setEnabled(false);
+				}
+			});
 			//current appointment
 			JLabel label7 = new JLabel("Current appointment Number");
 			label7.setFont(new Font("Sans Serif", Font.BOLD,
@@ -598,6 +629,19 @@ public class SecretaryView implements Screen {
 					DisplayFrame.FONT_SIZE));
 			bookButton.setEnabled(false);
 			this.bookingTab.add(bookButton, BorderLayout.SOUTH);
+			//Validation
+			for (int i = 6; i < bookingTabInputs.size(); i++) {
+				((Component) bookingTabInputs.get(i)).addKeyListener(new KeyAdapter() {
+					public void keyTyped(KeyEvent e) {
+						if (firstName.getText().length() > 0 && houseNumber.getText().length() > 0 && postCode.getText().length() > 0
+								&& currentAppointment.getText().length() > 0 && totalAppointments.getText().length() > 0) {
+							bookButton.setEnabled(true);
+						} else {
+							bookButton.setEnabled(false);
+						}
+					}
+				});
+			}
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
 				    e.getMessage(),
