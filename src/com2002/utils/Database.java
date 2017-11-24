@@ -9,6 +9,7 @@ package com2002.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -25,6 +26,9 @@ public class Database {
 
 	/** Constant to represent db name **/
 	final private static String dbName = "team035";
+	
+	/** Constant to represent db table names **/
+	final public static String[] TABLE_NAMES = {"Treatments", "AppointmentTypes", "Employees", "Address", "HealthPlans", "Patients", "Appointments", "PatientHealthPlan", "AppointmentTreatment"};
 
 	/**
 	 * getConnection Static method
@@ -58,5 +62,28 @@ public class Database {
 	 */
 	public static void closeDb(Connection conn) {
 	    try { conn.close(); } catch (Exception e) {}
+	}
+	
+	/** 
+	 * dbHasTable method
+	 * 
+	 * This function is used to find if a given db has a table
+	 * 
+	 * @param conn Connection to said db
+	 * @param tableName Name of the db
+	 * @return Boolean representing if predicate is true
+	 * @throws SQLException in case of error with connection
+	 */
+	public static boolean dbHasTable(Connection conn, String tableName) throws SQLException {
+	    boolean tableExists = false;
+	    try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {
+	        while (rs.next() && !tableExists) { 
+	            String name = rs.getString("TABLE_NAME");
+	            if (name != null && name.equals(tableName)) {
+	                tableExists = true;
+	            }
+	        }
+	    }
+	    return tableExists;
 	}
 }
