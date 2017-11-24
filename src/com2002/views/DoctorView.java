@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -22,6 +23,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -144,6 +148,36 @@ public class DoctorView implements Screen {
 		this.screen.add(bottomPanel, BorderLayout.SOUTH);
 		frame.setFrameSize(DisplayFrame.DEFAULT_NUM, DisplayFrame.DEFAULT_NUM);
 		frame.centerFrame();
+	    //Menubar
+	    JMenuBar menuBar = new JMenuBar();
+        JMenu file = new JMenu("File");
+        file.setMnemonic(KeyEvent.VK_F);
+        JMenuItem logOutMenuItem = new JMenuItem("Log out");
+        logOutMenuItem.setMnemonic(KeyEvent.VK_L);
+        logOutMenuItem.setToolTipText("Log out");
+        logOutMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				frame.dispose();
+				DisplayFrame window = new DisplayFrame();
+				//We're all setup.. go to login screen
+				LoginView loginScreen = new LoginView(window);
+				window.setDisplayedPanel(loginScreen.getPanel());
+			}
+        });
+        file.add(logOutMenuItem);
+        JMenuItem exitMenuItem = new JMenuItem("Exit");
+        exitMenuItem.setMnemonic(KeyEvent.VK_E);
+        exitMenuItem.setToolTipText("Exit application");
+        exitMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.exit(0);				
+			}
+        });
+        file.add(exitMenuItem);
+        menuBar.add(file);
+        frame.setJMenuBar(menuBar);
 	}
 	
 	@SuppressWarnings("deprecation")
