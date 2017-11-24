@@ -3,7 +3,8 @@ package com2002.views;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -11,7 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -49,15 +52,18 @@ public class LoginView implements Screen {
 		//Main panel
 		this.screen = new JPanel();
 		this.screen.setLayout(new BorderLayout());
+		this.screen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		//Title
 		this.labels = new ArrayList<JLabel>();
 		this.labels.add(new JLabel(TITLE, SwingConstants.CENTER));
 		this.labels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE));
+		this.labels.get(0).setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		this.screen.add(this.labels.get(0), BorderLayout.NORTH);
 		//Middle panel
 		this.middlePanel = new JPanel();
-		this.middlePanel.setLayout(new GridLayout(2, 2));
+        this.middlePanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 		this.fields = new ArrayList<Object>();
 		//Username & Password fields and labels
 		for (int i = 0; i < LABELS.length; i++) {
@@ -65,8 +71,9 @@ public class LoginView implements Screen {
 			this.labels.add(new JLabel(LABELS[i], SwingConstants.CENTER));
 			this.labels.get(i + 1).setFont(new Font("Sans Serif", Font.PLAIN, 
 					DisplayFrame.FONT_SIZE / 2));
+			this.labels.get(i + 1).setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			//Add to middlePanel
-			this.middlePanel.add(this.labels.get(i + 1));
+			this.middlePanel.add(this.labels.get(i + 1), gbc);
 			//field
 			if (LABELS[i] == "Password") {
 				JPasswordField passwordField = new JPasswordField(8);
@@ -78,8 +85,12 @@ public class LoginView implements Screen {
 				textField.setMaximumSize(textField.getPreferredSize());
 				this.fields.add(textField);
 			}
+			((JComponent) this.fields.get(i)).setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			//Add to middlePanel
-			this.middlePanel.add((Component) this.fields.get(i));
+			this.middlePanel.add((Component) this.fields.get(i), gbc);
+
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.gridy = 1;
 		}
 		this.screen.add(this.middlePanel, BorderLayout.CENTER);
 		//Login Button
@@ -102,12 +113,15 @@ public class LoginView implements Screen {
 							    "Check username or password",
 							    JOptionPane.ERROR_MESSAGE);
 					} else if (staff.getRole().equals("Secretary")) { //It's the secretary
-						SecretaryView secView = new SecretaryView(frame, (Secretary) staff);
-						frame.setDisplayedPanel(secView.getPanel());
+						DisplayFrame newFrame = new DisplayFrame();
+						SecretaryView secView = new SecretaryView(newFrame, (Secretary) staff);
+						newFrame.setDisplayedPanel(secView.getPanel());
+						frame.dispose();
 					} else { //It's the doctor
-						DoctorView docView;
-						docView = new DoctorView(frame, (Doctor) staff);
-						frame.setDisplayedPanel(docView.getPanel());
+						DisplayFrame newFrame = new DisplayFrame();
+						DoctorView docView = new DoctorView(frame, (Doctor) staff);
+						newFrame.setDisplayedPanel(docView.getPanel());
+						frame.dispose();
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
