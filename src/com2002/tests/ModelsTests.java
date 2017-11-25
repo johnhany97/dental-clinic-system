@@ -338,6 +338,7 @@ public class ModelsTests {
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Cleaning', 60)");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
 			new Patient("Mr", "Nur", "Magid", LocalDate.of(1997, 05, 18) , "07543867024", "57", "W5 1LF");
+			new Patient("Mr", "Andy", "Abc", LocalDate.of(1997, 05, 19) , "07543867025", "57", "W5 1LF");
 			new Doctor("Arthur", "Granacher", "dentist", "password", Role.DENTIST);
 			new Doctor("John", "Ayad", "hygienist", "password", Role.HYGIENIST);
 			Appointment aptmnt = new Appointment(Timestamp.valueOf("2017-11-13 11:10:00.0"), Timestamp.valueOf("2017-11-13 11:30:00.0"), 
