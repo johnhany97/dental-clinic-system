@@ -374,57 +374,15 @@ public class PatientView implements Screen {
 			payButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));
 			payButton.addActionListener(new ActionListener() {
-				@Override
+				@Override 
 				public void actionPerformed(ActionEvent e) {
 					try {
-						//Cost of appointment
-						String price = String.valueOf(appointment.calculateCost());
-						String toShow = "Pay " + price + " for this appointment?";
-						int selectedOption = JOptionPane.showConfirmDialog(null, toShow, "Confirm", JOptionPane.YES_NO_OPTION); 
-						if (selectedOption == JOptionPane.YES_OPTION) {
-							appointment.pay();
-							if (patient.getUsage() != null) { //we need to deduct from health plan as well if possible
-								String appointmentType = appointment.getAppointmentType();
-								switch (appointmentType.toLowerCase()) {
-									case "checkup":
-										if (patient.getUsage().getCheckUpUsed() < patient.getUsage().getHealthPlan().getCheckUpLevel()) patient.getUsage().incrementCheckUp();
-										break;
-									case "cleaning":
-										if (patient.getUsage().getHygieneUsed() < patient.getUsage().getHealthPlan().getHygieneLevel()) patient.getUsage().incrementHygiene();
-										break;
-									case "remedial":
-										if (patient.getUsage().getRepairUsed() < patient.getUsage().getHealthPlan().getRepairLevel()) patient.getUsage().incrementRepair();
-										break;
-								}
-							}
-							JOptionPane.showMessageDialog (null, "Successfully done transaction", "Success!", JOptionPane.INFORMATION_MESSAGE);
-							//refresh list of appointments
-							List<Appointment> appointmentList = Schedule.getAppointmentsByPatient(patient.getPatientID());
-							appointmentCards.clear();
-							appointmentsPanel.removeAll();
-							appointmentsPanel.repaint();
-							appointmentsPanel.setLayout(new GridLayout(0,2));
-							if (appointmentList.size() > 0) {
-								for (int i = 0; i < appointmentList.size(); i++) {
-									addAppointment(appointmentList.get(i));
-								}
-							} else {
-								//No appointments for today
-								appointmentsPanel.setLayout(new BorderLayout());
-								JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
-								appointmentsPanel.add(imgLabel, BorderLayout.CENTER);
-							}
-							frame.dispose();
-						}
-					} catch (CommunicationsException e1) {
-						JOptionPane.showMessageDialog(frame,
-							    e1.getMessage(),
-							    "Check Internet",
-							    JOptionPane.ERROR_MESSAGE);
+						PayView pv = new PayView(frame, appointment);
+						frame.setDisplayedPanel(pv.getPanel());
 					} catch (SQLException e1) {
 						JOptionPane.showMessageDialog(frame,
 							    e1.getMessage(),
-							    "Error communicating with db",
+							    "Error",
 							    JOptionPane.ERROR_MESSAGE);
 					}
 				}

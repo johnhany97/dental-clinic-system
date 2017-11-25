@@ -277,34 +277,12 @@ public class AppointmentView implements Screen {
 	    JButton payButton = new JButton("Pay");
 	    payButton.setFont(new Font("Sans Serif", Font.PLAIN,
 				DisplayFrame.FONT_SIZE / 2));
-	    finishButton.addActionListener(new ActionListener() {
+	    payButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					//Cost of appointment
-					String price = String.valueOf(appointment.calculateCost());
-					String toShow = "Pay " + price + " for this appointment?";
-					int selectedOption = JOptionPane.showConfirmDialog(null, toShow, "Confirm", JOptionPane.YES_NO_OPTION); 
-					if (selectedOption == JOptionPane.YES_OPTION) {
-						appointment.pay();
-						if (usage != null) { //we need to deduct from health plan as well if possible
-							String appointmentType = appointment.getAppointmentType();
-							switch (appointmentType.toLowerCase()) {
-								case "checkup":
-									if (usage.getCheckUpUsed() < usage.getHealthPlan().getCheckUpLevel()) usage.incrementCheckUp();
-									break;
-								case "cleaning":
-									if (usage.getHygieneUsed() < usage.getHealthPlan().getHygieneLevel()) usage.incrementHygiene();
-									break;
-								case "remedial":
-									if (usage.getRepairUsed() < usage.getHealthPlan().getRepairLevel()) usage.incrementRepair();
-									break;
-							}
-						}
-						JOptionPane.showMessageDialog (null, "Successfully done transaction", "Success!", JOptionPane.INFORMATION_MESSAGE);
-						//Now leave
-						frame.dispose();
-					}
+					PayView pv = new PayView(frame, appointment);
+					frame.setDisplayedPanel(pv.getPanel());
 				} catch (CommunicationsException e1) {
 					JOptionPane.showMessageDialog(frame,
 						    e1.getMessage(),
