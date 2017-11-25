@@ -13,6 +13,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
@@ -80,6 +81,11 @@ public class BookAppointmentsView implements Screen {
 			UtilDateModel model = new UtilDateModel();
 			JDatePanelImpl datePanel = new JDatePanelImpl(model);
 			JDatePickerImpl startDate = new JDatePickerImpl(datePanel);
+			Calendar cal = Calendar.getInstance();
+			Date today = new Date();
+			cal.setTime(new Date(today.getTime() + (1000 * 60 * 60 * 24)));
+			model.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+			model.setSelected(true);
 			this.inputs.add(startDate);
 			//time
 			JTimeChooser startTime = new JTimeChooser();
@@ -89,6 +95,8 @@ public class BookAppointmentsView implements Screen {
 			UtilDateModel model2 = new UtilDateModel();
 			JDatePanelImpl datePanel2 = new JDatePanelImpl(model2);
 			JDatePickerImpl endDate = new JDatePickerImpl(datePanel2);
+			model2.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+			model2.setSelected(true);
 			this.inputs.add(endDate);
 			//time
 			JTimeChooser endTime = new JTimeChooser();

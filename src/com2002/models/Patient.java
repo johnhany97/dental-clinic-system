@@ -149,6 +149,10 @@ public class Patient {
 		return this.patientID;
 	}
 	
+	public Address getAddress() throws CommunicationsException, SQLException {
+		return new Address(this.houseNumber, this.postcode);
+	}
+	
 	/**
 	 * Updates the patientID of a patient to a given value.
 	 * @param patientID The new patientID of the patient.

@@ -97,12 +97,7 @@ public class DBQueries {
 		Connection conn = Database.getConnection();
 		ResultSet rs = execQuery("SELECT * FROM Patients WHERE HouseNumber = '" + houseNumber + "' AND Postcode = '" + postcode + "'", conn);
 		while (rs.next()) {
-			String title = rs.getString("Title");
-			String firstName = rs.getString("FirstName");
-			String lastName = rs.getString("LastName");
-			LocalDate dateOfBirth = rs.getDate("DateOfBirth").toLocalDate();
-			String phoneNumber = rs.getString("PhoneNumber");
-			patients.add(new Patient(title, firstName, lastName, dateOfBirth, phoneNumber, houseNumber, postcode));
+			patients.add(new Patient(rs.getInt("PatientID")));
 		}
 		conn.close();
 		return patients;

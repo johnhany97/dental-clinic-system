@@ -212,9 +212,73 @@ public class SecretaryView implements Screen {
 					//What are we searching for?
 					String partialPatientFirstName = patientFirstNameField.getText();
 					String partialPatientLastName = patientLastNameField.getText();
-					//Search for it
-					//use this list to refresh our tab
+					try {
+						//Search for it
+						String docUsername = DBQueries.getData("Username", "Employees", "Role", "Dentist");
+						//use this list to refresh our tab
+						try {
+				    		//new starting date
+							Date selectedDate = (Date) dentistDatePicker.getModel().getValue();
+				    		dentistAppointmentsScreen.removeAll();
+				    		dentistAppointmentsCardsColumn.clear();
+				    		dentistAppointmentCards.clear();
+				    		dentistAppointmentsList.clear();
+							frame.repaint();
+							dentistTab.repaint();
+							String dayNames[] = new DateFormatSymbols().getWeekdays();
+							for (int i = 0; i < 7; i++) {
+								//initialize appointments list
+								dentistAppointmentsList = Schedule.getAppointmentsByDocAndNameAndDate(new Doctor(docUsername), partialPatientFirstName, partialPatientLastName,new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
+								//set time of calendar to obtain day name and day number
+								Calendar calendar = Calendar.getInstance();
+								calendar.setTime(new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
+								//title of each day's column
+								JLabel dayName = new JLabel(dayNames[calendar.get(Calendar.DAY_OF_WEEK)] + " " + calendar.get(Calendar.DAY_OF_MONTH), SwingConstants.CENTER);
+								dayName.setFont(new Font("Sans Serif", Font.BOLD,
+										DisplayFrame.FONT_SIZE));
+								//actual appointments if any
+								dentistAppointmentsCardsColumn.add(new JPanel());
+								dentistAppointmentsCardsColumn.get(i).setBorder(BorderFactory.createLineBorder(Color.BLACK));
+								if (dentistAppointmentsList.size() > 0) {
+									dentistAppointmentsCardsColumn.get(i).setLayout(new BoxLayout(dentistAppointmentsCardsColumn.get(i), BoxLayout.Y_AXIS));
+									JPanel dayPanel = new JPanel();
+									dayPanel.setLayout(new BorderLayout());
+									dayPanel.add(dayName, BorderLayout.CENTER);
+									dentistAppointmentsCardsColumn.get(i).add(dayPanel);
+									for (int j = 0; j < dentistAppointmentsList.size(); j++) {
+										addAppointment(dentistAppointmentsList.get(j), i, "Dentist");
+									}
+									dentistAppointmentsScreen.add(dentistAppointmentsCardsColumn.get(i));
+								} else {
+									//No appointments for today
+									dentistAppointmentsCardsColumn.get(i).setLayout(new BorderLayout());
+									dentistAppointmentsCardsColumn.get(i).add(dayName, BorderLayout.NORTH);
+								}
+								dentistAppointmentsScreen.add(dentistAppointmentsCardsColumn.get(i));
+							}
+				    	} catch (SQLException e1) {
+							JOptionPane.showMessageDialog(frame,
+								    e1.getMessage(),
+								    "Error fetching appointments",
+								    JOptionPane.ERROR_MESSAGE);
+				    	}
+					} catch (SQLException e) {
+						JOptionPane.showMessageDialog(frame,
+							    e.getMessage(),
+							    "Error fetching appointments",
+							    JOptionPane.ERROR_MESSAGE);
+					}
 				}
+			});
+			JButton viewAllButton = new JButton("Refresh (View All)");
+			viewAllButton.setFont(new Font("Sans Serif", Font.PLAIN,
+					DisplayFrame.FONT_SIZE / 2));
+			viewAllButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					refreshDentistTab();
+				}
+				
 			});
 			JPanel searchPanel = new JPanel();
 			searchPanel.add(patientFirstNameLabel);
@@ -298,6 +362,7 @@ public class SecretaryView implements Screen {
 			datePickerPanel.add(labelDatePicker);
 			datePickerPanel.add(this.dentistDatePicker);
 			bottomLeftPanel.add(datePickerPanel,  BorderLayout.WEST);
+			bottomLeftPanel.add(viewAllButton, BorderLayout.EAST);
 			bottomLeftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			this.dentistTab.add(bottomLeftPanel, BorderLayout.SOUTH);
 		} catch (SQLException e1) {
@@ -336,8 +401,71 @@ public class SecretaryView implements Screen {
 					//What are we searching for?
 					String partialPatientFirstName = patientFirstNameField.getText();
 					String partialPatientLastName = patientLastNameField.getText();
-					//Search for it
-					//use this list to refresh our tab
+					try {
+						//Search for it
+						String docUsername = DBQueries.getData("Username", "Employees", "Role", "Hygienist");
+						//use this list to refresh our tab
+						try {
+				    		//new starting date
+							Date selectedDate = (Date) hygienistDatePicker.getModel().getValue();
+				    		hygienistAppointmentsScreen.removeAll();
+							hygienistAppointmentsCardsColumn.clear();
+							hygienistAppointmentCards.clear();
+							hygienistAppointmentsList.clear();
+							frame.repaint();
+							hygienistTab.repaint();
+							String dayNames[] = new DateFormatSymbols().getWeekdays();
+							for (int i = 0; i < 7; i++) {
+								//initialize appointments list
+								hygienistAppointmentsList = Schedule.getAppointmentsByDocAndNameAndDate(new Doctor(docUsername), partialPatientFirstName, partialPatientLastName,new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
+								//set time of calendar to obtain day name and day number
+								Calendar calendar = Calendar.getInstance();
+								calendar.setTime(new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
+								//title of each day's column
+								JLabel dayName = new JLabel(dayNames[calendar.get(Calendar.DAY_OF_WEEK)] + " " + calendar.get(Calendar.DAY_OF_MONTH), SwingConstants.CENTER);
+								dayName.setFont(new Font("Sans Serif", Font.BOLD,
+										DisplayFrame.FONT_SIZE));
+								//actual appointments if any
+								hygienistAppointmentsCardsColumn.add(new JPanel());
+								hygienistAppointmentsCardsColumn.get(i).setBorder(BorderFactory.createLineBorder(Color.BLACK));
+								if (hygienistAppointmentsList.size() > 0) {
+									hygienistAppointmentsCardsColumn.get(i).setLayout(new BoxLayout(hygienistAppointmentsCardsColumn.get(i), BoxLayout.Y_AXIS));
+									JPanel dayPanel = new JPanel();
+									dayPanel.setLayout(new BorderLayout());
+									dayPanel.add(dayName, BorderLayout.CENTER);
+									hygienistAppointmentsCardsColumn.get(i).add(dayPanel);
+									for (int j = 0; j < hygienistAppointmentsList.size(); j++) {
+										addAppointment(hygienistAppointmentsList.get(j), i, "Hygienist");
+									}
+									hygienistAppointmentsScreen.add(hygienistAppointmentsCardsColumn.get(i));
+								} else {
+									//No appointments for today
+									hygienistAppointmentsCardsColumn.get(i).setLayout(new BorderLayout());
+									hygienistAppointmentsCardsColumn.get(i).add(dayName, BorderLayout.NORTH);
+								}
+								hygienistAppointmentsScreen.add(hygienistAppointmentsCardsColumn.get(i));
+							}
+				    	} catch (SQLException e1) {
+							JOptionPane.showMessageDialog(frame,
+								    e1.getMessage(),
+								    "Error fetching appointments",
+								    JOptionPane.ERROR_MESSAGE);
+				    	}
+					} catch (SQLException e) {
+						JOptionPane.showMessageDialog(frame,
+							    e.getMessage(),
+							    "Error fetching appointments",
+							    JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
+			JButton viewAllButton = new JButton("Refresh (View All)");
+			viewAllButton.setFont(new Font("Sans Serif", Font.PLAIN,
+					DisplayFrame.FONT_SIZE / 2));
+			viewAllButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					refreshDentistTab();
 				}
 			});
 			JPanel searchPanel = new JPanel();
@@ -423,6 +551,7 @@ public class SecretaryView implements Screen {
 			datePickerPanel.add(labelDatePicker);
 			datePickerPanel.add(this.hygienistDatePicker);
 			bottomLeftPanel.add(datePickerPanel,  BorderLayout.WEST);
+			bottomLeftPanel.add(viewAllButton, BorderLayout.EAST);
 			bottomLeftPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			this.hygienistTab.add(bottomLeftPanel, BorderLayout.SOUTH);
 		} catch (SQLException e1) {
@@ -477,11 +606,12 @@ public class SecretaryView implements Screen {
 			//day
 			UtilDateModel model = new UtilDateModel();
 			JDatePanelImpl datePanel = new JDatePanelImpl(model);
-			JDatePickerImpl startDate = new JDatePickerImpl(datePanel);
 			Date today = new Date();
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(new Date(today.getTime() + (1000 * 60 * 60 * 24)));
 			model.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+			model.setSelected(true);
+			JDatePickerImpl startDate = new JDatePickerImpl(datePanel);
 			this.bookingTabInputs.add(startDate);
 			//time
 			JTimeChooser startTime = new JTimeChooser();
@@ -490,8 +620,9 @@ public class SecretaryView implements Screen {
 			//day
 			UtilDateModel model2 = new UtilDateModel();
 			JDatePanelImpl datePanel2 = new JDatePanelImpl(model2);
-			JDatePickerImpl endDate = new JDatePickerImpl(datePanel2);
 			model2.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+			model2.setSelected(true);
+			JDatePickerImpl endDate = new JDatePickerImpl(datePanel2);
 			this.bookingTabInputs.add(endDate);
 			//time
 			JTimeChooser endTime = new JTimeChooser();
@@ -1290,7 +1421,7 @@ public class SecretaryView implements Screen {
 			searchAddressesButton.setMnemonic(KeyEvent.VK_ENTER);
 			inputsAndButtons.add(searchAddressesButton);
 			//view all button
-			JButton viewAllButton = new JButton("View all");
+			JButton viewAllButton = new JButton("Refresh (View all)");
 			viewAllButton.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
 			viewAllButton.addActionListener(new ActionListener() {
 				@Override
@@ -1430,7 +1561,7 @@ public class SecretaryView implements Screen {
 			});
 			inputsAndButtons.add(searchPatientsButton);
 			//view all button
-			JButton viewAllPatientsButton = new JButton("View all");
+			JButton viewAllPatientsButton = new JButton("Refresh (View all)");
 			viewAllPatientsButton.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
 			viewAllPatientsButton.addActionListener(new ActionListener() {
 				@Override
@@ -1484,6 +1615,7 @@ public class SecretaryView implements Screen {
 				    JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
 	
 	private void refreshHygienistTab() {
 		try {
@@ -1753,8 +1885,6 @@ public class SecretaryView implements Screen {
 				this.hygienistAppointmentsCardsColumn.get(col).add(this.hygienistAppointmentCards.get(index));
 			}
 		} catch (SQLException e) {
-
-			e.printStackTrace();
 			JOptionPane.showMessageDialog(frame,
 				    "Database error. Check your internet connnection.",
 				    "Error fetching patient",
@@ -1788,7 +1918,7 @@ public class SecretaryView implements Screen {
 			addressArr[i][2] = givenList.get(i).getDistrict();
 			addressArr[i][3] = givenList.get(i).getCity();
 			addressArr[i][4] = givenList.get(i).getPostcode();
-			addressArr[i][5] = "View";
+			addressArr[i][5] = "View Patients";
 		}
 		return addressArr;
 	}

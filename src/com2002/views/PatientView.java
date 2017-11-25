@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ import com2002.models.HealthPlan;
 import com2002.models.Patient;
 import com2002.models.Schedule;
 import com2002.models.Usage;
+import com2002.views.setupwizard.PatientEditView;
 
 public class PatientView implements Screen {
 	
@@ -268,7 +270,9 @@ public class PatientView implements Screen {
 		    updateButton.addActionListener(new ActionListener() {
 		    	@Override
 		    	public void actionPerformed(ActionEvent arg0) {
-		    		
+		    		PatientEditView peView = new PatientEditView(frame, patient);
+		    		frame.setDisplayedPanel(peView.getPanel());
+		    		frame.revalidate();
 		    	}
 		    });
 		    buttonsPanel.add(updateButton);
@@ -356,11 +360,61 @@ public class PatientView implements Screen {
 			detailsButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));
 			bottomRightSection.add(detailsButton);
-			//TODO: Action listener
+			//TODO: ActionListener
 			JButton payButton = new JButton("Pay");
 			payButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));
+			payButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						//Cost of appointment
+						String price = String.valueOf(appointment.calculateCost());
+						String toShow = "Pay " + price + " for this appointment?";
+						int selectedOption = JOptionPane.showConfirmDialog(null, toShow, "Confirm", JOptionPane.YES_NO_OPTION); 
+						if (selectedOption == JOptionPane.YES_OPTION) {
+							appointment.pay();
+							//refresh list of appointments
+							List<Appointment> appointmentList = Schedule.getAppointmentsByPatient(patient.getPatientID());
+							appointmentCards.clear();
+							appointmentsPanel.removeAll();
+							appointmentsPanel.repaint();
+							appointmentsPanel.setLayout(new GridLayout(0,2));
+							if (appointmentList.size() > 0) {
+								for (int i = 0; i < appointmentList.size(); i++) {
+									addAppointment(appointmentList.get(i));
+								}
+							} else {
+								//No appointments for today
+								appointmentsPanel.setLayout(new BorderLayout());
+								JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
+								appointmentsPanel.add(imgLabel, BorderLayout.CENTER);
+							}
+							frame.revalidate();
+						}
+					} catch (CommunicationsException e1) {
+						JOptionPane.showMessageDialog(frame,
+							    e1.getMessage(),
+							    "Check Internet",
+							    JOptionPane.ERROR_MESSAGE);
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(frame,
+							    e1.getMessage(),
+							    "Error communicating with db",
+							    JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
 			bottomRightSection.add(payButton);
+			LocalDateTime today = LocalDateTime.now();
+			if (today.isBefore(appointment.getStartTime().toLocalDateTime())) { //we don't pay for or see details of future appointments
+				payButton.setEnabled(false);
+				detailsButton.setEnabled(false);
+			}
+			if (appointment.isPaid()) {
+				payButton.setEnabled(false);
+				payButton.setText("Paid");
+			}
 			bottomRightSection.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 			JButton deleteButton = new JButton("Delete");
 			deleteButton.setFont(new Font("Sans Serif", Font.PLAIN, 

@@ -158,15 +158,22 @@ public class Schedule {
 	 * @throws CommunicationsException when an error occurs whilst attempting connection.
 	 * @throws SQLException for any other error, could be incorrect parameters.
 	 */
-	public static  ArrayList<Appointment> getAppointmentsByDocAndName(Doctor doctor, String firstName, String lastName) throws CommunicationsException, SQLException  {
+	public static  ArrayList<Appointment> getAppointmentsByDocAndNameAndDate(Doctor doctor, String firstName, String lastName, Date date) throws CommunicationsException, SQLException  {
 		ArrayList<Appointment> appointments = new ArrayList<Appointment>();
 		Connection conn = Database.getConnection();
 		try {
-			ResultSet patients = DBQueries.execQuery("SELECT PatientID FROM Patients WHERE FirstName LIKE '" + firstName + "' OR LastName LIKE '" + lastName + "'", conn);
+			ResultSet patients = DBQueries.execQuery("SELECT PatientID FROM Patients WHERE FirstName LIKE '%" + firstName + "%' AND LastName LIKE '%" + lastName + "%'", conn);
 			while(patients.next()) {
 				int patID = patients.getInt("PatientID");
 				String username = doctor.getUsername();
-				ResultSet apps = DBQueries.execQuery("SELECT * FROM Appointments WHERE PatientID = " + patID + " AND Username = '" + username + "'", conn);
+				LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				int year  = localDate.getYear();
+				int month = localDate.getMonthValue();
+				int day   = localDate.getDayOfMonth();
+				String startDay = year + "-" + month + "-" + day + " 00:00:00.0";
+				String endDay = year + "-" + month + "-" + day + " 23:59:59.0";
+				ResultSet apps = DBQueries.execQuery("SELECT * FROM Appointments WHERE PatientID = " + patID + " AND Username = '" + username + "' AND ((StartDate <= '" + startDay + "' AND EndDate >= '" + startDay +
+						"') OR (StartDate >= '" + startDay + "' AND StartDate <= '" + endDay + "'))", conn);
 				while(apps.next()) {
 					Timestamp startDate = apps.getTimestamp("StartDate");
 					appointments.add(new Appointment(startDate, username));

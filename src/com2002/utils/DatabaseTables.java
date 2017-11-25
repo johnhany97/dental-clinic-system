@@ -94,7 +94,7 @@ public class DatabaseTables {
 			String appointment13 = "INSERT INTO Appointments VALUES ('2017-11-24 3:0:0', '2017-11-24 4:0:0', \"user2\", \"Checkup\", 1, \"l\", 1, 1, 0)";
 			String appointment14 = "INSERT INTO Appointments VALUES ('2017-11-24 4:0:0', '2017-11-24 5:0:0', \"user2\", \"Checkup\", 2, \"m\", 1, 1, 0)";
 			String appointment15 = "INSERT INTO Appointments VALUES ('2017-11-24 5:0:0', '2017-11-24 6:0:0', \"user2\", \"Checkup\", 1, \"n\", 1, 1, 0)";
-			String appointment16 = "INSERT INTO Appointments VALUES ('2017-11-24 6:0:0', '2017-11-24 7:0:0', \"user2\", \"Checkup\", 2, \"o\", 1, 1, 0)";
+			String appointment16 = "INSERT INTO Appointments VALUES ('2017-11-26 6:0:0', '2017-11-24 7:0:0', \"user2\", \"Checkup\", 2, \"o\", 1, 1, 0)";
 			stmt.executeUpdate(appointment1);
 			stmt.executeUpdate(appointment2);
 			stmt.executeUpdate(appointment3);
@@ -115,9 +115,6 @@ public class DatabaseTables {
 			
 			String patientHealthPlan1 = "INSERT INTO PatientHealthPlan VALUES (1, \"hp1\", 0, 0, 0, '2017-11-13')";
 			stmt.executeUpdate(patientHealthPlan1);
-			
-			String appointmentTreatments1 = "INSERT INTO AppointmentTreatment VALUES('2017-11-24 2:0:0', \"user1\", 'Treatment1')";
-//			stmt.executeUpdate(appointmentTreatments1);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

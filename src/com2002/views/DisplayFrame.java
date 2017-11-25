@@ -44,7 +44,6 @@ public class DisplayFrame extends JFrame {
 	  private int screenWidth;
 	  private int screenWidthStep;
 	  private int screenHeightStep;
-	  private JPanel panel;
 	  
 	  /**
 	   * Constructor
@@ -98,7 +97,6 @@ public class DisplayFrame extends JFrame {
 		  Container contentPane = this.getContentPane();
 		  contentPane.removeAll();
 		  contentPane.add(panel);
-		  this.panel = panel;
 		  repaint();
 		  setVisible(true);
 	  }
