@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +41,7 @@ import com2002.views.setupwizard.PatientEditView;
 
 public class PatientView implements Screen {
 	
+	private int type;
 	private JPanel screen;
 	private DisplayFrame frame;
 	private Patient patient;
@@ -52,10 +52,11 @@ public class PatientView implements Screen {
 	private JLabel repairLabel;
 	private JLabel hygieneLabel;
 	
-	public PatientView(DisplayFrame frame, Patient patient) {
+	public PatientView(DisplayFrame frame, Patient patient, int type) {
 		this.frame = frame;
 		this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.patient = patient;
+		this.type = type;
 		initialize();
 	}
 	
@@ -211,7 +212,7 @@ public class PatientView implements Screen {
 						}
 					} else {
 						// unsubscribe and refresh
-						int selectedOption = JOptionPane.showConfirmDialog(null, "Do you wanna unsubscribe patient?", "Choose", JOptionPane.YES_NO_OPTION); 
+						int selectedOption = JOptionPane.showConfirmDialog(null, "Do you want to unsubscribe patient?", "Choose", JOptionPane.YES_NO_OPTION); 
 			    		if (selectedOption == JOptionPane.YES_OPTION) {
 			    			try {
 			    				//unsubscribe
@@ -359,8 +360,16 @@ public class PatientView implements Screen {
 			JButton detailsButton = new JButton("View");
 			detailsButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));
+			detailsButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					DisplayFrame newFrame = new DisplayFrame();
+					newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					AppointmentView appointmentView = new AppointmentView(newFrame, appointment, type);
+					newFrame.setDisplayedPanel(appointmentView.getPanel());
+				}
+			});
 			bottomRightSection.add(detailsButton);
-			//TODO: ActionListener
 			JButton payButton = new JButton("Pay");
 			payButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));

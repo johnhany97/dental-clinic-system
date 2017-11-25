@@ -34,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -1739,7 +1740,6 @@ public class SecretaryView implements Screen {
 			String patientName = patient.getTitle() + " " + patient.getFirstName() + " " + patient.getLastName();
 			if (appointmentType.equals("Empty")) {
 				patientName = "Empty Appointment";
-				
 			}
 			Doctor doctor = app.getDoctor();
 			String docName = doctor.getFirstName() + " " + doctor.getLastName();
@@ -1811,6 +1811,15 @@ public class SecretaryView implements Screen {
 			JButton detailsButton = new JButton("Details");
 			detailsButton.setFont(new Font("Sans Serif", Font.PLAIN,
 					DisplayFrame.FONT_SIZE / 3));
+			detailsButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					DisplayFrame newFrame = new DisplayFrame();
+					newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					AppointmentView appointmentView = new AppointmentView(newFrame, app, AppointmentView.SECRETARY);
+					newFrame.setDisplayedPanel(appointmentView.getPanel());
+				}
+			});
 			bottomRightSection.add(detailsButton);
 			//Patient Info Button
 			JButton patientInfoButton = new JButton("Patient Info");
@@ -1823,7 +1832,7 @@ public class SecretaryView implements Screen {
 					try {
 						Patient patient = new Patient((int) patientInfoButton.getClientProperty("id"));
 						DisplayFrame patientViewFrame = new DisplayFrame();
-						PatientView patientView = new PatientView(patientViewFrame, patient);
+						PatientView patientView = new PatientView(patientViewFrame, patient, AppointmentView.SECRETARY);
 						patientViewFrame.setDisplayedPanel(patientView.getPanel());
 					} catch (CommunicationsException e) {
 						JOptionPane.showMessageDialog(frame,
@@ -1872,7 +1881,6 @@ public class SecretaryView implements Screen {
 				patientInfoButton.setEnabled(false);
 			}
 			bottomRightSection.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-			//TODO: Action listener
 			JPanel rightSection = new JPanel();
 			rightSection.setLayout(new BoxLayout(rightSection, BoxLayout.Y_AXIS));
 			rightSection.add(topRightSection);
@@ -1999,7 +2007,7 @@ class ButtonEditor extends DefaultCellEditor {
 				try {
 					Patient patient = new Patient(Integer.valueOf((String) this.table.getValueAt(this.row, 0)));
 					DisplayFrame patientViewFrame = new DisplayFrame();
-					PatientView patientView = new PatientView(patientViewFrame, patient);
+					PatientView patientView = new PatientView(patientViewFrame, patient, AppointmentView.SECRETARY);
 					patientViewFrame.setDisplayedPanel(patientView.getPanel());
 				} catch (CommunicationsException e) {
 					JOptionPane.showMessageDialog(this.frame,

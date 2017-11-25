@@ -265,7 +265,7 @@ public class DoctorView implements Screen {
 				public void actionPerformed(ActionEvent arg0) {
 					DisplayFrame newFrame = new DisplayFrame();
 					newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-					AppointmentView appointmentView = new AppointmentView(newFrame, appointment);
+					AppointmentView appointmentView = new AppointmentView(newFrame, appointment, AppointmentView.DOCTOR);
 					newFrame.setDisplayedPanel(appointmentView.getPanel());
 				}
 			});
@@ -280,7 +280,7 @@ public class DoctorView implements Screen {
 					try {
 						Patient patient = new Patient((int) patientInfoButton.getClientProperty("id"));
 						DisplayFrame patientViewFrame = new DisplayFrame();
-						PatientView patientView = new PatientView(patientViewFrame, patient);
+						PatientView patientView = new PatientView(patientViewFrame, patient, AppointmentView.DOCTOR);
 						patientViewFrame.setDisplayedPanel(patientView.getPanel());
 					} catch (CommunicationsException e) {
 	

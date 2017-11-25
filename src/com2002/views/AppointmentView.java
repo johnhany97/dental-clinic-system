@@ -46,7 +46,12 @@ import com2002.models.Usage;
 
 public class AppointmentView implements Screen {
 	
+	final static public int DOCTOR = 0;
+	
+	final static public int SECRETARY = 1;
+	
 	private JPanel panel;
+	private int type;
 	private DisplayFrame frame;
 	private Appointment appointment;
 	private Patient patient;
@@ -63,9 +68,10 @@ public class AppointmentView implements Screen {
 	private List<JLabel> activePreviousAppointmentLabels;
 	private List<JCheckBox> treatmentsInput;
 
-	public AppointmentView(DisplayFrame frame, Appointment appointment) {
+	public AppointmentView(DisplayFrame frame, Appointment appointment, int type) {
 		try {
 			this.frame = frame;
+			this.type = type;
 			this.frame.setFrameSize(DisplayFrame.DEFAULT_NUM, 7);
 			this.frame.centerFrame();
 			this.appointment = appointment;
@@ -183,6 +189,9 @@ public class AppointmentView implements Screen {
 	        JCheckBox cb = new JCheckBox(key);
 	        cb.setFont(new Font("Sans Serif", Font.PLAIN,
 	        		DisplayFrame.FONT_SIZE / 2));
+	        if (this.type == SECRETARY) {
+	        	cb.setEnabled(false);
+	        }
 	        this.treatmentsInput.add(cb);
 	    }
 	    JPanel treatmentsPanel = new JPanel();
@@ -213,6 +222,9 @@ public class AppointmentView implements Screen {
 	    this.notesTextArea = new JTextArea();
 	    if (this.appointment.getNotes() != null && this.appointment.getNotes() != "") {
 	    	this.notesTextArea.setText(this.appointment.getNotes());
+	    }
+	    if (this.type == SECRETARY) { //Secretary
+	    	this.notesTextArea.setEditable(false);
 	    }
 	    JScrollPane notesTextAreaScrollPane = new JScrollPane(this.notesTextArea);
 	    this.leftPanel.add(notesTextAreaScrollPane);

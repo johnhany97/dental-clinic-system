@@ -32,6 +32,7 @@ import javax.swing.text.NumberFormatter;
 
 import com2002.models.Address;
 import com2002.models.Patient;
+import com2002.views.AppointmentView;
 import com2002.views.DisplayFrame;
 import com2002.views.PatientView;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
@@ -321,7 +322,7 @@ public class PatientEditView {
 							JOptionPane.showMessageDialog (null, "Nothing to change", "Message", JOptionPane.INFORMATION_MESSAGE);
 						}
 						//refresh parent
-						PatientView patientView = new PatientView(frame, patient);
+						PatientView patientView = new PatientView(frame, patient, AppointmentView.SECRETARY);
 						frame.setDisplayedPanel(patientView.getPanel());
 						frame.revalidate();
 					} catch (SQLException e1) {
