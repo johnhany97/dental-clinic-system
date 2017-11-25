@@ -117,7 +117,6 @@ public class PatientView implements Screen {
 			details.add(phoneNumberLabel2);
 			centerPanel.add(details);
 			//health plan
-			//health plan
 			JPanel hpPanel = new JPanel();
 			hpPanel.setLayout(new GridLayout(0, 2));
 			String nameString = "No Health Plan";
@@ -132,6 +131,7 @@ public class PatientView implements Screen {
 					nameString = usage.getHealthPlan().getName();
 					HealthPlan hp;
 					hp = new HealthPlan(nameString);
+					nameString += " | Joined: " + usage.getDateJoined().toString();
 					//usage
 					int currentCheckup = usage.getCheckUpUsed();
 					int totalCheckup = hp.getCheckUpLevel();
@@ -383,6 +383,21 @@ public class PatientView implements Screen {
 						int selectedOption = JOptionPane.showConfirmDialog(null, toShow, "Confirm", JOptionPane.YES_NO_OPTION); 
 						if (selectedOption == JOptionPane.YES_OPTION) {
 							appointment.pay();
+							if (patient.getUsage() != null) { //we need to deduct from health plan as well if possible
+								String appointmentType = appointment.getAppointmentType();
+								switch (appointmentType.toLowerCase()) {
+									case "checkup":
+										if (patient.getUsage().getCheckUpUsed() < patient.getUsage().getHealthPlan().getCheckUpLevel()) patient.getUsage().incrementCheckUp();
+										break;
+									case "cleaning":
+										if (patient.getUsage().getHygieneUsed() < patient.getUsage().getHealthPlan().getHygieneLevel()) patient.getUsage().incrementHygiene();
+										break;
+									case "remedial":
+										if (patient.getUsage().getRepairUsed() < patient.getUsage().getHealthPlan().getRepairLevel()) patient.getUsage().incrementRepair();
+										break;
+								}
+							}
+							JOptionPane.showMessageDialog (null, "Successfully done transaction", "Success!", JOptionPane.INFORMATION_MESSAGE);
 							//refresh list of appointments
 							List<Appointment> appointmentList = Schedule.getAppointmentsByPatient(patient.getPatientID());
 							appointmentCards.clear();
@@ -399,7 +414,7 @@ public class PatientView implements Screen {
 								JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
 								appointmentsPanel.add(imgLabel, BorderLayout.CENTER);
 							}
-							frame.revalidate();
+							frame.dispose();
 						}
 					} catch (CommunicationsException e1) {
 						JOptionPane.showMessageDialog(frame,

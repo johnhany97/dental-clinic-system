@@ -274,7 +274,59 @@ public class AppointmentView implements Screen {
 				}
 			}
 	    });
-		this.leftPanel.add(finishButton);
+	    JButton payButton = new JButton("Pay");
+	    payButton.setFont(new Font("Sans Serif", Font.PLAIN,
+				DisplayFrame.FONT_SIZE / 2));
+	    finishButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					//Cost of appointment
+					String price = String.valueOf(appointment.calculateCost());
+					String toShow = "Pay " + price + " for this appointment?";
+					int selectedOption = JOptionPane.showConfirmDialog(null, toShow, "Confirm", JOptionPane.YES_NO_OPTION); 
+					if (selectedOption == JOptionPane.YES_OPTION) {
+						appointment.pay();
+						if (usage != null) { //we need to deduct from health plan as well if possible
+							String appointmentType = appointment.getAppointmentType();
+							switch (appointmentType.toLowerCase()) {
+								case "checkup":
+									if (usage.getCheckUpUsed() < usage.getHealthPlan().getCheckUpLevel()) usage.incrementCheckUp();
+									break;
+								case "cleaning":
+									if (usage.getHygieneUsed() < usage.getHealthPlan().getHygieneLevel()) usage.incrementHygiene();
+									break;
+								case "remedial":
+									if (usage.getRepairUsed() < usage.getHealthPlan().getRepairLevel()) usage.incrementRepair();
+									break;
+							}
+						}
+						JOptionPane.showMessageDialog (null, "Successfully done transaction", "Success!", JOptionPane.INFORMATION_MESSAGE);
+						//Now leave
+						frame.dispose();
+					}
+				} catch (CommunicationsException e1) {
+					JOptionPane.showMessageDialog(frame,
+						    e1.getMessage(),
+						    "Check Internet",
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(frame,
+						    e1.getMessage(),
+						    "Error communicating with db",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			}
+	    });
+	    if (this.type == DOCTOR) {
+	    	this.leftPanel.add(finishButton);
+	    } else {
+	    	this.leftPanel.add(payButton);
+	    	if (this.appointment.isPaid()) {
+	    		payButton.setEnabled(false);
+	    		payButton.setText("Paid");
+	    	}
+	    }
 		//add panels to each other
 		this.leftPanel.setMaximumSize(new Dimension(frame.getWidth() / 2, frame.getHeight()));
 		this.panel.add(this.leftPanel, BorderLayout.CENTER);
