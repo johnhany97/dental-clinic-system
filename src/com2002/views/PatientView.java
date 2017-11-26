@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -307,6 +309,13 @@ public class PatientView implements Screen {
 			this.appointmentCards = new ArrayList<JPanel>();
 			ArrayList<Appointment> list;
 			list = Schedule.getAppointmentsByPatient(this.patient.getPatientID());
+			// sort them (Z -> A)
+			Collections.sort(list, new Comparator<Appointment>() {
+				@Override
+				public int compare(Appointment o1, Appointment o2) {
+					return o2.getStartTime().compareTo(o1.getStartTime());
+				}
+			});
 			for (int i = 0; i < list.size(); i++) {
 				addAppointment(list.get(i));
 			}
@@ -430,6 +439,13 @@ public class PatientView implements Screen {
 							// get requested day
 							List<Appointment> appointmentList = Schedule
 									.getAppointmentsByPatient(patient.getPatientID());
+							// sort them
+							Collections.sort(appointmentList, new Comparator<Appointment>() {
+								@Override
+								public int compare(Appointment o1, Appointment o2) {
+									return o1.getStartTime().compareTo(o2.getStartTime());
+								}
+							});
 							appointmentCards.clear();
 							appointmentsPanel.removeAll();
 							appointmentsPanel.repaint();
