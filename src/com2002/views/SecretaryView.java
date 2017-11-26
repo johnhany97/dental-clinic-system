@@ -2131,8 +2131,8 @@ class ButtonEditor extends DefaultCellEditor {
 				}
 			} else if (label.equals("Pay Subscription")) {
 				try {
-					String patientId = (String) this.table.getValueAt(this.row, 0);
-					String amountDue = (String) this.table.getValueAt(this.row, 1);
+					String patientId = String.valueOf(this.table.getValueAt(this.row, 0));
+					String amountDue = String.valueOf(this.table.getValueAt(this.row, 1));
 					DBQueries.execUpdate(
 							"DELETE FROM `Payments` WHERE (`PatientID`='" + patientId + "' AND `AmountDue`='"
 									+ amountDue + "' AND `StartDate` IS NULL AND `Username` IS NULL) LIMIT 1");
@@ -2146,8 +2146,8 @@ class ButtonEditor extends DefaultCellEditor {
 				}
 			} else if (label.equals("Pay Appointment")) {
 				try {
-					String tsString = (String) this.table.getValueAt(this.row, 2);
-					String username = (String) this.table.getValueAt(this.row, 3);
+					String tsString = String.valueOf(this.table.getValueAt(this.row, 2));
+					String username = String.valueOf(this.table.getValueAt(this.row, 4));
 					PayView pv = new PayView(frame, new Appointment(Timestamp.valueOf(tsString), username));
 					frame.setDisplayedPanel(pv.getPanel());
 				} catch (CommunicationsException e) {
