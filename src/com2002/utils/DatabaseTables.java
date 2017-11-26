@@ -190,7 +190,7 @@ public class DatabaseTables {
 				+ "	PRIMARY KEY(`Name`)\r\n"
 				+ ")";
 		String patientHealthPlanTable = "CREATE TABLE `PatientHealthPlan` (\r\n"
-				+ "	`PatientID`	I		NTEGER NOT NULL,\r\n"
+				+ "	`PatientID`			INTEGER NOT NULL,\r\n"
 				+ "	`HealthPlanName`	VARCHAR(30),\r\n"
 				+ "	`CheckUpUsed`		INTEGER DEFAULT 0,\r\n"
 				+ "	`HygieneUsed`		INTEGER DEFAULT 0,\r\n"
