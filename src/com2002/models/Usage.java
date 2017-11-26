@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -282,8 +283,9 @@ public class Usage {
 	 *             when an error occurs whilst attempting connection
 	 * @throws SQLException
 	 *             for any other error, could be incorrect parameters.
+	 * @return Boolean which is true if we indeed updated
 	 */
-	public void resetHealthPlan() throws CommunicationsException, SQLException {
+	public boolean resetHealthPlan() throws CommunicationsException, SQLException {
 		LocalDate lastYear = LocalDate.now().plusYears(-1);
 		if (lastYear.isAfter(dateJoined)) {
 			this.dateJoined = dateJoined.plusYears(1);
@@ -293,7 +295,9 @@ public class Usage {
 			DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = '" + this.checkUpUsed
 					+ "', HygieneUsed = '" + this.hygieneUsed + "', RepairUsed = '" + this.repairUsed
 					+ "', DateJoined = '" + this.dateJoined + "'   WHERE PatientID = '" + this.patientID + "'");
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -329,5 +333,15 @@ public class Usage {
 	 */
 	public void deleteUsage(int patientID) throws SQLException {
 		DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID LIKE '%" + patientID + "%'");
+	}
+	
+	public static ArrayList<Usage> getAll() throws SQLException {
+		ArrayList<Usage> list = new ArrayList<Usage>();
+		Connection conn = Database.getConnection();
+		ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan", conn);
+		while (rs.next()) {
+			list.add(new Usage(rs.getInt("PatientID")));
+		}
+		return list;
 	}
 }

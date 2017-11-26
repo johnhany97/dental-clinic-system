@@ -75,6 +75,7 @@ import com2002.models.HealthPlan;
 import com2002.models.Patient;
 import com2002.models.Schedule;
 import com2002.models.Secretary;
+import com2002.models.Usage;
 import lu.tudor.santec.jtimechooser.JTimeChooser;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -180,7 +181,43 @@ public class SecretaryView implements Screen {
 			}
 		});
 		file.add(exitMenuItem);
+		JMenuItem healthPlan = new JMenu("Health Plans");
+		JMenuItem refreshAllItem = new JMenuItem("Refresh all");
+		refreshAllItem.setMnemonic(KeyEvent.VK_R);
+		refreshAllItem.setToolTipText("Refresh all health plans as per today");
+		refreshAllItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					// Get all patients with usages
+					ArrayList<Usage> list = Usage.getAll();
+					int count = 0;
+					for (int i = 0; i < list.size(); i++) {
+						if (list.get(i).resetHealthPlan()) {
+							// Assign invoices
+							DBQueries.execUpdate(
+									"INSERT INTO Payments (PatientID, AmountDue) VALUES ('" + list.get(i).getPatientID()
+											+ "', '" + list.get(i).getHealthPlan().getPrice() * 12 + "')");
+							count++;
+						}
+					}
+					if (count != 0) {
+						JOptionPane.showMessageDialog(null,
+								"Successfully reset health plans for " + count + " patients", "Success!",
+								JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(null, "No health plans needed refreshing", "Success!",
+								JOptionPane.INFORMATION_MESSAGE);
+					}
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(frame, e.getMessage(), "Error refreshing health plans",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		healthPlan.add(refreshAllItem);
 		menuBar.add(file);
+		menuBar.add(healthPlan);
 		frame.setJMenuBar(menuBar);
 	}
 

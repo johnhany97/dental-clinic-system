@@ -118,7 +118,7 @@ public class DatabaseTables {
 			stmt.executeUpdate(appointment16);
 			stmt.executeUpdate(appointment17);
 
-			String patientHealthPlan1 = "INSERT INTO PatientHealthPlan VALUES (1, \"hp1\", 0, 0, 0, '2017-11-13')";
+			String patientHealthPlan1 = "INSERT INTO PatientHealthPlan VALUES (1, \"hp1\", 0, 0, 0, '2016-11-13')";
 			stmt.executeUpdate(patientHealthPlan1);
 
 		} catch (SQLException e) {
