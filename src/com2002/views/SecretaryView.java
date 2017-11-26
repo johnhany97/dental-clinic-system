@@ -197,21 +197,20 @@ public class SecretaryView implements Screen {
 					int countReset = 0;
 					int countMonth = 0;
 					for (int i = 0; i < list.size(); i++) {
+						YearMonth m1 = YearMonth.from(list.get(i).getDateJoined());
+						YearMonth m2 = YearMonth.from(LocalDateTime.now());
+						String months = String.valueOf(m1.until(m2, ChronoUnit.MONTHS));
+						if (Integer.valueOf(months) > list.get(i).getPaymentsIssued()) {
+							// Assign invoices
+							list.get(i).setPaymentsIssued(Integer.valueOf(months));
+							DBQueries.execUpdate("INSERT INTO Payments (PatientID, AmountDue) VALUE('"
+									+ list.get(i).getPatientID() + "', '"
+									+ Double.valueOf(months) * list.get(i).getHealthPlan().getPrice() + "')");
+							countMonth++;
+						}
 						if (list.get(i).resetHealthPlan()) {
 							list.get(i).setPaymentsIssued(0);
 							countReset++;
-						} else {
-							YearMonth m1 = YearMonth.from(list.get(i).getDateJoined());
-							YearMonth m2 = YearMonth.from(LocalDateTime.now());
-							String months = String.valueOf(m1.until(m2, ChronoUnit.MONTHS));
-							if (Integer.valueOf(months) > list.get(i).getPaymentsIssued()) {
-								// Assign invoices
-								list.get(i).setPaymentsIssued(Integer.valueOf(months));
-								DBQueries.execUpdate("INSERT INTO Payments (PatientID, AmountDue) VALUE('"
-										+ list.get(i).getPatientID() + "', '"
-										+ Double.valueOf(months) * list.get(i).getHealthPlan().getPrice() + "')");
-								countMonth++;
-							}
 						}
 					}
 					if (countReset != 0) {
