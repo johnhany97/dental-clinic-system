@@ -7,9 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -802,7 +800,6 @@ public class ModelsTests {
 	@Test
 	public void searchMethod() {
 		try {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
 			DBQueries.execUpdate(
 					"INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
