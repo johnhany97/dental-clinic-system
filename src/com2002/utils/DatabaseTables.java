@@ -146,13 +146,6 @@ public class DatabaseTables {
 				+ "	`Price` DOUBLE,\r\n" 
 				+ "	PRIMARY KEY(`Name`)\r\n" 
 				+ ")";
-		String paymentsDueTable = "CREATE TABLE `PaymentsDue` (\r\n"
-				+ " `TransactionID`	INTEGER,\r\n"
-				+ " `PatientID`		INTEGER NOT NULL,\r\n"
-				+ " `AmountDue`		Real NOT NULL,\r\n"
-				+ " PRIMARY KEY(`TransactionID`),"
-				+ " FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID)"
-				+ ")";
 		String appointmentsTable = "CREATE TABLE `Appointments` (\r\n"
 				+ "	`StartDate`				DATETIME NOT NULL,\r\n"
 				+ "	`EndDate`				DATETIME NOT NULL,\r\n"
@@ -162,12 +155,11 @@ public class DatabaseTables {
 				+ "	`Notes`					VARCHAR(1000),\r\n"
 				+ "	`TotalAppointments`		INTEGER,\r\n"
 				+ "	`CurrentAppointment`	INTEGER,\r\n"
-				+ " `TransactionID`			INTEGER,\r\n"
+				+ " `Paid` 					BIT DEFAULT 0,\r\n"
 				+ "	PRIMARY KEY(`StartDate`,`Username`),\r\n"
 				+ "	FOREIGN KEY(`Username`) REFERENCES Employees(Username),\r\n"
 				+ "	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID),\r\n"
-				+ " FOREIGN KEY(`Type`) REFERENCES AppointmentTypes(Name),\r\n"
-				+ " FOREIGN KEY(`TransactionID`) REFERENCES PaymentsDue(TransactionID)" 
+				+ " FOREIGN KEY(`Type`) REFERENCES AppointmentTypes(Name)" 
 				+ ")";
 		String appointmentTreatmentTable = "CREATE TABLE `AppointmentTreatment` (\r\n"
 				+ " `StartDate`     DATETIME NOT NULL,\r\n" 
@@ -239,7 +231,6 @@ public class DatabaseTables {
 			stmt.executeUpdate(appointmentsTable);
 			stmt.executeUpdate(patientHealthPlanTable);
 			stmt.executeUpdate(appointmentTreatmentTable);
-			stmt.executeUpdate(paymentsDueTable);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -260,7 +251,7 @@ public class DatabaseTables {
 		Statement stmt = conn.createStatement();
 
 		try { // order is important for tables (reverse the creation order)
-			String sqlString = "DROP TABLE IF EXISTS PaymentsDue, AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, AppointmentTypes, Treatments";
+			String sqlString = "DROP TABLE IF EXISTS AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, AppointmentTypes, Treatments";
 			stmt.executeUpdate(sqlString);
 		} catch (SQLException e) {
 			e.printStackTrace();
