@@ -249,9 +249,9 @@ public class ModelsTests {
 		}
 	}
 
-	// tests that non-clashing appointments don't throw exception
+	// tests that a patient can't see both doctors at the same time
 	@Test
-	public void appointmentNoClashTest1() {
+	public void appointmentClashTest3() {
 		try {
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
@@ -273,7 +273,7 @@ public class ModelsTests {
 
 	// tests that clashing appointments throw an exception
 	@Test
-	public void appointmentNoClashTest2() {
+	public void appointmentNoClashTest() {
 		try {
 			DBQueries.execUpdate("INSERT INTO AppointmentTypes VALUES ('Checkup', 40)");
 			DBQueries.execUpdate("INSERT INTO Address VALUES ('57', 'Mulgrave road', 'Middlesex', 'London', 'W5 1LF')");
