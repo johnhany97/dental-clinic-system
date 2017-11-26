@@ -111,14 +111,6 @@ public class BookAppointmentsView implements Screen {
 			// time
 			JTimeChooser startTime = new JTimeChooser();
 			this.inputs.add(startTime);
-			// EndDate
-			// day
-			UtilDateModel model2 = new UtilDateModel();
-			JDatePanelImpl datePanel2 = new JDatePanelImpl(model2);
-			JDatePickerImpl endDate = new JDatePickerImpl(datePanel2);
-			model2.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-			model2.setSelected(true);
-			this.inputs.add(endDate);
 			// time
 			JTimeChooser endTime = new JTimeChooser();
 			this.inputs.add(endTime);
@@ -166,13 +158,6 @@ public class BookAppointmentsView implements Screen {
 			content.add(label2);
 			content.add(startTime);
 			startTime.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			// end day
-			JLabel label3 = new JLabel("End Day");
-			label3.setFont(new Font("Sans Serif", Font.BOLD, DisplayFrame.FONT_SIZE / 2));
-			label3.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			content.add(label3);
-			content.add(endDate);
-			endDate.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 			// end time
 			JLabel label4 = new JLabel("End Time");
 			label4.setFont(new Font("Sans Serif", Font.BOLD, DisplayFrame.FONT_SIZE / 2));
@@ -249,7 +234,6 @@ public class BookAppointmentsView implements Screen {
 					// Attempt registration
 					// Extract details
 					Date selectedStartDay = (Date) startDate.getModel().getValue();
-					Date selectedEndDay = (Date) endDate.getModel().getValue();
 					String timeStartString = startTime.getFormatedTime();
 					String timeEndString = endTime.getFormatedTime();
 					String docName = (String) doctorList.getSelectedItem();
@@ -262,20 +246,25 @@ public class BookAppointmentsView implements Screen {
 						currentAppointmentNum = Integer.valueOf(currentAppointment.getText());
 						totalAppointmentsNum = Integer.valueOf(totalAppointments.getText());
 					}
+					LocalDate localDate = selectedStartDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					String year = String.valueOf(localDate.getYear());
+					String month = String.valueOf(localDate.getMonthValue());
+					String day = String.valueOf(localDate.getDayOfMonth());
 					try {
-						Calendar newCal = Calendar.getInstance();
-						Calendar stTime = startTime.getCalendarWithTime(newCal);
-						Date t1 = new SimpleDateFormat("HH:mm:ss").parse("09:00:00");
-						Calendar startOfWork = Calendar.getInstance();
-						startOfWork.setTime(t1);
-						Calendar newCal2 = Calendar.getInstance();
-						Calendar edTime = endTime.getCalendarWithTime(newCal2);
-						Date t2;
-						t2 = new SimpleDateFormat("HH:mm:ss").parse("17:00:00");
-						Calendar endOfWork = Calendar.getInstance();
-						endOfWork.setTime(t2);
-						if (!(stTime.before(startOfWork) || stTime.after(endOfWork) || edTime.before(startOfWork)
-								|| edTime.after(endOfWork))) {
+						Date workingDayStart = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+								.parse(year + "-" + month + "-" + day + " 09:00:00");
+						Date chosenStart = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+								.parse(year + "-" + month + "-" + day + " " + timeStartString);
+						Date workingDayEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+								.parse(year + "-" + month + "-" + day + " 17:00:00");
+						Date chosenEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+								.parse(year + "-" + month + "-" + day + " " + timeEndString);
+						if (chosenStart.before(workingDayStart) || chosenStart.after(workingDayEnd)
+								|| chosenEnd.before(workingDayStart) || chosenEnd.after(workingDayEnd)) {
+							JOptionPane.showMessageDialog(frame,
+									"Appointment must be within allowed times (9AM to 5PM)", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						} else {
 							try {
 								// attempt booking
 								ArrayList<Doctor> listOfDoctors = Doctor.getAll();
@@ -286,17 +275,8 @@ public class BookAppointmentsView implements Screen {
 										docUsername = listOfDoctors.get(i).getUsername();
 									}
 								}
-								LocalDate localDate = selectedStartDay.toInstant().atZone(ZoneId.systemDefault())
-										.toLocalDate();
-								String year = String.valueOf(localDate.getYear());
-								String month = String.valueOf(localDate.getMonthValue());
-								String day = String.valueOf(localDate.getDayOfMonth());
 								Timestamp ts1 = Timestamp
 										.valueOf(year + "-" + month + "-" + day + " " + timeStartString);
-								localDate = selectedEndDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-								year = String.valueOf(localDate.getYear());
-								month = String.valueOf(localDate.getMonthValue());
-								day = String.valueOf(localDate.getDayOfMonth());
 								Timestamp ts2 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeEndString);
 								switch (typeName) {
 								case "Checkup":
@@ -325,7 +305,7 @@ public class BookAppointmentsView implements Screen {
 							}
 						}
 					} catch (ParseException e1) {
-						JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error fetching data from db",
+						JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}

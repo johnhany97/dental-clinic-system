@@ -9,6 +9,7 @@ package com2002.views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -23,6 +24,7 @@ import java.sql.Timestamp;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -678,6 +680,7 @@ public class SecretaryView implements Screen {
 			model2.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 			model2.setSelected(true);
 			JDatePickerImpl endDate = new JDatePickerImpl(datePanel2);
+			endDate.getComponent(1).setEnabled(false);
 			this.bookingTabInputs.add(endDate);
 			// time
 			JTimeChooser endTime = new JTimeChooser();
@@ -883,58 +886,78 @@ public class SecretaryView implements Screen {
 					try {
 						Patient patient = new Patient(patientName, patientHouseNum, patientPostCode);
 						if (patient.getFirstName() != null) { // exists!
-							// 2) attempt booking
-							ArrayList<Doctor> listOfDoctors = Doctor.getAll();
-							for (int i = 0; i < listOfDoctors.size(); i++) {
-								String titleOfDoc = "Dr. " + listOfDoctors.get(i).getFirstName() + " "
-										+ listOfDoctors.get(i).getLastName();
-								if (titleOfDoc.equals(docName)) {
-									docUsername = listOfDoctors.get(i).getUsername();
-								}
-							}
 							LocalDate localDate = selectedStartDay.toInstant().atZone(ZoneId.systemDefault())
 									.toLocalDate();
 							String year = String.valueOf(localDate.getYear());
 							String month = String.valueOf(localDate.getMonthValue());
 							String day = String.valueOf(localDate.getDayOfMonth());
-							Timestamp ts1 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeStartString);
-							localDate = selectedEndDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-							year = String.valueOf(localDate.getYear());
-							month = String.valueOf(localDate.getMonthValue());
-							day = String.valueOf(localDate.getDayOfMonth());
-							Timestamp ts2 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeEndString);
-							switch (typeName) {
-							case "Checkup":
-								new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
-										AppointmentType.CHECKUP, totalAppointmentsNum, currentAppointmentNum);
-								break;
-							case "Remedial":
-								new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
-										AppointmentType.REMEDIAL, totalAppointmentsNum, currentAppointmentNum);
-								break;
-							case "Cleaning":
-								new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
-										AppointmentType.CLEANING, totalAppointmentsNum, currentAppointmentNum);
-								break;
-							default:
-								new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
-										AppointmentType.EMPTY, totalAppointmentsNum, currentAppointmentNum);
-								break;
-							}
-							// refresh appointments tab
-							if (new Doctor(docUsername).getRole().equals("Dentist")) {
-								refreshDentistTab();
+							Date workingDayStart = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+									.parse(year + "-" + month + "-" + day + " 09:00:00");
+							Date chosenStart = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+									.parse(year + "-" + month + "-" + day + " " + timeStartString);
+							Date workingDayEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+									.parse(year + "-" + month + "-" + day + " 17:00:00");
+							Date chosenEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+									.parse(year + "-" + month + "-" + day + " " + timeEndString);
+							if ((chosenStart.before(workingDayStart) || chosenStart.after(workingDayEnd)
+									|| chosenEnd.before(workingDayStart) || chosenEnd.after(workingDayEnd))
+									&& !typeName.equals("Empty")) {
+								JOptionPane.showMessageDialog(frame,
+										"Appointment must be within allowed times (9AM to 5PM)", "Error",
+										JOptionPane.ERROR_MESSAGE);
 							} else {
-								refreshHygienistTab();
+								// 2) attempt booking
+								ArrayList<Doctor> listOfDoctors = Doctor.getAll();
+								for (int i = 0; i < listOfDoctors.size(); i++) {
+									String titleOfDoc = "Dr. " + listOfDoctors.get(i).getFirstName() + " "
+											+ listOfDoctors.get(i).getLastName();
+									if (titleOfDoc.equals(docName)) {
+										docUsername = listOfDoctors.get(i).getUsername();
+									}
+								}
+								Timestamp ts1 = Timestamp
+										.valueOf(year + "-" + month + "-" + day + " " + timeStartString);
+								Timestamp ts2 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeEndString);
+								if (typeName.equals("Empty")) { // Appointments extend on multiple days only if empty
+									localDate = selectedEndDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+									year = String.valueOf(localDate.getYear());
+									month = String.valueOf(localDate.getMonthValue());
+									day = String.valueOf(localDate.getDayOfMonth());
+									ts2 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeEndString);
+								}
+								switch (typeName) {
+								case "Checkup":
+									new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
+											AppointmentType.CHECKUP, totalAppointmentsNum, currentAppointmentNum);
+									break;
+								case "Remedial":
+									new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
+											AppointmentType.REMEDIAL, totalAppointmentsNum, currentAppointmentNum);
+									break;
+								case "Cleaning":
+									new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
+											AppointmentType.CLEANING, totalAppointmentsNum, currentAppointmentNum);
+									break;
+								default:
+									new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
+											AppointmentType.EMPTY, totalAppointmentsNum, currentAppointmentNum);
+									break;
+								}
+								// refresh appointments tab
+								if (new Doctor(docUsername).getRole().equals("Dentist")) {
+									refreshDentistTab();
+								} else {
+									refreshHygienistTab();
+								}
+								currentAppointment.setText("");
+								totalAppointments.setText("");
+								firstName.setText("");
+								houseNumber.setText("");
+								postCode.setText("");
+								JOptionPane.showMessageDialog(null, "Successfully added Patient", "Success!",
+										JOptionPane.INFORMATION_MESSAGE);
+								frame.revalidate();
 							}
-							currentAppointment.setText("");
-							totalAppointments.setText("");
-							firstName.setText("");
-							houseNumber.setText("");
-							postCode.setText("");
-							JOptionPane.showMessageDialog(null, "Successfully added Patient", "Success!",
-									JOptionPane.INFORMATION_MESSAGE);
-							frame.revalidate();
 						} else {
 							JOptionPane.showMessageDialog(frame, "Patient doesn't exist", "Error",
 									JOptionPane.ERROR_MESSAGE);
@@ -945,6 +968,8 @@ public class SecretaryView implements Screen {
 					} catch (SQLException e) {
 						JOptionPane.showMessageDialog(frame, e.getMessage(), "Error fetching data from db",
 								JOptionPane.ERROR_MESSAGE);
+					} catch (ParseException e) {
+						JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			});
@@ -952,6 +977,7 @@ public class SecretaryView implements Screen {
 			// Validation
 			for (int i = 6; i < bookingTabInputs.size(); i++) {
 				((Component) bookingTabInputs.get(i)).addKeyListener(new KeyAdapter() {
+
 					public void keyTyped(KeyEvent e) {
 						if (firstName.getText().length() > 0 && houseNumber.getText().length() > 0
 								&& postCode.getText().length() > 0) {
@@ -973,6 +999,7 @@ public class SecretaryView implements Screen {
 						houseNumber.setEnabled(false);
 						postCode.setEnabled(false);
 						bookButton.setEnabled(true);
+						endDate.getComponent(1).setEnabled(true);
 					} else {
 						// enable input
 						currentAppointment.setEnabled(true);
@@ -980,11 +1007,14 @@ public class SecretaryView implements Screen {
 						firstName.setEnabled(true);
 						houseNumber.setEnabled(true);
 						postCode.setEnabled(true);
+						endDate.getComponent(1).setEnabled(false);
 					}
 					frame.revalidate();
 				}
 			});
-		} catch (SQLException e) {
+		} catch (
+
+		SQLException e) {
 			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error fetching data from db",
 					JOptionPane.ERROR_MESSAGE);
 		}
