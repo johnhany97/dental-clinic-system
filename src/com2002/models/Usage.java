@@ -52,6 +52,40 @@ public class Usage {
 			conn.close();
 		}
 	}
+	
+	/**
+	 * This constructor should be called when subscribing a health plan to a
+	 * patients
+	 * 
+	 * @param patientID
+	 *            patient ID to subscribe the health plan to them
+	 * @param healthPlanName
+	 *            Health plan name of the patient to subscribe to them
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws MySQLIntegrityConstraintViolationException
+	 *             if patient id already exists
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
+	 */
+	public Usage(int patientID, String healthPlanName)
+			throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+		if (!Usage.hasPatientID(patientID)) {
+			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName
+					+ "', 0, 0, 0, '" + LocalDate.now() + "', 0)");
+			this.patientID = patientID;
+			this.healthPlan = new HealthPlan(healthPlanName);
+			this.checkUpUsed = 0;
+			this.hygieneUsed = 0;
+			this.repairUsed = 0;
+			this.dateJoined = LocalDate.now();
+			this.healthPlan = new HealthPlan(healthPlanName);
+			this.paymentsIssued = 0;
+		} else {
+			throw new MySQLIntegrityConstraintViolationException(
+					"A patient with patient id " + patientID + " already has a heath plan.");
+		}
+	}
 
 	/**
 	 * Function to get value of paymentsIssued
@@ -73,40 +107,6 @@ public class Usage {
 		DBQueries.execUpdate("UPDATE PatientHealthPlan SET PaymentsIssued = " + paymentsIssued + " WHERE patientID = "
 				+ this.patientID);
 		this.paymentsIssued = paymentsIssued;
-	}
-
-	/**
-	 * This constructor should be called when subscribing a health plan to a
-	 * patients
-	 * 
-	 * @param patientID
-	 *            patient ID to subscribe the health plan to them
-	 * @param healthPlanName
-	 *            Health plan name of the patient to subscribe to them
-	 * @throws CommunicationsException
-	 *             when an error occurs whilst attempting connection
-	 * @throws MySQLIntegrityConstraintViolationException
-	 *             if patient id already exists
-	 * @throws SQLException
-	 *             for any other error, could be incorrect parameters.
-	 */
-	public Usage(int patientID, String healthPlanName)
-			throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
-		if (!Usage.hasPatientID(patientID)) {
-			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName
-					+ "', 0, 0, 0, '" + LocalDate.now() + "'), 0");
-			this.patientID = patientID;
-			this.healthPlan = new HealthPlan(healthPlanName);
-			this.checkUpUsed = 0;
-			this.hygieneUsed = 0;
-			this.repairUsed = 0;
-			this.dateJoined = LocalDate.now();
-			this.healthPlan = new HealthPlan(healthPlanName);
-			this.paymentsIssued = 0;
-		} else {
-			throw new MySQLIntegrityConstraintViolationException(
-					"A patient with patient id " + patientID + " already has a heath plan.");
-		}
 	}
 
 	/**
