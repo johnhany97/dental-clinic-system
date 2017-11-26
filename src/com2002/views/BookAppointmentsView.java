@@ -261,6 +261,10 @@ public class BookAppointmentsView implements Screen {
 						Date chosenEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 								.parse(year + "-" + month + "-" + day + " " + timeEndString);
 						String nameOfDay = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(workingDayStart);
+						System.out.println(workingDayStart);
+						System.out.println(chosenStart);
+						System.out.println(workingDayEnd);
+						System.out.println(endTime.getHours() + " : " + endTime.getMinutes());
 						if (chosenStart.before(workingDayStart) || chosenStart.after(workingDayEnd)
 								|| chosenEnd.before(workingDayStart) || chosenEnd.after(workingDayEnd)
 								|| nameOfDay.equals("Saturday") || nameOfDay.equals("Sunday")) {

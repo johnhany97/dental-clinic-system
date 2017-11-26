@@ -306,7 +306,7 @@ public class AppointmentView implements Screen {
 						JOptionPane.showMessageDialog(frame, "Error saving treatments", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					} finally {
-						if (conn!= null) conn.close();
+						Database.closeDb(conn);
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();

@@ -221,7 +221,6 @@ public class SecretaryView implements Screen {
 						JOptionPane.showMessageDialog(null, "No health plans needed resetting", "Success!",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
-
 					if (countMonth != 0) {
 						JOptionPane.showMessageDialog(null,
 								"Successfully issued invoices for " + countMonth + " patients", "Success!",

@@ -428,6 +428,7 @@ public class PatientView implements Screen {
 					+ appointment.getUsername() + "' AND PatientID = '" + appointment.getPatientID() + "'",
 					conn);
 			boolean flag = rs.next();
+			conn.close();
 			if (today.isBefore(appointment.getStartTime().toLocalDateTime()) || !flag) { // we don't pay for or see details of
 																				// future appointments or unfinished ones
 				payButton.setEnabled(false);

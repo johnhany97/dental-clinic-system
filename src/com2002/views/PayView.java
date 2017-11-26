@@ -92,7 +92,7 @@ public class PayView implements Screen {
 		}
 		text += "<h2><strong>Total price for appointment:</strong> £" + String.valueOf(this.appointment.calculateCost())
 				+ "</h2>";
-		if (this.usage != null) { // has healthplan
+		if (this.usage != null) { // has health plan
 			// based on this appointment's type
 			String type = this.appointment.getAppointmentType();
 			// We compare what we consumed with what we're allowed to have
