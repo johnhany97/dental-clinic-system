@@ -951,10 +951,12 @@ public class SecretaryView implements Screen {
 									.parse(year + "-" + month + "-" + day + " 09:00:00");
 							Date chosenStart = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 									.parse(year + "-" + month + "-" + day + " " + timeStartString);
+							chosenStart = endTime.getDateWithTime(chosenStart);
 							Date workingDayEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 									.parse(year + "-" + month + "-" + day + " 17:00:00");
 							Date chosenEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 									.parse(year + "-" + month + "-" + day + " " + timeEndString);
+							chosenEnd = endTime.getDateWithTime(chosenEnd);
 							String nameOfDay = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(workingDayStart);
 							if ((chosenStart.before(workingDayStart) || chosenStart.after(workingDayEnd)
 									|| chosenEnd.before(workingDayStart) || chosenEnd.after(workingDayEnd)
@@ -1017,11 +1019,11 @@ public class SecretaryView implements Screen {
 								frame.revalidate();
 							}
 						} else {
-							JOptionPane.showMessageDialog(frame, "Patient doesn't exist", "Error",
+							JOptionPane.showMessageDialog(frame, "patient doesn't exist", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					} catch (CommunicationsException e) {
-						JOptionPane.showMessageDialog(frame, e.getMessage(), "Error connecting to internet",
+						JOptionPane.showMessageDialog(frame, "Error connecting to the internet", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					} catch (SQLException e) {
 						JOptionPane.showMessageDialog(frame, e.getMessage(), "Error fetching data from db",

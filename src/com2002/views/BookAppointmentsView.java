@@ -256,15 +256,13 @@ public class BookAppointmentsView implements Screen {
 								.parse(year + "-" + month + "-" + day + " 09:00:00");
 						Date chosenStart = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 								.parse(year + "-" + month + "-" + day + " " + timeStartString);
+						chosenStart = startTime.getDateWithTime(chosenStart);
 						Date workingDayEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 								.parse(year + "-" + month + "-" + day + " 17:00:00");
 						Date chosenEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 								.parse(year + "-" + month + "-" + day + " " + timeEndString);
+						chosenEnd = endTime.getDateWithTime(chosenEnd);
 						String nameOfDay = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(workingDayStart);
-						System.out.println(workingDayStart);
-						System.out.println(chosenStart);
-						System.out.println(workingDayEnd);
-						System.out.println(endTime.getHours() + " : " + endTime.getMinutes());
 						if (chosenStart.before(workingDayStart) || chosenStart.after(workingDayEnd)
 								|| chosenEnd.before(workingDayStart) || chosenEnd.after(workingDayEnd)
 								|| nameOfDay.equals("Saturday") || nameOfDay.equals("Sunday")) {
@@ -304,10 +302,10 @@ public class BookAppointmentsView implements Screen {
 										JOptionPane.INFORMATION_MESSAGE);
 								frame.dispose();
 							} catch (CommunicationsException e) {
-								JOptionPane.showMessageDialog(frame, e.getMessage(), "Error connecting to internet",
+								JOptionPane.showMessageDialog(frame, "Error connecting to the internet", "Error",
 										JOptionPane.ERROR_MESSAGE);
 							} catch (SQLException e) {
-								JOptionPane.showMessageDialog(frame, e.getMessage(), "Error fetching data from db",
+								JOptionPane.showMessageDialog(frame, e.getMessage(), "Error",
 										JOptionPane.ERROR_MESSAGE);
 							}
 						}
