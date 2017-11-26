@@ -262,9 +262,9 @@ public class ModelsTests {
 					"hygienist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
 			new Appointment(Timestamp.valueOf("2017-11-13 11:20:00.0"), Timestamp.valueOf("2017-11-13 11:25:00.0"),
 					"dentist", 1, "Notes", AppointmentType.CHECKUP, 1, 1);
-			assertTrue(true);
+			fail("Integrity exception not thrown.");
 		} catch (MySQLIntegrityConstraintViolationException e) {
-			fail("Integrity exception thrown when it shouldn't be.");
+			assertTrue(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
