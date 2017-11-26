@@ -146,10 +146,11 @@ public class DatabaseTables {
 				+ "	`Price` DOUBLE,\r\n" 
 				+ "	PRIMARY KEY(`Name`)\r\n" 
 				+ ")";
-		String paymentsDueTable = "CREATE TABLE `PaymentsDue` (\r\n"
+		String paymentsTable = "CREATE TABLE `Payments` (\r\n"
 				+ " `TransactionID`	INTEGER,\r\n"
 				+ " `PatientID`		INTEGER NOT NULL,\r\n"
 				+ " `AmountDue`		Real NOT NULL,\r\n"
+				+ " `Paid`			BIT DEFAULT 0,\r\n"
 				+ " PRIMARY KEY(`TransactionID`),"
 				+ " FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID)"
 				+ ")";
@@ -239,7 +240,7 @@ public class DatabaseTables {
 			stmt.executeUpdate(appointmentsTable);
 			stmt.executeUpdate(patientHealthPlanTable);
 			stmt.executeUpdate(appointmentTreatmentTable);
-			stmt.executeUpdate(paymentsDueTable);
+			stmt.executeUpdate(paymentsTable);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -260,7 +261,7 @@ public class DatabaseTables {
 		Statement stmt = conn.createStatement();
 
 		try { // order is important for tables (reverse the creation order)
-			String sqlString = "DROP TABLE IF EXISTS PaymentsDue, AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, AppointmentTypes, Treatments";
+			String sqlString = "DROP TABLE IF EXISTS Payments, AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, AppointmentTypes, Treatments";
 			stmt.executeUpdate(sqlString);
 		} catch (SQLException e) {
 			e.printStackTrace();
