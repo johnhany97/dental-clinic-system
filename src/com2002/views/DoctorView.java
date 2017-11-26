@@ -249,10 +249,8 @@ public class DoctorView implements Screen {
 			}
 			LocalDateTime startTime = appointment.getStartTime().toLocalDateTime();
 			String startString = String.format("%tH:%tM", startTime, startTime);
-			String startDayString = String.format("%tD", startTime);
 			LocalDateTime endTime = appointment.getEndTime().toLocalDateTime();
 			String endString = String.format("%tH:%tM", endTime, endTime);
-			String endDayString = String.format("%tD", endTime);
 			// Left section (contains time)
 			JPanel leftSection = new JPanel();
 			leftSection.setLayout(new BoxLayout(leftSection, BoxLayout.Y_AXIS));
@@ -262,20 +260,12 @@ public class DoctorView implements Screen {
 			JLabel startT = new JLabel(startString, SwingConstants.CENTER);
 			startT.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
 			leftSection.add(startT);
-			JLabel startD = new JLabel(startDayString, SwingConstants.CENTER);
-			startD.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 3));
-			if (appointmentType.equals("Empty")) {
-				leftSection.add(startD);
-			}
 			JLabel end = new JLabel("End", SwingConstants.CENTER);
 			end.setFont(new Font("Sans Serif", Font.BOLD, DisplayFrame.FONT_SIZE / 3));
 			leftSection.add(end);
 			JLabel endT = new JLabel(endString, SwingConstants.CENTER);
 			endT.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
 			leftSection.add(endT);
-			JLabel endD = new JLabel(endDayString, SwingConstants.CENTER);
-			endD.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 3));
-			leftSection.add(endD);
 			leftSection.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 			this.appointmentCards.get(index).add(leftSection, BorderLayout.WEST);
 			// right section (rest of appointment details)
