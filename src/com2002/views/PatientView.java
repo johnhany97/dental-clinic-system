@@ -1,7 +1,7 @@
 /**
  * PatientView class
  * 
- * Class that represents a view that is used to book appointments
+ * Class that represents a view that is used to view patient details
  * @author John Ayad
  */
 package com2002.views;
@@ -262,7 +262,7 @@ public class PatientView implements Screen {
 			});
 			buttonsPanel.add(hpButton);
 			// book appointment
-			JButton bookAppointmentButton = new JButton("Book Appointment");
+			JButton bookAppointmentButton = new JButton("Book");
 			bookAppointmentButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
