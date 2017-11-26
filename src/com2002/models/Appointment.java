@@ -98,8 +98,8 @@ public class Appointment {
 		Connection conn = Database.getConnection();
 		try {
 			ResultSet timeAndPatientCheckRS = DBQueries.execQuery("SELECT * FROM Appointments WHERE (StartDate < '"
-					+ endTime.toString() + "' AND EndDate > '" + startTime.toString() + "') AND Username = '" + username
-					+ "' AND PatientID = '" + patientID + "'", conn);
+					+ endTime.toString() + "' AND EndDate > '" + startTime.toString() + "') AND (Username = '" + username
+					+ "' OR PatientID = '" + patientID + "')", conn);
 			if (timeAndPatientCheckRS.next()) {
 				throw new MySQLIntegrityConstraintViolationException("Clashing appointment exists.");
 			}
