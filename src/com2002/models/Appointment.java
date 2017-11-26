@@ -20,7 +20,7 @@ public class Appointment {
 	private String appointmentType;
 	private int totalAppointments;
 	private int currentAppointment;
-	private int transactionID;
+	private boolean paid = false;
 	private ArrayList<String> treatments;
 
 	/**
@@ -54,7 +54,10 @@ public class Appointment {
 				while (treatmentsRS.next()) {
 					this.treatments.add(treatmentsRS.getString("TreatmentName"));
 				}
-				this.transactionID = rs.getInt("TransactionID");
+				int paidBit = rs.getInt("Paid");
+				if (paidBit == 1) {
+					this.paid = true;
+				}
 			} else {
 				throw new SQLException("Appointment with start time " + startTime.toString() + " and doctor username "
 						+ username + " does not exist.");
@@ -136,7 +139,6 @@ public class Appointment {
 		this.currentAppointment = -1;
 		this.treatments.clear();
 		this.treatments = null;
-		this.transactionID = -1;
 	}
 
 	/**

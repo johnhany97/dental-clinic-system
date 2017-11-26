@@ -29,7 +29,7 @@ public class Database {
 
 	/** Constant to represent db table names **/
 	final public static String[] TABLE_NAMES = { "Treatments", "AppointmentTypes", "Employees", "Address",
-			"HealthPlans", "Patients", "Appointments", "PatientHealthPlan", "AppointmentTreatment", "Payments" };
+			"HealthPlans", "Patients", "Appointments", "PatientHealthPlan", "AppointmentTreatment", "PaymentsDue" };
 
 	/**
 	 * getConnection Static method

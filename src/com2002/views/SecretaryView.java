@@ -180,9 +180,6 @@ public class SecretaryView implements Screen {
 			}
 		});
 		file.add(exitMenuItem);
-		JMenu healthPlans = new JMenu("Health Plans");
-		JMenuItem refreshALl = new JMenuItem("Health plans");
-		
 		menuBar.add(file);
 		frame.setJMenuBar(menuBar);
 	}
