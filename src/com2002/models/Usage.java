@@ -363,9 +363,13 @@ public class Usage {
 	public static ArrayList<Usage> getAll() throws SQLException {
 		ArrayList<Usage> list = new ArrayList<Usage>();
 		Connection conn = Database.getConnection();
-		ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan", conn);
-		while (rs.next()) {
-			list.add(new Usage(rs.getInt("PatientID")));
+		try {
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan", conn);
+			while (rs.next()) {
+				list.add(new Usage(rs.getInt("PatientID")));
+			}
+		} finally {
+			conn.close();
 		}
 		return list;
 	}
