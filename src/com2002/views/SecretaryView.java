@@ -953,7 +953,7 @@ public class SecretaryView implements Screen {
 								firstName.setText("");
 								houseNumber.setText("");
 								postCode.setText("");
-								JOptionPane.showMessageDialog(null, "Successfully added Patient", "Success!",
+								JOptionPane.showMessageDialog(null, "Successfully added Appointment", "Success!",
 										JOptionPane.INFORMATION_MESSAGE);
 								frame.revalidate();
 							}
