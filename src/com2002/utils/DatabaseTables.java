@@ -118,7 +118,7 @@ public class DatabaseTables {
 			stmt.executeUpdate(appointment16);
 			stmt.executeUpdate(appointment17);
 
-			String patientHealthPlan1 = "INSERT INTO PatientHealthPlan VALUES (1, \"hp1\", 0, 0, 0, '2016-11-13')";
+			String patientHealthPlan1 = "INSERT INTO PatientHealthPlan VALUES (1, \"hp1\", 0, 0, 0, '2016-11-13', 0)";
 			stmt.executeUpdate(patientHealthPlan1);
 
 		} catch (SQLException e) {
@@ -203,6 +203,7 @@ public class DatabaseTables {
 				+ "	`HygieneUsed`		INTEGER DEFAULT 0,\r\n"
 				+ "	`RepairUsed`		INTEGER DEFAULT 0,\r\n"
 				+ "	`DateJoined`		DATE NOT NULL,\r\n"
+				+ " `PaymentsIssued`	INTEGER DEFAULT 0,\r\n"
 				+ "	PRIMARY KEY(`PatientID`,`HealthPlanName`),\r\n"
 				+ "	FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID),\r\n"
 				+ "	FOREIGN KEY(`HealthPlanName`) REFERENCES HealthPlans(Name)\r\n"

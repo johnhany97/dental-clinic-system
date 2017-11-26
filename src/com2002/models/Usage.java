@@ -21,6 +21,7 @@ public class Usage {
 	private int hygieneUsed;
 	private int repairUsed;
 	private LocalDate dateJoined;
+	private int paymentsIssued;
 
 	/**
 	 * This constructor should be called when finding a treatment plan of a patient
@@ -45,10 +46,33 @@ public class Usage {
 				this.hygieneUsed = rs.getInt("HygieneUsed");
 				this.repairUsed = rs.getInt("RepairUsed");
 				this.dateJoined = rs.getDate("DateJoined").toLocalDate();
+				this.paymentsIssued = rs.getInt("PaymentsIssued");
 			}
 		} finally {
 			conn.close();
 		}
+	}
+
+	/**
+	 * Function to get value of paymentsIssued
+	 * 
+	 * @return the paymentsIssued
+	 */
+	public int getPaymentsIssued() {
+		return paymentsIssued;
+	}
+
+	/**
+	 * Function to set the value of paymentsIssued
+	 * 
+	 * @param paymentsIssued
+	 *            the paymentsIssued to set
+	 * @throws SQLException
+	 */
+	public void setPaymentsIssued(int paymentsIssued) throws SQLException {
+		DBQueries.execUpdate("UPDATE PatientHealthPlan SET PaymentsIssued = " + paymentsIssued + " WHERE patientID = "
+				+ this.patientID);
+		this.paymentsIssued = paymentsIssued;
 	}
 
 	/**
@@ -70,7 +94,7 @@ public class Usage {
 			throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
 		if (!Usage.hasPatientID(patientID)) {
 			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName
-					+ "', 0, 0, 0, '" + LocalDate.now() + "')");
+					+ "', 0, 0, 0, '" + LocalDate.now() + "'), 0");
 			this.patientID = patientID;
 			this.healthPlan = new HealthPlan(healthPlanName);
 			this.checkUpUsed = 0;
@@ -78,6 +102,7 @@ public class Usage {
 			this.repairUsed = 0;
 			this.dateJoined = LocalDate.now();
 			this.healthPlan = new HealthPlan(healthPlanName);
+			this.paymentsIssued = 0;
 		} else {
 			throw new MySQLIntegrityConstraintViolationException(
 					"A patient with patient id " + patientID + " already has a heath plan.");
@@ -334,7 +359,7 @@ public class Usage {
 	public void deleteUsage(int patientID) throws SQLException {
 		DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID LIKE '%" + patientID + "%'");
 	}
-	
+
 	public static ArrayList<Usage> getAll() throws SQLException {
 		ArrayList<Usage> list = new ArrayList<Usage>();
 		Connection conn = Database.getConnection();

@@ -27,13 +27,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -191,22 +194,41 @@ public class SecretaryView implements Screen {
 				try {
 					// Get all patients with usages
 					ArrayList<Usage> list = Usage.getAll();
-					int count = 0;
+					int countReset = 0;
+					int countMonth = 0;
 					for (int i = 0; i < list.size(); i++) {
 						if (list.get(i).resetHealthPlan()) {
-							// Assign invoices
-							DBQueries.execUpdate(
-									"INSERT INTO Payments (PatientID, AmountDue) VALUES ('" + list.get(i).getPatientID()
-											+ "', '" + list.get(i).getHealthPlan().getPrice() * 12 + "')");
-							count++;
+							list.get(i).setPaymentsIssued(0);
+							countReset++;
+						} else {
+							YearMonth m1 = YearMonth.from(list.get(i).getDateJoined());
+							YearMonth m2 = YearMonth.from(LocalDateTime.now());
+							String months = String.valueOf(m1.until(m2, ChronoUnit.MONTHS));
+							if (Integer.valueOf(months) > list.get(i).getPaymentsIssued()) {
+								// Assign invoices
+								list.get(i).setPaymentsIssued(Integer.valueOf(months));
+								DBQueries.execUpdate("INSERT INTO Payments (PatientID, AmountDue) VALUE('"
+										+ list.get(i).getPatientID() + "', '"
+										+ Double.valueOf(months) * list.get(i).getHealthPlan().getPrice() + "')");
+								countMonth++;
+							}
 						}
 					}
-					if (count != 0) {
+					if (countReset != 0) {
 						JOptionPane.showMessageDialog(null,
-								"Successfully reset health plans for " + count + " patients", "Success!",
+								"Successfully reset health plans for " + countReset + " patients", "Success!",
 								JOptionPane.INFORMATION_MESSAGE);
 					} else {
-						JOptionPane.showMessageDialog(null, "No health plans needed refreshing", "Success!",
+						JOptionPane.showMessageDialog(null, "No health plans needed resetting", "Success!",
+								JOptionPane.INFORMATION_MESSAGE);
+					}
+
+					if (countMonth != 0) {
+						JOptionPane.showMessageDialog(null,
+								"Successfully issued invoices for " + countMonth + " patients", "Success!",
+								JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(null, "No patients needed any new invoices", "Success!",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 				} catch (SQLException e) {
@@ -935,12 +957,14 @@ public class SecretaryView implements Screen {
 									.parse(year + "-" + month + "-" + day + " 17:00:00");
 							Date chosenEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 									.parse(year + "-" + month + "-" + day + " " + timeEndString);
+							String nameOfDay = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(workingDayStart);
 							if ((chosenStart.before(workingDayStart) || chosenStart.after(workingDayEnd)
-									|| chosenEnd.before(workingDayStart) || chosenEnd.after(workingDayEnd))
+									|| chosenEnd.before(workingDayStart) || chosenEnd.after(workingDayEnd)
+									|| nameOfDay.equals("Saturday") || nameOfDay.equals("Sunday"))
 									&& !typeName.equals("Empty")) {
 								JOptionPane.showMessageDialog(frame,
-										"Appointment must be within allowed times (9AM to 5PM)", "Error",
-										JOptionPane.ERROR_MESSAGE);
+										"Appointment must be within allowed times (9AM to 5PM) (Monday to Friday)",
+										"Error", JOptionPane.ERROR_MESSAGE);
 							} else {
 								// 2) attempt booking
 								ArrayList<Doctor> listOfDoctors = Doctor.getAll();

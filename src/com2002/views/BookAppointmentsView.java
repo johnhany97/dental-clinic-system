@@ -23,6 +23,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -259,10 +260,12 @@ public class BookAppointmentsView implements Screen {
 								.parse(year + "-" + month + "-" + day + " 17:00:00");
 						Date chosenEnd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 								.parse(year + "-" + month + "-" + day + " " + timeEndString);
+						String nameOfDay = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(workingDayStart);
 						if (chosenStart.before(workingDayStart) || chosenStart.after(workingDayEnd)
-								|| chosenEnd.before(workingDayStart) || chosenEnd.after(workingDayEnd)) {
+								|| chosenEnd.before(workingDayStart) || chosenEnd.after(workingDayEnd)
+								|| nameOfDay.equals("Saturday") || nameOfDay.equals("Sunday")) {
 							JOptionPane.showMessageDialog(frame,
-									"Appointment must be within allowed times (9AM to 5PM)", "Error",
+									"Appointment must be within allowed times (9AM to 5PM) (Monday to Friday)", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						} else {
 							try {
@@ -305,8 +308,7 @@ public class BookAppointmentsView implements Screen {
 							}
 						}
 					} catch (ParseException e1) {
-						JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			});
