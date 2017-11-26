@@ -241,7 +241,6 @@ public class DoctorView implements Screen {
 				patientName = "Empty Appointment";
 
 			}
-			String docName = this.doctor.getFirstName() + " " + this.doctor.getLastName();
 			String appointmentStatus = "Single Appointment";
 			if (appointment.getTotalAppointments() > 1) {
 				appointmentStatus = "Appointment " + appointment.getCurrentAppointment() + " of "
@@ -279,9 +278,6 @@ public class DoctorView implements Screen {
 			JLabel typeAndStatus = new JLabel(appointmentType + " | " + appointmentStatus);
 			typeAndStatus.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 3));
 			topRightSection.add(typeAndStatus);
-			JLabel doctorT = new JLabel("Doctor: " + docName);
-			doctorT.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 3));
-			topRightSection.add(doctorT);
 			JPanel bottomRightSection = new JPanel();
 			bottomRightSection.setLayout(new FlowLayout());
 			bottomRightSection.setAlignmentX(Component.LEFT_ALIGNMENT);

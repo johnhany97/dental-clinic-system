@@ -47,13 +47,12 @@ public class DatabaseTables {
 
 			Statement stmt = conn.createStatement();
 
-			String treatments1 = "INSERT INTO Treatments VALUES (\"Amalgam\", 50)";
-			String treatments2 = "INSERT INTO Treatments VALUES (\"Gold Crown\", 60)";
-			String treatments3 = "INSERT INTO Treatments VALUES (\"Composite\", 60)";
-			stmt.executeUpdate(treatments1);
-			stmt.executeUpdate(treatments3);
-			stmt.executeUpdate(treatments2);
-			
+			String amalgam = "INSERT INTO Treatments VALUES (\"Amalgam\", 50)";
+			String goldCrown = "INSERT INTO Treatments VALUES (\"Gold Crown\", 60)";
+			String composite = "INSERT INTO Treatments VALUES (\"Composite\", 60)";
+			stmt.executeUpdate(amalgam);
+			stmt.executeUpdate(goldCrown);
+			stmt.executeUpdate(composite);
 
 			String appointmentsTypes1 = "INSERT INTO AppointmentTypes VALUES (\"Checkup\", 10)";
 			String appointmentsTypes2 = "INSERT INTO AppointmentTypes VALUES (\"Remedial\", 10)";
@@ -77,10 +76,14 @@ public class DatabaseTables {
 			stmt.executeUpdate(address1);
 			stmt.executeUpdate(address2);
 
-			String healthPlan1 = "INSERT INTO HealthPlans VALUES (\"Gold HP\", 123.2, 1, 2, 3)";
-			String healthPlan2 = "INSERT INTO HealthPlans VALUES (\"Silver HP\", 122, 2, 3, 4)";
-			stmt.executeUpdate(healthPlan1);
-			stmt.executeUpdate(healthPlan2);
+			String NHS = "INSERT INTO HealthPlans VALUES (\"NHS free plan\", 0, 2, 2, 6)";
+			String maintenance = "INSERT INTO HealthPlans VALUES (\"Maintenance plan\", 15, 2, 2, 0)";
+			String oralHealth = "INSERT INTO HealthPlans VALUES (\"Oral health plan\", 21, 2, 4, 0)";
+			String dentalRepair = "INSERT INTO HealthPlans VALUES (\"Dental repair plan\", 36, 2, 2, 2)";
+			stmt.executeUpdate(NHS);
+			stmt.executeUpdate(maintenance);
+			stmt.executeUpdate(oralHealth);
+			stmt.executeUpdate(dentalRepair);
 
 			String patient1 = "INSERT INTO Patients VALUES (1, \"Mr.\", \"Arthur\", \"Granacher\", '1997-02-12', \"02748593488\", \"Flat C43F\", \"S3 7LG\")";
 			String patient2 = "INSERT INTO Patients VALUES (2, \"Ms.\", \"Nuraldeen\", \"Magid\", '1993-06-13', \"08648148426\", \"Apt. E42F\", \"S3 7LS\")";
