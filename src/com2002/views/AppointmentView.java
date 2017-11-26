@@ -237,8 +237,10 @@ public class AppointmentView implements Screen {
 		}
 		JLabel treatmentsLabel = new JLabel("Treatments:");
 		treatmentsLabel.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
-		this.leftPanel.add(treatmentsLabel);
-		this.leftPanel.add(treatmentsScrollPane);
+		if (this.appointment.getAppointmentType().equals("Remedial")) {
+			this.leftPanel.add(treatmentsLabel);
+			this.leftPanel.add(treatmentsScrollPane);
+		}
 		// notes text area
 		JLabel notesLabel = new JLabel("Notes:");
 		notesLabel.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
@@ -340,7 +342,7 @@ public class AppointmentView implements Screen {
 			this.leftPanel.add(payButton);
 			if (this.appointment.isPaid() || !flag) {
 				payButton.setEnabled(false);
-				if (!flag) {
+				if (this.appointment.isPaid()) {
 					payButton.setText("Paid");
 				}
 			} 
