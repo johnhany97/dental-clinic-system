@@ -1019,7 +1019,7 @@ public class SecretaryView implements Screen {
 								frame.revalidate();
 							}
 						} else {
-							JOptionPane.showMessageDialog(frame, "patient doesn't exist", "Error",
+							JOptionPane.showMessageDialog(frame, "Patient doesn't exist", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					} catch (CommunicationsException e) {
