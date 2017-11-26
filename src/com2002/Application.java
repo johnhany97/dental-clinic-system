@@ -17,39 +17,9 @@ import com2002.views.DisplayFrame;
 import com2002.views.LoginView;
 
 public class Application {
-
-	// Instance variables
+	
 	private static DisplayFrame window;
-
-	/**
-	 * isSetup Function
-	 * 
-	 * Function used by application to check if the db has the required databases to
-	 * run
-	 * 
-	 * @return Boolean representing whether the DB is setup or not
-	 */
-	private static Boolean isSetup() {
-		boolean flag = true;
-		Connection conn = null;
-		try {
-			conn = Database.getConnection();
-			for (int i = 0; i < Database.TABLE_NAMES.length && flag; i++) {
-				flag = flag && Database.dbHasTable(conn, Database.TABLE_NAMES[i]);
-			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(window, e.getMessage(), "Error checking database", JOptionPane.ERROR_MESSAGE);
-		} finally {
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(window, e.getMessage(), "Error closing connection", JOptionPane.ERROR_MESSAGE);
-				}
-		}
-		return flag;
-	}
-
+	
 	/**
 	 * Entry point for the program
 	 *
@@ -82,5 +52,34 @@ public class Application {
 				JOptionPane.showMessageDialog(window, e.getMessage(), "Error setting up DB", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
+
+	/**
+	 * isSetup Function
+	 * 
+	 * Function used by application to check if the db has the required databases to
+	 * run
+	 * 
+	 * @return Boolean representing whether the DB is setup or not
+	 */
+	private static Boolean isSetup() {
+		boolean flag = true;
+		Connection conn = null;
+		try {
+			conn = Database.getConnection();
+			for (int i = 0; i < Database.TABLE_NAMES.length && flag; i++) {
+				flag = flag && Database.dbHasTable(conn, Database.TABLE_NAMES[i]);
+			}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(window, e.getMessage(), "Error checking database", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(window, e.getMessage(), "Error closing connection", JOptionPane.ERROR_MESSAGE);
+				}
+		}
+		return flag;
 	}
 }
