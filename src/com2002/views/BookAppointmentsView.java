@@ -1,3 +1,9 @@
+/**
+ * BookAppointmentsView class
+ * 
+ * Class that represents a view that is used to book appointments
+ * @author John Ayad
+ */
 package com2002.views;
 
 import java.awt.BorderLayout;
@@ -44,17 +50,28 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 public class BookAppointmentsView implements Screen {
 	
+	//instance variables
 	private JPanel screen;
 	private DisplayFrame frame;
 	private Patient patient;
 	private ArrayList<Object> inputs;
 	
+	/**
+	 * Constructor
+	 * 
+	 * Instantiates an instance of this view
+	 * @param frame DisplayFrame in which class is to be viewed
+	 * @param patient Patient whom we are to book an appointment for
+	 */
 	public BookAppointmentsView(DisplayFrame frame, Patient patient) {
 		this.frame = frame;
 		this.patient = patient;
 		initialize();
 	}
 	
+	/**
+	 * Function used to instantiate components and add their action listeners
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initialize() {
 		try {
@@ -304,6 +321,11 @@ public class BookAppointmentsView implements Screen {
 				}
 			});
 			this.screen.add(bookButton, BorderLayout.SOUTH);
+		} catch (CommunicationsException e) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
 				    e.getMessage(),

@@ -22,6 +22,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import com.mysql.jdbc.CommunicationsException;
+
 import com2002.interfaces.Screen;
 import com2002.models.DBQueries;
 import com2002.models.Doctor;
@@ -123,16 +125,19 @@ public class LoginView implements Screen {
 						newFrame.setDisplayedPanel(docView.getPanel());
 						frame.dispose();
 					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+				} catch (CommunicationsException e) {
 					JOptionPane.showMessageDialog(frame,
-						    "Database error. Check your internet connnection",
+						    "Not connected to internet",
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(frame,
+						    e.getMessage(),
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
-					e.printStackTrace();
 					JOptionPane.showMessageDialog(frame,
-						    "Error setting up view",
+						    e.getMessage(),
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				}
@@ -141,6 +146,7 @@ public class LoginView implements Screen {
 		this.screen.add(this.loginButton, BorderLayout.SOUTH);
 	}
 	
+	@Override
 	public JPanel getPanel() {
 		return this.screen;
 	}

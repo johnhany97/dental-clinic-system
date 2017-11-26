@@ -31,6 +31,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 
+import com.mysql.jdbc.CommunicationsException;
+
 import com2002.interfaces.Screen;
 import com2002.utils.Database;
 import com2002.views.DisplayFrame;
@@ -141,6 +143,11 @@ public class TreatmentsScreen implements Screen {
 		    		AppointmentTypesScreen appointmentTypesScreen = new AppointmentTypesScreen(frame);
 			    	frame.setDisplayedPanel(appointmentTypesScreen.getPanel());
 			    	frame.repaint();
+	    		} catch (CommunicationsException e) {
+	    			JOptionPane.showMessageDialog(frame,
+	    				    "Not connected to internet",
+	    				    "Error",
+	    				    JOptionPane.ERROR_MESSAGE);
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(frame,
 							"Error with the database statement execution.",

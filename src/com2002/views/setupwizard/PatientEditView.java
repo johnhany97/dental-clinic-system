@@ -30,6 +30,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.text.NumberFormatter;
 
+import com.mysql.jdbc.CommunicationsException;
+
 import com2002.models.Address;
 import com2002.models.Patient;
 import com2002.views.AppointmentView;
@@ -325,8 +327,12 @@ public class PatientEditView {
 						PatientView patientView = new PatientView(frame, patient, AppointmentView.SECRETARY);
 						frame.setDisplayedPanel(patientView.getPanel());
 						frame.revalidate();
+					} catch (CommunicationsException e1) {
+						JOptionPane.showMessageDialog(frame,
+							    "Not connected to internet",
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
 					} catch (SQLException e1) {
-						e1.printStackTrace();
 						JOptionPane.showMessageDialog(frame,
 							    e1.getMessage(),
 							    "Error fetching data from db",
@@ -349,6 +355,11 @@ public class PatientEditView {
 					});
 				}
 			}
+		} catch (CommunicationsException e1) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		} catch (SQLException e1) {
 			JOptionPane.showMessageDialog(frame,
 				    e1.getMessage(),

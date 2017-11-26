@@ -28,6 +28,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
+import com.mysql.jdbc.CommunicationsException;
+
 import com2002.interfaces.Screen;
 import com2002.models.Doctor;
 import com2002.models.Role;
@@ -96,51 +98,61 @@ public class EmployeesScreen implements Screen {
 	    this.nextButton.setFont(new Font("Sans Serif", Font.PLAIN,
 	            DisplayFrame.FONT_SIZE));
 	    this.nextButton.addActionListener(new ActionListener() {
-	      @SuppressWarnings("unused")
-		@Override
-	      public void actionPerformed(ActionEvent arg0) {
-	    	  //Save data in db
-	    	  int index = 0;
-	    	  for (int i = 0; i < 3; i++) {
-	    		  String firstName = ((JTextField) textFields.get(index)).getText();
-	    		  index++;
-	    		  String lastName = ((JTextField) textFields.get(index)).getText();
-	    		  index++;
-	    		  String username = ((JTextField) textFields.get(index)).getText();
-	    		  index++;
-	    		  String password = String.valueOf(((JPasswordField) textFields.get(index)).getPassword());
-	    		  index++;
-	    		  String role = (String) rolesLists.get(i).getSelectedValue();
-	    		  if (role.equals("Secretary")) {
-	    			  try {
-	    				  Staff employee = new Secretary(firstName, lastName, username, password);
-				    	  //Next screen
-				    	  TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
-				    	  frame.setDisplayedPanel(treatmentsScreen.getPanel());
-				    	  frame.repaint();
-					} catch (SQLException e) {
-						JOptionPane.showMessageDialog(frame,
-								"Error with the database statement execution.",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-	    		  } else {
-	    			  Role r = role.equals("Dentist") ? Role.DENTIST : Role.HYGIENIST;
-	    			  try {
-	    				  Staff employee = new Doctor(firstName, lastName, username, password, r);
-				    	  //Next screen
-				    	  TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
-				    	  frame.setDisplayedPanel(treatmentsScreen.getPanel());
-				    	  frame.repaint();
-					} catch (SQLException e) {
-						JOptionPane.showMessageDialog(frame,
-								"Error with the database statement execution.",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-	    		  }
-	    	  }
-	      }
+	    	@SuppressWarnings("unused")
+			@Override
+		      public void actionPerformed(ActionEvent arg0) {
+		    	  //Save data in db
+		    	  int index = 0;
+		    	  for (int i = 0; i < 3; i++) {
+		    		  String firstName = ((JTextField) textFields.get(index)).getText();
+		    		  index++;
+		    		  String lastName = ((JTextField) textFields.get(index)).getText();
+		    		  index++;
+		    		  String username = ((JTextField) textFields.get(index)).getText();
+		    		  index++;
+		    		  String password = String.valueOf(((JPasswordField) textFields.get(index)).getPassword());
+		    		  index++;
+		    		  String role = (String) rolesLists.get(i).getSelectedValue();
+		    		  if (role.equals("Secretary")) {
+							try {
+								Staff employee = new Secretary(firstName, lastName, username, password);
+								//Next screen
+								TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
+								frame.setDisplayedPanel(treatmentsScreen.getPanel());
+								frame.repaint();
+							} catch (CommunicationsException e) {
+								JOptionPane.showMessageDialog(frame,
+									    "Not connected to internet",
+									    "Error",
+									    JOptionPane.ERROR_MESSAGE);
+							} catch (SQLException e) {
+								JOptionPane.showMessageDialog(frame,
+										e.getMessage(),
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+							}
+		    		  } else {
+		    			  	Role r = role.equals("Dentist") ? Role.DENTIST : Role.HYGIENIST;
+			    			try {
+			    				Staff employee = new Doctor(firstName, lastName, username, password, r);
+						    	//Next screen
+						    	TreatmentsScreen treatmentsScreen = new TreatmentsScreen(frame);
+						    	frame.setDisplayedPanel(treatmentsScreen.getPanel());
+						    	frame.repaint();
+			    			} catch (CommunicationsException e) {
+			    				JOptionPane.showMessageDialog(frame,
+			    					    "Not connected to internet",
+			    					    "Error",
+			    					    JOptionPane.ERROR_MESSAGE);
+							} catch (SQLException e) {
+								JOptionPane.showMessageDialog(frame,
+										"Error with the database statement execution.",
+										"Error",
+										JOptionPane.ERROR_MESSAGE);
+							}
+		    		  }
+		    	  }
+		      }
 	    });
 	}
 	
@@ -197,6 +209,4 @@ public class EmployeesScreen implements Screen {
 	public JPanel getPanel() {
 		return this.screen;
 	}
-	
-
 }

@@ -135,11 +135,15 @@ public class DoctorView implements Screen {
 						}
 						frame.revalidate();
 					} catch (CommunicationsException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						JOptionPane.showMessageDialog(frame,
+							    "Not connected to internet",
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
 					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						JOptionPane.showMessageDialog(frame,
+							    e1.getMessage(),
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -283,11 +287,9 @@ public class DoctorView implements Screen {
 						PatientView patientView = new PatientView(patientViewFrame, patient, AppointmentView.DOCTOR);
 						patientViewFrame.setDisplayedPanel(patientView.getPanel());
 					} catch (CommunicationsException e) {
-	
-						e.printStackTrace();
 						JOptionPane.showMessageDialog(frame,
-							    "Database error. Check your internet connnection.",
-							    "Error fetching patient",
+							    "Not connected to internet",
+							    "Error",
 							    JOptionPane.ERROR_MESSAGE);
 					} catch (SQLException e) {
 						JOptionPane.showMessageDialog(frame,
@@ -328,6 +330,11 @@ public class DoctorView implements Screen {
 								addAppointment(appointments.get(i));
 							}
 							frame.revalidate();
+		    			} catch (CommunicationsException e) {
+		    				JOptionPane.showMessageDialog(frame,
+		    					    "Not connected to internet",
+		    					    "Error",
+		    					    JOptionPane.ERROR_MESSAGE);
 						} catch (SQLException e) {
 							JOptionPane.showMessageDialog(frame,
 								    e.getMessage(),
@@ -351,10 +358,16 @@ public class DoctorView implements Screen {
 			rightSection.add(bottomRightSection);
 			this.appointmentCards.get(index).add(rightSection, BorderLayout.CENTER);
 			this.appointmentsPanel.add(this.appointmentCards.get(index));
-
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (CommunicationsException e) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(frame,
+				    e.getMessage(),
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

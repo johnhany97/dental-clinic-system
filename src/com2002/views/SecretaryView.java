@@ -1258,7 +1258,7 @@ public class SecretaryView implements Screen {
 						} catch (Exception e4) {
 							JOptionPane.showMessageDialog(frame,
 								    e4.getMessage(),
-								    "Error fetching patients",
+								    "Error",
 								    JOptionPane.ERROR_MESSAGE);
 						}
 						//refresh addresses list
@@ -1278,15 +1278,19 @@ public class SecretaryView implements Screen {
 						} catch (Exception e5) {
 							JOptionPane.showMessageDialog(frame,
 								    e5.getMessage(),
-								    "Error fetching addresses",
+								    "Error",
 								    JOptionPane.ERROR_MESSAGE);
 						}
 						frame.revalidate();
-						
+					} catch (CommunicationsException e1) {
+						JOptionPane.showMessageDialog(frame,
+							    "Not connected to internet",
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
 					} catch (SQLException e1) {
 						JOptionPane.showMessageDialog(frame,
 							    e1.getMessage(),
-							    "Error fetching data from db",
+							    "Error",
 							    JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -1306,6 +1310,11 @@ public class SecretaryView implements Screen {
 					});
 				}
 			}
+		} catch (CommunicationsException e1) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		} catch (SQLException e1) {
 			JOptionPane.showMessageDialog(frame,
 				    e1.getMessage(),
@@ -1466,6 +1475,11 @@ public class SecretaryView implements Screen {
 			JScrollPane addressesScrollPane = new JScrollPane(this.addressesTable);
 			this.addressesTable.setFillsViewportHeight(true);
 			addressesTab.add(addressesScrollPane, BorderLayout.CENTER);
+		} catch (CommunicationsException e) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
 				    e.getMessage(),
@@ -1552,10 +1566,9 @@ public class SecretaryView implements Screen {
 						}
 						frame.revalidate();
 					} catch (Exception e) {
-						e.printStackTrace();
 						JOptionPane.showMessageDialog(frame,
 							    e.getMessage(),
-							    "Error fetching appointments",
+							    "Error",
 							    JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -1580,10 +1593,9 @@ public class SecretaryView implements Screen {
 						patientsTabInputs.get(3).setText("");
 						frame.revalidate();
 					} catch (Exception e) {
-						e.printStackTrace();
 						JOptionPane.showMessageDialog(frame,
 							    e.getMessage(),
-							    "Error fetching patients",
+							    "Error ",
 							    JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -1607,11 +1619,14 @@ public class SecretaryView implements Screen {
 			this.patientsTable.setFillsViewportHeight(true);
 			patientsTab.add(patientsScrollPane, BorderLayout.CENTER);
 			this.rightTabbedPane.addTab("Patients", patientsTab);
-		} catch (SQLException e) {
-
-			e.printStackTrace();
+		} catch (CommunicationsException e) {
 			JOptionPane.showMessageDialog(frame,
-				    "Database error. Check your internet connnection.",
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(frame,
+				    e.getMessage(),
 				    "Error fetching patients",
 				    JOptionPane.ERROR_MESSAGE);
 		}
@@ -1661,6 +1676,11 @@ public class SecretaryView implements Screen {
 				}
 				hygienistAppointmentsScreen.add(hygienistAppointmentsCardsColumn.get(i));
 			}
+		} catch (CommunicationsException e1) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
     	} catch (SQLException e1) {
 			JOptionPane.showMessageDialog(frame,
 				    e1.getMessage(),
@@ -1712,6 +1732,11 @@ public class SecretaryView implements Screen {
 				}
 				dentistAppointmentsScreen.add(dentistAppointmentsCardsColumn.get(i));
 			}
+    	} catch (CommunicationsException e1) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
     	} catch (SQLException e1) {
 			JOptionPane.showMessageDialog(frame,
 				    e1.getMessage(),
@@ -1836,13 +1861,13 @@ public class SecretaryView implements Screen {
 						patientViewFrame.setDisplayedPanel(patientView.getPanel());
 					} catch (CommunicationsException e) {
 						JOptionPane.showMessageDialog(frame,
-							    "Database error. Check your internet connnection.",
-							    "Error fetching patient",
+							    "Not connected to internet",
+							    "Error",
 							    JOptionPane.ERROR_MESSAGE);
 					} catch (SQLException e) {
 						JOptionPane.showMessageDialog(frame,
 							    e.getMessage(),
-							    "Error fetching patient",
+							    "Error",
 							    JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -1865,6 +1890,11 @@ public class SecretaryView implements Screen {
 							} else {
 								refreshHygienistTab();
 							}
+		    			} catch (CommunicationsException e) {
+		    				JOptionPane.showMessageDialog(frame,
+		    					    "Not connected to internet",
+		    					    "Error",
+		    					    JOptionPane.ERROR_MESSAGE);
 						} catch (SQLException e) {
 							JOptionPane.showMessageDialog(frame,
 								    e.getMessage(),
@@ -1892,9 +1922,14 @@ public class SecretaryView implements Screen {
 				this.hygienistAppointmentCards.get(index).add(rightSection, BorderLayout.CENTER);
 				this.hygienistAppointmentsCardsColumn.get(col).add(this.hygienistAppointmentCards.get(index));
 			}
+		} catch (CommunicationsException e) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
-				    "Database error. Check your internet connnection.",
+				    e.getMessage(),
 				    "Error fetching patient",
 				    JOptionPane.ERROR_MESSAGE);
 		}
@@ -2011,12 +2046,12 @@ class ButtonEditor extends DefaultCellEditor {
 					patientViewFrame.setDisplayedPanel(patientView.getPanel());
 				} catch (CommunicationsException e) {
 					JOptionPane.showMessageDialog(this.frame,
-						    "Error connecting to the database. Check internet connection.",
+						    "Not connected to internet",
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(this.frame,
-						    "Error fetching the information from the database",
+						    e.getMessage(),
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				}
@@ -2030,12 +2065,12 @@ class ButtonEditor extends DefaultCellEditor {
 					addressViewFrame.setDisplayedPanel(addressView.getPanel());
 				} catch (CommunicationsException e) {
 					JOptionPane.showMessageDialog(this.frame,
-						    "Error connecting to the database. Check internet connection.",
+						    "Not connected to internet",
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(this.frame,
-						    "Error fetching the information from the database",
+						    e.getMessage(),
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				}				

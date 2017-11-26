@@ -143,9 +143,14 @@ public class PatientView implements Screen {
 					int totalHygiene = hp.getHygieneLevel();
 					hygieneString = "<html><strong>Hygiene:</strong> " + String.valueOf(currentHygiene) + " out of " + String.valueOf(totalHygiene) + "</html>";
 					hpButton.setText("Unsubscribe");
+				} catch (CommunicationsException e) {
+					JOptionPane.showMessageDialog(frame,
+						    "Not connected to internet",
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(frame,
-						    "Error connecting to the database. Check internet connection.",
+						    e.getMessage(),
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
 				}
@@ -204,18 +209,23 @@ public class PatientView implements Screen {
 							    hpButton.setText("Unsubscribe");
 							    frame.revalidate();
 						    }
+						} catch (CommunicationsException e) {
+							JOptionPane.showMessageDialog(frame,
+								    "Not connected to internet",
+								    "Error",
+								    JOptionPane.ERROR_MESSAGE);
 						} catch (SQLException e) {
 							JOptionPane.showMessageDialog(frame,
-								    "Database error.",
-								    "Error while fetching healthplans from db",
+								    e.getMessage(),
+								    "Error",
 								    JOptionPane.ERROR_MESSAGE);
 						}
 					} else {
-						// unsubscribe and refresh
+						// un-subscribe and refresh
 						int selectedOption = JOptionPane.showConfirmDialog(null, "Do you want to unsubscribe patient?", "Choose", JOptionPane.YES_NO_OPTION); 
 			    		if (selectedOption == JOptionPane.YES_OPTION) {
 			    			try {
-			    				//unsubscribe
+			    				//un-subscribe
 								patient.unsubscribePatient();
 								//refresh panel
 								hpLabel.setText("No Health Plan");
@@ -224,10 +234,15 @@ public class PatientView implements Screen {
 								hygieneLabel.setText("Hygiene: 0 out of 0");
 								hpButton.setText("Subscribe");
 								frame.revalidate();
+			    			} catch (CommunicationsException e) {
+			    				JOptionPane.showMessageDialog(frame,
+			    					    "Not connected to internet",
+			    					    "Error",
+			    					    JOptionPane.ERROR_MESSAGE);
 							} catch (SQLException e) {
 								JOptionPane.showMessageDialog(frame,
-									    "Database error.",
-									    "Error while unsubscribing",
+									    e.getMessage(),
+									    "Error",
 									    JOptionPane.ERROR_MESSAGE);
 							}
 			    		}
@@ -255,10 +270,15 @@ public class PatientView implements Screen {
 		    		if (selectedOption == JOptionPane.YES_OPTION) {
 		    			try {
 							Patient.deletePatient(patient.getPatientID());
+		    			} catch (CommunicationsException e) {
+		    				JOptionPane.showMessageDialog(frame,
+		    					    "Not connected to internet",
+		    					    "Error",
+		    					    JOptionPane.ERROR_MESSAGE);
 						} catch (SQLException e) {
 							JOptionPane.showMessageDialog(frame,
-								    "Database error.",
-								    "Error while deleting",
+								    e.getMessage(),
+								    "Error",
 								    JOptionPane.ERROR_MESSAGE);
 						}
 		    			frame.dispose();
@@ -291,7 +311,7 @@ public class PatientView implements Screen {
 		    centerPanelHolder.add(appointmentsScrollPane);
 		} catch (CommunicationsException e) {
 			JOptionPane.showMessageDialog(frame,
-				    "Database error. Check your internet connnection.",
+				    "Not connected to internet",
 				    "Error",
 				    JOptionPane.ERROR_MESSAGE);
 		} catch (SQLException e) {
@@ -379,6 +399,11 @@ public class PatientView implements Screen {
 					try {
 						PayView pv = new PayView(frame, appointment);
 						frame.setDisplayedPanel(pv.getPanel());
+					} catch (CommunicationsException e1) {
+						JOptionPane.showMessageDialog(frame,
+							    "Not connected to internet",
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
 					} catch (SQLException e1) {
 						JOptionPane.showMessageDialog(frame,
 							    e1.getMessage(),
@@ -410,35 +435,28 @@ public class PatientView implements Screen {
 		    		if (selectedOption == JOptionPane.YES_OPTION) {
 		    			try {
 							appointment.removeAppointment();
-							try {
-								//get requested day
-								List<Appointment> appointmentList = Schedule.getAppointmentsByPatient(patient.getPatientID());
-								appointmentCards.clear();
-								appointmentsPanel.removeAll();
-								appointmentsPanel.repaint();
-								appointmentsPanel.setLayout(new GridLayout(0,2));
-								if (appointmentList.size() > 0) {
-									for (int i = 0; i < appointmentList.size(); i++) {
-										addAppointment(appointmentList.get(i));
-									}
-								} else {
-									//No appointments for today
-									appointmentsPanel.setLayout(new BorderLayout());
-									JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
-									appointmentsPanel.add(imgLabel, BorderLayout.CENTER);
+							//get requested day
+							List<Appointment> appointmentList = Schedule.getAppointmentsByPatient(patient.getPatientID());
+							appointmentCards.clear();
+							appointmentsPanel.removeAll();
+							appointmentsPanel.repaint();
+							appointmentsPanel.setLayout(new GridLayout(0,2));
+							if (appointmentList.size() > 0) {
+								for (int i = 0; i < appointmentList.size(); i++) {
+									addAppointment(appointmentList.get(i));
 								}
-								frame.revalidate();
-							} catch (CommunicationsException e) {
-								JOptionPane.showMessageDialog(frame,
-									    "Check internet connection",
-									    "Error",
-									    JOptionPane.ERROR_MESSAGE);
-							} catch (SQLException e) {
-								JOptionPane.showMessageDialog(frame,
-									    e.getMessage(),
-									    "Error fetching appointments",
-									    JOptionPane.ERROR_MESSAGE);
+							} else {
+								//No appointments for today
+								appointmentsPanel.setLayout(new BorderLayout());
+								JLabel imgLabel = new JLabel(new ImageIcon(((new ImageIcon("resources/pictures/none_found.png")).getImage()).getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)), SwingConstants.CENTER);
+								appointmentsPanel.add(imgLabel, BorderLayout.CENTER);
 							}
+							frame.revalidate();
+		    			} catch (CommunicationsException e) {
+		    				JOptionPane.showMessageDialog(frame,
+		    					    "Not connected to internet",
+		    					    "Error",
+		    					    JOptionPane.ERROR_MESSAGE);
 						} catch (SQLException e) {
 							JOptionPane.showMessageDialog(frame,
 								    e.getMessage(),
@@ -449,13 +467,17 @@ public class PatientView implements Screen {
 				}
 			});
 			bottomRightSection.add(deleteButton);
-			//TODO: Action listener
 			JPanel rightSection = new JPanel();
 			rightSection.setLayout(new BoxLayout(rightSection, BoxLayout.Y_AXIS));
 			rightSection.add(topRightSection);
 			rightSection.add(bottomRightSection);
 			this.appointmentCards.get(index).add(rightSection, BorderLayout.CENTER);
 			this.appointmentsPanel.add(this.appointmentCards.get(index));
+		} catch (CommunicationsException e) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
 				    "Database error. Check your internet connnection.",

@@ -1,3 +1,9 @@
+/**
+ * AppointmentView class
+ * 
+ * Class that represents a view that shows an appointment's details
+ * @author John Ayad
+ */
 package com2002.views;
 
 import java.awt.BorderLayout;
@@ -46,10 +52,13 @@ import com2002.models.Usage;
 
 public class AppointmentView implements Screen {
 	
+	/** Constant used to represent a doctor is to be viewing this appointment **/
 	final static public int DOCTOR = 0;
 	
+	/** Constant used to represent a secretary is to be viewing this appointment **/
 	final static public int SECRETARY = 1;
 	
+	//instance variables
 	private JPanel panel;
 	private int type;
 	private DisplayFrame frame;
@@ -68,11 +77,19 @@ public class AppointmentView implements Screen {
 	private List<JLabel> activePreviousAppointmentLabels;
 	private List<JCheckBox> treatmentsInput;
 
+	/**
+	 * Constructor used to instantiate an instance of this view
+	 * 
+	 * @param frame DisplayFrame in which this class is to be shown
+	 * @param appointment Appointment which we are to show details of
+	 * @param type Representing whether a Doctor (0) or a Secretary (1) are to be using this view
+	 */
 	public AppointmentView(DisplayFrame frame, Appointment appointment, int type) {
 		try {
+			//initialize components
 			this.frame = frame;
 			this.type = type;
-			this.frame.setFrameSize(DisplayFrame.DEFAULT_NUM, 7);
+			this.frame.setFrameSize(DisplayFrame.DEFAULT_NUM, 7); //change size
 			this.frame.centerFrame();
 			this.appointment = appointment;
 			this.patient = appointment.getPatient();
@@ -87,9 +104,14 @@ public class AppointmentView implements Screen {
 				}
 			}
 			initialize();
+		} catch (CommunicationsException e) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(frame,
-				    "Error connecting to the database. Check internet connection.",
+				    e.getMessage(),
 				    "Error",
 				    JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
@@ -100,6 +122,12 @@ public class AppointmentView implements Screen {
 		}
 	}
 	
+	/**
+	 * Function used to initialize components of this view and add
+	 * their action listeners
+	 * @throws CommunicationsException on error with db connection
+	 * @throws SQLException on error with db
+	 */
 	private void initialize() throws CommunicationsException, SQLException {
 		this.panel = new JPanel();
 		this.panel.setLayout(new BorderLayout());
@@ -343,6 +371,12 @@ public class AppointmentView implements Screen {
 		this.panel.add(this.rightPanel, BorderLayout.EAST);
 	}
 	
+	/**
+	 * addAppointment function
+	 * 
+	 * Used to initialize an appointment card
+	 * @param appointment Appointment which is to be shown in the card
+	 */
 	private void addAppointment(Appointment appointment) {
 		try {
 			this.appointmentCards.add(new JPanel());
@@ -434,16 +468,20 @@ public class AppointmentView implements Screen {
 						Appointment apt = (Appointment) detailsButton.getClientProperty("Appointment");
 						setOldAppointmentInView(apt);
 						frame.revalidate();
+					} catch (CommunicationsException e) {
+						JOptionPane.showMessageDialog(frame,
+							    "Not connected to internet",
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
 					} catch (SQLException e) {
 						JOptionPane.showMessageDialog(frame,
-							    "Error fetching appointment details",
+							    e.getMessage(),
 							    "Error",
 							    JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			});
 			bottomRightSection.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-			//TODO: Action listener
 			JPanel rightSection = new JPanel();
 			rightSection.setLayout(new BoxLayout(rightSection, BoxLayout.Y_AXIS));
 			rightSection.add(topRightSection);
@@ -452,11 +490,20 @@ public class AppointmentView implements Screen {
 			this.appointmentsPanel.add(this.appointmentCards.get(index));
 
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(frame,
+				    e1.getMessage(),
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
+	/**
+	 * setOldAppointmentInView function
+	 * 
+	 * Used to show an appointment in the special section on top of the right panel
+	 * @param appointment Appointment to be shown
+	 * @throws SQLException error with db 
+	 */
 	private void setOldAppointmentInView(Appointment appointment) throws SQLException {
 		//Get details from appointments
 		String appointmentType = appointment.getAppointmentType();
@@ -521,6 +568,7 @@ public class AppointmentView implements Screen {
 		}
 	}
 	
+	@Override
 	public JPanel getPanel() {
 		return this.panel;
 	}

@@ -35,6 +35,10 @@ public class DatabaseTables {
 		createTables();
 	}
 	
+	/**
+	 * Function used in development mode
+	 * Used to fill database with dummy data
+	 */
 	public static void populateTables() {
 		Connection conn = null;
 		try {

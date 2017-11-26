@@ -1,3 +1,9 @@
+/**
+ * AddressView class
+ * 
+ * Class that represents a view that shows an address' details
+ * @author John Ayad
+ */
 package com2002.views;
 
 import java.awt.BorderLayout;
@@ -16,6 +22,8 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import com.mysql.jdbc.CommunicationsException;
+
 import com2002.interfaces.Screen;
 import com2002.models.Address;
 import com2002.models.DBQueries;
@@ -23,6 +31,7 @@ import com2002.models.Patient;
 
 public class AddressView implements Screen {
 	
+	//Instance variables
 	private JPanel screen;
 	private DisplayFrame frame;
 	private Address address;
@@ -30,21 +39,38 @@ public class AddressView implements Screen {
 	private DefaultTableModel patientsTableModel;
 	private JTable patientsTable;
 	
+	/**
+	 * Constructor that instantiates an instance of this class
+	 * 
+	 * @param frame DisplayFrame to show view in
+	 * @param address Address to show details of
+	 */
 	public AddressView(DisplayFrame frame, Address address) {
 		this.frame = frame;
 		this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.address = address;
 		try {
 			initialize();
+		} catch (CommunicationsException e) {
+			JOptionPane.showMessageDialog(frame,
+				    "Not connected to internet",
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(frame,
-				    "Error initializing the frame",
+				    e.getMessage(),
 				    "Error",
 				    JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
-	@SuppressWarnings({ "unused", "serial" })
+	/**
+	 * Initialize Function
+	 * 
+	 * Function used to initialize View's components and actionlistener
+	 * @throws Exception
+	 */
+	@SuppressWarnings({ "serial" })
 	private void initialize() throws Exception {
 		//Main Screen
 		this.screen = new JPanel();
@@ -97,6 +123,7 @@ public class AddressView implements Screen {
 		center.setLayout(new GridLayout(0, 1));
 		JPanel upperPart = new JPanel();
 		upperPart.setLayout(new GridLayout(0, 2));
+		//Add components to panels
 		upperPart.add(hNumTitle);
 		upperPart.add(hNumLabel);
 		upperPart.add(sNameTitle);
@@ -137,6 +164,12 @@ public class AddressView implements Screen {
 		this.screen.add(center, BorderLayout.CENTER);
 	}
 	
+	/** 
+	 * Function used to convert an ArrayList of patients to a 2D array
+	 * needed by JTable component
+	 * @param givenList ArrayList of patients
+	 * @return 2D array of patient's details as strings
+	 */
 	private Object[][] patientListConverter(ArrayList<Patient> givenList) {
 		Object[][] patientArr = new Object[givenList.size()][7];
 		for (int i = 0; i < givenList.size(); i++) {

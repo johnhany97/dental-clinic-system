@@ -82,8 +82,8 @@ public class Appointment {
 		}
 		Connection conn =  Database.getConnection();
 		try {
-			ResultSet timeCheckRS = DBQueries.execQuery("SELECT * FROM Appointments WHERE (StartDate < '" + endTime.toString() + "' AND EndDate > '" + startTime.toString() + "') AND Username = '" + username + "'", conn);
-			if(timeCheckRS.next()) {
+			ResultSet timeAndPatientCheckRS = DBQueries.execQuery("SELECT * FROM Appointments WHERE (StartDate < '" + endTime.toString() + "' AND EndDate > '" + startTime.toString() + "') AND Username = '" + username + "' AND PatientID = '" + patientID + "'", conn);
+			if(timeAndPatientCheckRS.next()) {
 				throw new MySQLIntegrityConstraintViolationException("Clashing appointment exists.");
 			}
 			DBQueries.execUpdate("INSERT INTO Appointments VALUES ('" + startTime.toString() + "', '" + endTime.toString() + "', '" + username + "', '" 

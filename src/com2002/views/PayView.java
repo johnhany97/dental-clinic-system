@@ -100,39 +100,39 @@ public class PayView implements Screen {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-				//Cost of appointment
-				int selectedOption = JOptionPane.showConfirmDialog(null, "Pay for the Appointment?", "Confirm", JOptionPane.YES_NO_OPTION); 
-				if (selectedOption == JOptionPane.YES_OPTION) {
-					appointment.pay();
-					if (usage != null) { //we need to deduct from health plan as well if possible
-						String appointmentType = appointment.getAppointmentType();
-						switch (appointmentType.toLowerCase()) {
-							case "checkup":
-								if (usage.getCheckUpUsed() < usage.getHealthPlan().getCheckUpLevel()) usage.incrementCheckUp();
-								break;
-							case "cleaning":
-								if (usage.getHygieneUsed() < usage.getHealthPlan().getHygieneLevel()) usage.incrementHygiene();
-								break;
-							case "remedial":
-								if (usage.getRepairUsed() < usage.getHealthPlan().getRepairLevel()) usage.incrementRepair();
-								break;
+					//Cost of appointment
+					int selectedOption = JOptionPane.showConfirmDialog(null, "Pay for the Appointment?", "Confirm", JOptionPane.YES_NO_OPTION); 
+					if (selectedOption == JOptionPane.YES_OPTION) {
+						appointment.pay();
+						if (usage != null) { //we need to deduct from health plan as well if possible
+							String appointmentType = appointment.getAppointmentType();
+							switch (appointmentType.toLowerCase()) {
+								case "checkup":
+									if (usage.getCheckUpUsed() < usage.getHealthPlan().getCheckUpLevel()) usage.incrementCheckUp();
+									break;
+								case "cleaning":
+									if (usage.getHygieneUsed() < usage.getHealthPlan().getHygieneLevel()) usage.incrementHygiene();
+									break;
+								case "remedial":
+									if (usage.getRepairUsed() < usage.getHealthPlan().getRepairLevel()) usage.incrementRepair();
+									break;
+							}
 						}
+						JOptionPane.showMessageDialog (null, "Successfully done transaction", "Success!", JOptionPane.INFORMATION_MESSAGE);
+						//refresh list of appointments
+						frame.dispose();
 					}
-					JOptionPane.showMessageDialog (null, "Successfully done transaction", "Success!", JOptionPane.INFORMATION_MESSAGE);
-					//refresh list of appointments
-					frame.dispose();
+				} catch (CommunicationsException e1) {
+					JOptionPane.showMessageDialog(frame,
+						    "Not connected to internet",
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(frame,
+						    e1.getMessage(),
+						    "Error communicating with db",
+						    JOptionPane.ERROR_MESSAGE);
 				}
-			} catch (CommunicationsException e1) {
-				JOptionPane.showMessageDialog(frame,
-					    e1.getMessage(),
-					    "Check Internet",
-					    JOptionPane.ERROR_MESSAGE);
-			} catch (SQLException e1) {
-				JOptionPane.showMessageDialog(frame,
-					    e1.getMessage(),
-					    "Error communicating with db",
-					    JOptionPane.ERROR_MESSAGE);
-			}
 			}
 		});
 		this.screen.add(payButton, BorderLayout.SOUTH);
