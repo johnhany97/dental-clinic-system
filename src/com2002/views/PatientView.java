@@ -304,6 +304,17 @@ public class PatientView implements Screen {
 				}
 			});
 			buttonsPanel.add(updateButton);
+			// payments
+			JButton paymentsButton = new JButton("Due payments");
+			paymentsButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					PaymentsDueView pdv = new PaymentsDueView(frame, patient);
+					frame.setDisplayedPanel(pdv.getPanel());
+					frame.revalidate();
+				}
+			});
+			buttonsPanel.add(paymentsButton);
 			// appointments
 			this.appointmentsPanel = new JPanel();
 			this.appointmentsPanel.setLayout(new GridLayout(0, 2));

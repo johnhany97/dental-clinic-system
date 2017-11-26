@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 public class Database {
 
 	/** Constant to represent db username **/
@@ -65,6 +67,7 @@ public class Database {
 		try {
 			conn.close();
 		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error closing database", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

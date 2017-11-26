@@ -40,7 +40,12 @@ public class Application {
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(window, e.getMessage(), "Error checking database", JOptionPane.ERROR_MESSAGE);
 		} finally {
-			Database.closeDb(conn);
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(window, e.getMessage(), "Error closing connection", JOptionPane.ERROR_MESSAGE);
+				}
 		}
 		return flag;
 	}
