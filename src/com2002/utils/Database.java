@@ -28,7 +28,7 @@ public class Database {
 	final private static String dbName = "team035";
 
 	/** Constant to represent db table names **/
-	final public static String[] TABLE_NAMES = { "Treatments", "AppointmentTypes", "Employees", "Address",
+	final public static String[] TABLE_NAMES = { "Payments", "Treatments", "AppointmentTypes", "Employees", "Address",
 			"HealthPlans", "Patients", "Appointments", "PatientHealthPlan", "AppointmentTreatment" };
 
 	/**

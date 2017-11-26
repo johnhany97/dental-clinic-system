@@ -47,14 +47,14 @@ public class DatabaseTables {
 
 			Statement stmt = conn.createStatement();
 
-			String treatments1 = "INSERT INTO Treatments VALUES (\"Treatment1\", 123.2)";
-			String treatments2 = "INSERT INTO Treatments VALUES (\"Treatment2\", 1231.1)";
+			String treatments1 = "INSERT INTO Treatments VALUES (\"Treatment1\", 50)";
+			String treatments2 = "INSERT INTO Treatments VALUES (\"Treatment2\", 60)";
 			stmt.executeUpdate(treatments1);
 			stmt.executeUpdate(treatments2);
 
-			String appointmentsTypes1 = "INSERT INTO AppointmentTypes VALUES (\"Checkup\", 123)";
-			String appointmentsTypes2 = "INSERT INTO AppointmentTypes VALUES (\"Remedial\", 132)";
-			String appointmentsTypes3 = "INSERT INTO AppointmentTypes VALUES (\"Cleaning\", 12)";
+			String appointmentsTypes1 = "INSERT INTO AppointmentTypes VALUES (\"Checkup\", 10)";
+			String appointmentsTypes2 = "INSERT INTO AppointmentTypes VALUES (\"Remedial\", 10)";
+			String appointmentsTypes3 = "INSERT INTO AppointmentTypes VALUES (\"Cleaning\", 10)";
 			String appointmentsTypes4 = "INSERT INTO AppointmentTypes VALUES (\"Empty\", 0)";
 			stmt.executeUpdate(appointmentsTypes1);
 			stmt.executeUpdate(appointmentsTypes2);
@@ -83,23 +83,23 @@ public class DatabaseTables {
 			stmt.executeUpdate(patient1);
 			stmt.executeUpdate(patient2);
 
-			String appointment1 = "INSERT INTO Appointments (StartDate, EndDate, Username, Type, TotalAppointments, CurrentAppointment) VALUES ('2017-11-24 01:00:00', '2017-11-24 02:00:00', 'user1', 'Empty', 1, 1)";
+			String appointment1 = "INSERT INTO Appointments (StartDate, EndDate, Username, Type, TotalAppointments, CurrentAppointment) VALUES ('2017-11-26 01:00:00', '2017-11-26 02:00:00', 'user1', 'Empty', 1, 1)";
 			String appointment17 = "INSERT INTO Appointments (StartDate, EndDate, Username, Type, TotalAppointments, CurrentAppointment) VALUES ('2017-11-15 01:00:00', '2017-11-17 02:00:00', 'user1', 'Empty', 1, 1)";
-			String appointment2 = "INSERT INTO Appointments VALUES ('2017-11-24 2:0:0', '2017-11-24 3:0:0', \"user1\", \"Remedial\", 2, \"a\", 1, 1, 0)";
-			String appointment3 = "INSERT INTO Appointments VALUES ('2017-11-24 3:0:0', '2017-11-24 4:0:0', \"user1\", \"Cleaning\", 1, \"b\", 1, 1, 0)";
-			String appointment4 = "INSERT INTO Appointments VALUES ('2017-11-24 4:0:0', '2017-11-24 5:0:0', \"user1\", \"Remedial\", 2, \"c\", 1, 1, 0)";
-			String appointment5 = "INSERT INTO Appointments VALUES ('2017-11-24 5:0:0', '2017-11-24 6:0:0', \"user1\", \"Cleaning\", 1, \"d\", 1, 1, 0)";
-			String appointment6 = "INSERT INTO Appointments VALUES ('2017-11-24 6:0:0', '2017-11-24 7:0:0', \"user1\", \"Checkup\", 2, \"e\", 1, 1, 0)";
-			String appointment7 = "INSERT INTO Appointments VALUES ('2017-11-24 7:0:0', '2017-11-24 8:0:0', \"user1\", \"Cleaning\", 1, \"f\", 1, 1, 0)";
-			String appointment8 = "INSERT INTO Appointments VALUES ('2017-11-24 8:0:0', '2017-11-24 9:0:0', \"user1\", \"Checkup\", 2, \"g\", 1, 1, 0)";
-			String appointment9 = "INSERT INTO Appointments VALUES ('2017-11-24 9:0:0', '2017-11-24 10:0:0', \"user1\", \"Remedial\", 1, \"h\", 1, 1, 0)";
-			String appointment10 = "INSERT INTO Appointments VALUES ('2017-11-24 10:0:0', '2017-11-24 11:0:0', \"user1\", \"Checkup\", 2, \"i\", 1, 1, 0)";
-			String appointment11 = "INSERT INTO Appointments VALUES ('2017-11-24 1:0:0', '2017-11-24 2:0:0', \"user2\", \"Checkup\", 1, \"j\", 1, 1, 0)";
-			String appointment12 = "INSERT INTO Appointments VALUES ('2017-11-24 2:0:0', '2017-11-24 3:0:0', \"user2\", \"Checkup\", 2, \"k\", 1, 1, 0)";
-			String appointment13 = "INSERT INTO Appointments VALUES ('2017-11-24 3:0:0', '2017-11-24 4:0:0', \"user2\", \"Checkup\", 1, \"l\", 1, 1, 0)";
-			String appointment14 = "INSERT INTO Appointments VALUES ('2017-11-24 4:0:0', '2017-11-24 5:0:0', \"user2\", \"Checkup\", 2, \"m\", 1, 1, 0)";
-			String appointment15 = "INSERT INTO Appointments VALUES ('2017-11-24 5:0:0', '2017-11-24 6:0:0', \"user2\", \"Checkup\", 1, \"n\", 1, 1, 0)";
-			String appointment16 = "INSERT INTO Appointments VALUES ('2017-11-26 6:0:0', '2017-11-24 7:0:0', \"user2\", \"Checkup\", 2, \"o\", 1, 1, 0)";
+			String appointment2 = "INSERT INTO Appointments VALUES ('2017-11-26 2:0:0', '2017-11-26 3:0:0', \"user1\", \"Remedial\", 2, \"a\", 1, 1, 0)";
+			String appointment3 = "INSERT INTO Appointments VALUES ('2017-11-26 3:0:0', '2017-11-26 4:0:0', \"user1\", \"Cleaning\", 1, \"b\", 1, 1, 0)";
+			String appointment4 = "INSERT INTO Appointments VALUES ('2017-11-26 4:0:0', '2017-11-26 5:0:0', \"user1\", \"Remedial\", 2, \"c\", 1, 1, 0)";
+			String appointment5 = "INSERT INTO Appointments VALUES ('2017-11-26 5:0:0', '2017-11-26 6:0:0', \"user1\", \"Cleaning\", 1, \"d\", 1, 1, 0)";
+			String appointment6 = "INSERT INTO Appointments VALUES ('2017-11-26 6:0:0', '2017-11-26 7:0:0', \"user1\", \"Checkup\", 2, \"e\", 1, 1, 0)";
+			String appointment7 = "INSERT INTO Appointments VALUES ('2017-11-26 7:0:0', '2017-11-26 8:0:0', \"user1\", \"Cleaning\", 1, \"f\", 1, 1, 0)";
+			String appointment8 = "INSERT INTO Appointments VALUES ('2017-11-26 8:0:0', '2017-11-26 9:0:0', \"user1\", \"Checkup\", 2, \"g\", 1, 1, 0)";
+			String appointment9 = "INSERT INTO Appointments VALUES ('2017-11-26 9:0:0', '2017-11-26 10:0:0', \"user1\", \"Remedial\", 1, \"h\", 1, 1, 0)";
+			String appointment10 = "INSERT INTO Appointments VALUES ('2017-11-26 10:0:0', '2017-11-26 11:0:0', \"user1\", \"Checkup\", 2, \"i\", 1, 1, 0)";
+			String appointment11 = "INSERT INTO Appointments VALUES ('2017-11-26 1:0:0', '2017-11-26 2:0:0', \"user2\", \"Checkup\", 1, \"j\", 1, 1, 0)";
+			String appointment12 = "INSERT INTO Appointments VALUES ('2017-11-26 2:0:0', '2017-11-26 3:0:0', \"user2\", \"Checkup\", 2, \"k\", 1, 1, 0)";
+			String appointment13 = "INSERT INTO Appointments VALUES ('2017-11-26 3:0:0', '2017-11-26 4:0:0', \"user2\", \"Checkup\", 1, \"l\", 1, 1, 0)";
+			String appointment14 = "INSERT INTO Appointments VALUES ('2017-11-26 4:0:0', '2017-11-26 5:0:0', \"user2\", \"Checkup\", 2, \"m\", 1, 1, 0)";
+			String appointment15 = "INSERT INTO Appointments VALUES ('2017-11-26 5:0:0', '2017-11-26 6:0:0', \"user2\", \"Checkup\", 1, \"n\", 1, 1, 0)";
+			String appointment16 = "INSERT INTO Appointments VALUES ('2017-11-26 6:0:0', '2017-11-26 7:0:0', \"user2\", \"Checkup\", 2, \"o\", 1, 1, 0)";
 			stmt.executeUpdate(appointment1);
 			stmt.executeUpdate(appointment2);
 			stmt.executeUpdate(appointment3);
@@ -143,13 +143,20 @@ public class DatabaseTables {
 		// tables schema
 		String treatmentsTable = "CREATE TABLE `Treatments` (\r\n" 
 				+ "	`Name` 	VARCHAR(30) NOT NULL,\r\n"
-				+ "	`Price` DOUBLE,\r\n" 
+				+ "	`Price` DOUBLE,\r\n"
 				+ "	PRIMARY KEY(`Name`)\r\n" 
 				+ ")";
+		String paymentsTable = "CREATE TABLE `Payments` (\r\n"
+				+ " `PatientID`		INTEGER NOT NULL,\r\n"
+				+ " `AmountDue`		Real NOT NULL,\r\n"
+				+ " `StartDate`		DATETIME,\r\n"
+				+ " `Username`		VARCHAR(15),\r\n"
+				+ " FOREIGN KEY(`PatientID`) REFERENCES Patients(PatientID)"
+				+ ")";
 		String appointmentsTable = "CREATE TABLE `Appointments` (\r\n"
-				+ "	`StartDate`				DATETIME NOT NULL,\r\n"
+				+ "	`StartDate`				DATETIME,\r\n"
 				+ "	`EndDate`				DATETIME NOT NULL,\r\n"
-				+ "	`Username`				VARCHAR(15) NOT NULL,\r\n"
+				+ "	`Username`				VARCHAR(15),\r\n"
 				+ "	`Type`					VARCHAR(30) NOT NULL,\r\n"
 				+ "	`PatientID`				INTEGER,\r\n"
 				+ "	`Notes`					VARCHAR(1000),\r\n"
@@ -162,7 +169,7 @@ public class DatabaseTables {
 				+ " FOREIGN KEY(`Type`) REFERENCES AppointmentTypes(Name)" 
 				+ ")";
 		String appointmentTreatmentTable = "CREATE TABLE `AppointmentTreatment` (\r\n"
-				+ " `StartDate`     DATETIME NOT NULL,\r\n" 
+				+ " `StartDate`     DATETIME,\r\n" 
 				+ " `Username`      VARCHAR(15) NOT NULL,\r\n"
 				+ " `TreatmentName` VARCHAR(30) NOT NULL,\r\n"
 				+ " FOREIGN KEY(`StartDate`, `Username`) References Appointments(`StartDate`, `Username`),\r\n"
@@ -176,7 +183,7 @@ public class DatabaseTables {
 		String employeesTable = "CREATE TABLE `Employees` (\r\n"
 				+ "	`FirstName`	VARCHAR(30) NOT NULL,\r\n"
 				+ "	`LastName`	VARCHAR(30) NOT NULL,\r\n"
-				+ "	`Username`	VARCHAR(15) NOT NULL,\r\n"
+				+ "	`Username`	VARCHAR(15),\r\n"
 				+ "	`Password`	VARCHAR(30) NOT NULL,\r\n"
 				+ "	`Role`		VARCHAR(30) NOT NULL,\r\n"
 				+ "	PRIMARY KEY(`Username`)\r\n" 
@@ -231,6 +238,7 @@ public class DatabaseTables {
 			stmt.executeUpdate(appointmentsTable);
 			stmt.executeUpdate(patientHealthPlanTable);
 			stmt.executeUpdate(appointmentTreatmentTable);
+			stmt.executeUpdate(paymentsTable);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -251,7 +259,7 @@ public class DatabaseTables {
 		Statement stmt = conn.createStatement();
 
 		try { // order is important for tables (reverse the creation order)
-			String sqlString = "DROP TABLE IF EXISTS AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, AppointmentTypes, Treatments";
+			String sqlString = "DROP TABLE IF EXISTS Payments, AppointmentTreatment, PatientHealthPlan, Appointments, Patients, HealthPlans, Address, Employees, AppointmentTypes, Treatments";
 			stmt.executeUpdate(sqlString);
 		} catch (SQLException e) {
 			e.printStackTrace();

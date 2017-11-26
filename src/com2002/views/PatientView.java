@@ -14,6 +14,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,11 +42,13 @@ import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 
 import com2002.interfaces.Screen;
 import com2002.models.Appointment;
+import com2002.models.DBQueries;
 import com2002.models.Doctor;
 import com2002.models.HealthPlan;
 import com2002.models.Patient;
 import com2002.models.Schedule;
 import com2002.models.Usage;
+import com2002.utils.Database;
 import com2002.views.setupwizard.PatientEditView;
 
 public class PatientView implements Screen {
@@ -418,8 +422,14 @@ public class PatientView implements Screen {
 			});
 			bottomRightSection.add(payButton);
 			LocalDateTime today = LocalDateTime.now();
-			if (today.isBefore(appointment.getStartTime().toLocalDateTime())) { // we don't pay for or see details of
-																				// future appointments
+			Connection conn = Database.getConnection();
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Payments WHERE StartDate = '"
+					+ appointment.getStartTime().toString() + "' AND Username = '"
+					+ appointment.getUsername() + "' AND PatientID = '" + appointment.getPatientID() + "'",
+					conn);
+			boolean flag = rs.next();
+			if (today.isBefore(appointment.getStartTime().toLocalDateTime()) || !flag) { // we don't pay for or see details of
+																				// future appointments or unfinished ones
 				payButton.setEnabled(false);
 				detailsButton.setEnabled(false);
 			}

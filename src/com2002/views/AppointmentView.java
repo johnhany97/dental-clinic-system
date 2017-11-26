@@ -15,6 +15,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -49,6 +51,7 @@ import com2002.models.HealthPlan;
 import com2002.models.Patient;
 import com2002.models.Schedule;
 import com2002.models.Usage;
+import com2002.utils.Database;
 
 public class AppointmentView implements Screen {
 
@@ -270,6 +273,7 @@ public class AppointmentView implements Screen {
 					if (notes != null && notes != "") {
 						appointment.setNotes(notes);
 					}
+					Connection conn = null;
 					try {
 						// Save list of treatments if any
 						if (selectedTreatments.size() > 0) {
@@ -277,12 +281,30 @@ public class AppointmentView implements Screen {
 						}
 						JOptionPane.showMessageDialog(null, "Successfully saved appointment details", "Success!",
 								JOptionPane.INFORMATION_MESSAGE);
+						// update money due if any
+						conn = Database.getConnection();
+						ResultSet rs = DBQueries.execQuery("SELECT * FROM Payments WHERE StartDate = '"
+								+ appointment.getStartTime().toString() + "' AND Username = '"
+								+ appointment.getUsername() + "' AND PatientID = '" + appointment.getPatientID() + "'",
+								conn);
+						if (rs.next()) { // we'll update what was originally due
+							DBQueries.execUpdate("UPDATE Payments SET AmountDue = '" + appointment.calculateCost()
+									+ "' WHERE (StartDate = '" + appointment.getStartTime().toString()
+									+ "' AND Username = '" + appointment.getUsername() + "' AND PatientID = '"
+									+ appointment.getPatientID() + "')");
+						} else { // insert new money due
+							DBQueries.execUpdate("INSERT INTO Payments VALUES (" + appointment.getPatientID() + ", "
+									+ appointment.calculateCost() + ", '" + appointment.getStartTime().toString()
+									+ "', '" + appointment.getUsername() + "')");
+						}
 						// Close this window
 						frame.dispose();
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 						JOptionPane.showMessageDialog(frame, "Error saving treatments", "Error",
 								JOptionPane.ERROR_MESSAGE);
+					} finally {
+						if (conn!= null) conn.close();
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -309,11 +331,20 @@ public class AppointmentView implements Screen {
 		if (this.type == DOCTOR) {
 			this.leftPanel.add(finishButton);
 		} else {
+			Connection conn = Database.getConnection();
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM Payments WHERE StartDate = '"
+					+ appointment.getStartTime().toString() + "' AND Username = '"
+					+ appointment.getUsername() + "' AND PatientID = '" + appointment.getPatientID() + "'",
+					conn);
+			boolean flag = rs.next();
 			this.leftPanel.add(payButton);
-			if (this.appointment.isPaid()) {
+			if (this.appointment.isPaid() || !flag) {
 				payButton.setEnabled(false);
-				payButton.setText("Paid");
-			}
+				if (!flag) {
+					payButton.setText("Paid");
+				}
+			} 
+			conn.close();
 		}
 		// add panels to each other
 		this.leftPanel.setMaximumSize(new Dimension(frame.getWidth() / 2, frame.getHeight()));

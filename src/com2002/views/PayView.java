@@ -153,7 +153,6 @@ public class PayView implements Screen {
 						}
 						JOptionPane.showMessageDialog(null, "Successfully done transaction", "Success!",
 								JOptionPane.INFORMATION_MESSAGE);
-						// refresh list of appointments
 						frame.dispose();
 					}
 				} catch (CommunicationsException e1) {
