@@ -200,7 +200,8 @@ public class Appointment {
 		DBQueries.execUpdate("UPDATE Appointments SET Paid = 1 WHERE StartDate = '" + this.startTime.toString()
 				+ "' AND Username = '" + this.username + "'");
 		DBQueries.execUpdate("DELETE FROM `Payments` WHERE `PatientID`='" + this.patientID + "' AND `AmountDue`='"
-				+ this.calculateCost() + "' LIMIT 1");
+				+ this.calculateCost() + "' AND StartDate = '" + this.startTime.toString() + "' AND Username ='"
+				+ this.username + "' LIMIT 1");
 		paid = true;
 	}
 

@@ -67,26 +67,30 @@ public class PaymentsDueView implements Screen {
 			ArrayList<Object[]> appointmentsList = new ArrayList<Object[]>();
 			ArrayList<Object[]> healthPlansList = new ArrayList<Object[]>();
 			for (int i = 0; i < this.paymentsList.size(); i++) {
+				System.out.println(this.paymentsList.get(i)[0]);
 				if ((int) this.paymentsList.get(i)[0] == HEALTH_PLAN) { // Add to health plan payments table
-					Object[] record = new Object[3];
-					record[0] = String.valueOf((Double) this.paymentsList.get(i)[1]);
-					record[1] = "Health Plan monthly invoice";
-					record[2] = "Pay Subscription";
-					appointmentsList.add(record);
+					Object[] record = new Object[4];
+					record[0] = this.patient.getPatientID();
+					record[1] = String.valueOf((Double) this.paymentsList.get(i)[1]);
+					record[2] = "Health Plan monthly invoice";
+					record[3] = "Pay Subscription";
+					healthPlansList.add(record);
 				} else { // Add to appointment payments table
 					// AmountDue, AppointmentStartTime, AppointmentUsername, AppointmentType, Pay
 					// Appointment
-					Object[] record = new Object[6];
-					record[0] = String.valueOf((Double) this.paymentsList.get(i)[1]);
-					record[1] = ((Appointment) this.paymentsList.get(i)[2]).getStartTime().toString();
-					record[2] = ((Appointment) this.paymentsList.get(i)[2]).getDoctor().getFirstName();
-					record[3] = ((Appointment) this.paymentsList.get(i)[2]).getUsername();
-					record[4] = ((Appointment) this.paymentsList.get(i)[2]).getAppointmentType();
-					record[5] = "Pay Appointment";
+					Object[] record = new Object[7];
+					record[0] = this.patient.getPatientID();
+					record[1] = String.valueOf((Double) this.paymentsList.get(i)[1]);
+					record[2] = ((Appointment) this.paymentsList.get(i)[2]).getStartTime().toString();
+					record[3] = ((Appointment) this.paymentsList.get(i)[2]).getDoctor().getFirstName();
+					record[4] = ((Appointment) this.paymentsList.get(i)[2]).getUsername();
+					record[5] = ((Appointment) this.paymentsList.get(i)[2]).getAppointmentType();
+					record[6] = "Pay Appointment";
+					appointmentsList.add(record);
 				}
 			}
 			// First table
-			Object[][] convertedAppointments = convertList(appointmentsList);
+			Object[][] convertedAppointments = convertList(appointmentsList, APPOINTMENT);
 			String[] columnTitlesAppointments = { "Amount Due", "Start time", "Doctor Name", "Doctor Username",
 					"Appointment Type", "Actions" };
 			// initialize table and add to the views
@@ -95,7 +99,7 @@ public class PaymentsDueView implements Screen {
 				@Override
 				public boolean isCellEditable(int row, int col) {
 					// only the last column
-					return col == 5;
+					return col == 6;
 				}
 			};
 			this.appointmentPaymentsTable = new JTable(this.appointmentPaymentsTableModel);
@@ -105,13 +109,13 @@ public class PaymentsDueView implements Screen {
 			JScrollPane appointmentsTableScrollPane = new JScrollPane(this.appointmentPaymentsTable);
 			this.appointmentPaymentsTable.setFillsViewportHeight(true);
 			// Second table
-			Object[][] convertedHealthPlans = convertList(healthPlansList);
+			Object[][] convertedHealthPlans = convertList(healthPlansList, HEALTH_PLAN);
 			String[] columnTitlesHealthPlans = { "Amount Due", "Description", "Actions" };
 			// initialize table and add to the view
 			this.healthPlanPaymentsTableModel = new DefaultTableModel(convertedHealthPlans, columnTitlesHealthPlans) {
 				@Override
 				public boolean isCellEditable(int row, int col) {
-					return col == 2;
+					return col == 3;
 				}
 			};
 			this.healthPlanPaymentsTable = new JTable(this.healthPlanPaymentsTableModel);
@@ -133,13 +137,26 @@ public class PaymentsDueView implements Screen {
 		}
 	}
 
-	private Object[][] convertList(ArrayList<Object[]> healthPlansList) {
-		int rows = healthPlansList.size();
+	private Object[][] convertList(ArrayList<Object[]> oldList, int type) {
+		int rows = oldList.size();
 		Object[][] newArr = new Object[rows][];
 		for (int i = 0; i < rows; i++) {
-			newArr[i] = healthPlansList.get(i);
-			System.out.println(newArr[i][0]);
-			System.out.println(newArr[i][1]);
+			if (type == HEALTH_PLAN) {
+				newArr[i] = new Object[3];
+				newArr[i][0] = oldList.get(i)[0];
+				newArr[i][1] = oldList.get(i)[1];
+				newArr[i][2] = oldList.get(i)[2];
+				newArr[i][3] = oldList.get(i)[3];
+			} else {
+				newArr[i] = new Object[6];
+				newArr[i][0] = oldList.get(i)[0];
+				newArr[i][1] = oldList.get(i)[1];
+				newArr[i][2] = oldList.get(i)[2];
+				newArr[i][3] = oldList.get(i)[3];
+				newArr[i][4] = oldList.get(i)[4];
+				newArr[i][5] = oldList.get(i)[5];
+				newArr[i][6] = oldList.get(i)[6];
+			}
 		}
 		return newArr;
 	}
@@ -167,11 +184,12 @@ public class PaymentsDueView implements Screen {
 				// Appointment
 				if (rs.getString("StartDate") != null || rs.getString("StartDate") != "") {
 					row[0] = PaymentsDueView.HEALTH_PLAN;
-					row[2] = new Appointment(rs.getTimestamp("StartDate"), rs.getString("Username"));
+					row[2] = new HealthPlan(rs.getString("PatientID"));
 				} else {
 					row[0] = PaymentsDueView.APPOINTMENT;
-					row[2] = new HealthPlan(rs.getString("PatientID"));
+					row[2] = new Appointment(rs.getTimestamp("StartDate"), rs.getString("Username"));
 				}
+				list.add(row);
 			}
 		} finally {
 			conn.close();

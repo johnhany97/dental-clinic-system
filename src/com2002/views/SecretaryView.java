@@ -677,9 +677,7 @@ public class SecretaryView implements Screen {
 		this.rightScreen = new JPanel();
 		this.rightScreen.setLayout(new BorderLayout());
 		this.rightTabbedPane = new JTabbedPane();
-		this.rightTabbedPane
-				.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.BLACK),
-						BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+		this.rightTabbedPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		this.rightScreen.add(rightTabbedPane, BorderLayout.CENTER);
 		this.rightTabbedPane.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
 		// Register tab
@@ -2125,6 +2123,33 @@ class ButtonEditor extends DefaultCellEditor {
 					DisplayFrame patientViewFrame = new DisplayFrame();
 					PatientView patientView = new PatientView(patientViewFrame, patient, AppointmentView.SECRETARY);
 					patientViewFrame.setDisplayedPanel(patientView.getPanel());
+				} catch (CommunicationsException e) {
+					JOptionPane.showMessageDialog(this.frame, "Not connected to internet", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(this.frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} else if (label.equals("Pay Subscription")) {
+				try {
+					String patientId = (String) this.table.getValueAt(this.row, 0);
+					String amountDue = (String) this.table.getValueAt(this.row, 1);
+					DBQueries.execUpdate(
+							"DELETE FROM `Payments` WHERE (`PatientID`='" + patientId + "' AND `AmountDue`='"
+									+ amountDue + "' AND `StartDate` IS NULL AND `Username` IS NULL) LIMIT 1");
+					JOptionPane.showMessageDialog(null, "Successfully paid health plan subscription", "Success!",
+							JOptionPane.INFORMATION_MESSAGE);
+				} catch (CommunicationsException e) {
+					JOptionPane.showMessageDialog(this.frame, "Not connected to internet", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(this.frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} else if (label.equals("Pay Appointment")) {
+				try {
+					String tsString = (String) this.table.getValueAt(this.row, 2);
+					String username = (String) this.table.getValueAt(this.row, 3);
+					PayView pv = new PayView(frame, new Appointment(Timestamp.valueOf(tsString), username));
+					frame.setDisplayedPanel(pv.getPanel());
 				} catch (CommunicationsException e) {
 					JOptionPane.showMessageDialog(this.frame, "Not connected to internet", "Error",
 							JOptionPane.ERROR_MESSAGE);
