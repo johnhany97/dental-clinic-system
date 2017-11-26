@@ -33,8 +33,10 @@ import com2002.utils.Database;
 
 public class PaymentsDueView implements Screen {
 
+	/** Constant to define health plan transaction **/
 	final static public int HEALTH_PLAN = 0;
 
+	/** Constant to define appointment transaction **/
 	final static public int APPOINTMENT = 1;
 
 	// instance variables
@@ -47,12 +49,23 @@ public class PaymentsDueView implements Screen {
 	private DefaultTableModel healthPlanPaymentsTableModel;
 	private JTable healthPlanPaymentsTable;
 
+	/**
+	 * Constructor used to instantiate instance of this view
+	 * 
+	 * @param frame
+	 *            DisplayFrame in which it is to be shown
+	 * @param patient
+	 *            Patient who is paying or seeing payments due
+	 */
 	public PaymentsDueView(DisplayFrame frame, Patient patient) {
 		this.frame = frame;
 		this.patient = patient;
 		initialize();
 	}
 
+	/**
+	 * Function used to initialize components and add action listeners
+	 */
 	@SuppressWarnings("serial")
 	private void initialize() {
 		this.screen = new JPanel();
@@ -136,6 +149,16 @@ public class PaymentsDueView implements Screen {
 		}
 	}
 
+	/**
+	 * Function given an array list and type of list converts to a JTable usable
+	 * array
+	 * 
+	 * @param oldList
+	 *            ArrayList to be converted
+	 * @param type
+	 *            Type of list (Appointments or health plans)
+	 * @return 2D object array with all details
+	 */
 	private Object[][] convertList(ArrayList<Object[]> oldList, int type) {
 		int rows = oldList.size();
 		Object[][] newArr = new Object[rows][];
