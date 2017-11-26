@@ -39,12 +39,12 @@ import com2002.views.DisplayFrame;
 public class AppointmentTypesScreen implements Screen {
 
 	/** Constant representing all of the input labels and the title **/
-	final private static String[] LABELS = {"Appointment Types' Prices", "Checkup", "Cleaning", "Remedial", "Empty"};
+	final private static String[] LABELS = { "Appointment Types' Prices", "Checkup", "Cleaning", "Remedial", "Empty" };
 
 	/** Constant representing the button's label **/
 	final private static String NEXT_BUTTON_LABEL = "Next";
 
-	//Instance variables
+	// Instance variables
 	private JPanel screen;
 	private List<JLabel> labels;
 	private JButton nextButton;
@@ -56,7 +56,9 @@ public class AppointmentTypesScreen implements Screen {
 	 * Constructor
 	 * 
 	 * Used to create an instance of this class
-	 * @param frame the frame in which this panel will be shown
+	 * 
+	 * @param frame
+	 *            the frame in which this panel will be shown
 	 */
 	public AppointmentTypesScreen(DisplayFrame frame) {
 		this.frame = frame;
@@ -69,52 +71,49 @@ public class AppointmentTypesScreen implements Screen {
 	private void initializeAppointmentTypes() {
 		this.screen = new JPanel();
 		this.screen.setLayout(new BorderLayout());
-		//Title
+		// Title
 		this.labels = new ArrayList<JLabel>();
 		this.labels.add(new JLabel(LABELS[0], SwingConstants.CENTER));
-		this.labels.get(0).setFont(new Font("Sans Serif", Font.PLAIN,
-				DisplayFrame.FONT_SIZE));
+		this.labels.get(0).setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE));
 		this.screen.add(this.labels.get(0), BorderLayout.NORTH);
-		//Add the 4 labels with their price fields
+		// Add the 4 labels with their price fields
 		this.panels = new ArrayList<JPanel>();
 		this.panels.add(new JPanel());
 		this.panels.get(0).setLayout(new BoxLayout(this.panels.get(0), BoxLayout.PAGE_AXIS));
 		this.fields = new ArrayList<JTextField>();
-		NumberFormat numFormat = new DecimalFormat("#0.0"); //Format of data in price textfield
-		NumberFormatter  numFormatter  = new NumberFormatter(numFormat);
+		NumberFormat numFormat = new DecimalFormat("#0.0"); // Format of data in price textfield
+		NumberFormatter numFormatter = new NumberFormatter(numFormat);
 		for (int i = 1; i < LABELS.length; i++) {
-			//Create a panel
+			// Create a panel
 			this.panels.add(new JPanel());
 			int index = this.panels.size() - 1;
 			this.panels.get(index).setLayout(new FlowLayout());
-			//Create label
+			// Create label
 			this.labels.add(new JLabel(LABELS[i], SwingConstants.CENTER));
 			int labelIndex = this.labels.size() - 1;
-			this.labels.get(labelIndex).setFont(new Font("Sans Serif", Font.PLAIN,
-					DisplayFrame.FONT_SIZE / 2));
-			//Create textfield
+			this.labels.get(labelIndex).setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 2));
+			// Create textfield
 			this.fields.add(new JFormattedTextField(numFormatter));
-			int fieldIndex = this.fields.size() - 1; //it's index;
-			this.fields.get(fieldIndex).setColumns(20); //size (width)
-			//add label and textfield to panel'
+			int fieldIndex = this.fields.size() - 1; // it's index;
+			this.fields.get(fieldIndex).setColumns(20); // size (width)
+			// add label and textfield to panel'
 			this.panels.get(index).add(this.labels.get(labelIndex));
 			this.panels.get(index).add(this.fields.get(fieldIndex));
-			//add panel to bigger panel
+			// add panel to bigger panel
 			this.panels.get(0).add(this.panels.get(index));
 		}
 		this.screen.add(this.panels.get(0), BorderLayout.CENTER);
-		//Next button
-	    this.nextButton = new JButton(NEXT_BUTTON_LABEL);
-	    this.screen.add(this.nextButton, BorderLayout.SOUTH);
-	    this.nextButton.setFont(new Font("Sans Serif", Font.PLAIN,
-	            DisplayFrame.FONT_SIZE));
-	    this.nextButton.addActionListener(new ActionListener() {
-	    	@Override
-	    	public void actionPerformed(ActionEvent arg0) {
-	    		//Save data
-	    		Connection conn = null;
-	    		try {
-		    		conn = Database.getConnection();
+		// Next button
+		this.nextButton = new JButton(NEXT_BUTTON_LABEL);
+		this.screen.add(this.nextButton, BorderLayout.SOUTH);
+		this.nextButton.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE));
+		this.nextButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// Save data
+				Connection conn = null;
+				try {
+					conn = Database.getConnection();
 					Statement stmt = conn.createStatement();
 					for (int i = 1; i < LABELS.length; i++) {
 						String name = LABELS[i];
@@ -122,29 +121,26 @@ public class AppointmentTypesScreen implements Screen {
 						String sqlQuery = "INSERT INTO AppointmentTypes VALUES ('" + name + "', '" + price + "')";
 						stmt.executeUpdate(sqlQuery);
 					}
-		    		//Next screen
-		    		HealthPlansScreen healthPlansScreen = new HealthPlansScreen(frame);
-			    	frame.setDisplayedPanel(healthPlansScreen.getPanel());
-			    	frame.repaint();
-	    		} catch (CommunicationsException e) {
-	    			JOptionPane.showMessageDialog(frame,
-	    				    "Not connected to internet",
-	    				    "Error",
-	    				    JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(frame,
-							e.getMessage(),
-							"Error",
+					// Next screen
+					HealthPlansScreen healthPlansScreen = new HealthPlansScreen(frame);
+					frame.setDisplayedPanel(healthPlansScreen.getPanel());
+					frame.repaint();
+				} catch (CommunicationsException e) {
+					JOptionPane.showMessageDialog(frame, "Not connected to internet", "Error",
 							JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				} finally {
-					if (conn != null) Database.closeDb(conn);
+					if (conn != null)
+						Database.closeDb(conn);
 				}
-	    	}
-	    });
+			}
+		});
 	}
 
 	/**
 	 * Function used to return this screen's JPanel
+	 * 
 	 * @return JPanel this class's panel
 	 */
 	public JPanel getPanel() {

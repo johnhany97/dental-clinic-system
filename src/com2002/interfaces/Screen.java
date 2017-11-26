@@ -11,8 +11,9 @@ import javax.swing.JPanel;
 public interface Screen {
 
 	/**
-	 * Function that should return the class' panel 
-	 * @return
+	 * Function that should return the class' panel
+	 * 
+	 * @return JPanel representing panel of the view
 	 */
 	public JPanel getPanel();
 }

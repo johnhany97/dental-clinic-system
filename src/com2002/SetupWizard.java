@@ -12,16 +12,18 @@ import com2002.views.DisplayFrame;
 import com2002.views.setupwizard.WelcomeScreen;
 
 public class SetupWizard {
-	
-	//Instance variables
+
+	// Instance variables
 	WelcomeScreen welcomeScreen;
 	DisplayFrame frame;
-	
+
 	/**
 	 * Constructor
 	 * 
 	 * Creates a new instance of the setup wizard
-	 * @param frame frame in which wizard is to be shown
+	 * 
+	 * @param frame
+	 *            frame in which wizard is to be shown
 	 */
 	public SetupWizard(DisplayFrame frame) {
 		this.frame = frame;
@@ -30,6 +32,7 @@ public class SetupWizard {
 
 	/**
 	 * Function to return the first screen's JPanel
+	 * 
 	 * @return
 	 */
 	public JPanel initialPanel() {

@@ -20,44 +20,56 @@ public class Usage {
 	private int hygieneUsed;
 	private int repairUsed;
 	private LocalDate dateJoined;
-	
+
 	/**
 	 * This constructor should be called when finding a treatment plan of a patient
-	 * @param patientID ID of the patient to be checked 
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @param patientID
+	 *            ID of the patient to be checked
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
 	public Usage(int patientID) throws CommunicationsException, SQLException {
 		Connection conn = Database.getConnection();
 		try {
-			ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan WHERE PatientID = '" 
-					+ patientID + "'", conn);
+			ResultSet rs = DBQueries.execQuery("SELECT * FROM PatientHealthPlan WHERE PatientID = '" + patientID + "'",
+					conn);
 			this.patientID = patientID;
-			if(rs.next()) {
+			if (rs.next()) {
 				this.patientID = rs.getInt("PatientID");
 				this.healthPlan = new HealthPlan(rs.getString("HealthPlanName"));
 				this.checkUpUsed = rs.getInt("CheckUpUsed");
 				this.hygieneUsed = rs.getInt("HygieneUsed");
 				this.repairUsed = rs.getInt("RepairUsed");
-				this.dateJoined = rs.getDate("DateJoined").toLocalDate();	
-			}	
+				this.dateJoined = rs.getDate("DateJoined").toLocalDate();
+			}
 		} finally {
 			conn.close();
 		}
 	}
-	
-	
+
 	/**
-	 * This constructor should be called when subscribing a health plan to a patients
-	 * @param patientID patient ID to subscribe the health plan to them
-	 * @param healthPlanName Health plan name of the patient to subscribe to them
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws MySQLIntegrityConstraintViolationException if patient id already exists
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * This constructor should be called when subscribing a health plan to a
+	 * patients
+	 * 
+	 * @param patientID
+	 *            patient ID to subscribe the health plan to them
+	 * @param healthPlanName
+	 *            Health plan name of the patient to subscribe to them
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws MySQLIntegrityConstraintViolationException
+	 *             if patient id already exists
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
-    public Usage(int patientID, String healthPlanName) throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException{
-		if(!Usage.hasPatientID(patientID)){
-			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName + "', 0, 0, 0, '" + LocalDate.now() + "')");
+	public Usage(int patientID, String healthPlanName)
+			throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+		if (!Usage.hasPatientID(patientID)) {
+			DBQueries.execUpdate("INSERT INTO PatientHealthPlan Values('" + patientID + "', '" + healthPlanName
+					+ "', 0, 0, 0, '" + LocalDate.now() + "')");
 			this.patientID = patientID;
 			this.healthPlan = new HealthPlan(healthPlanName);
 			this.checkUpUsed = 0;
@@ -66,23 +78,29 @@ public class Usage {
 			this.dateJoined = LocalDate.now();
 			this.healthPlan = new HealthPlan(healthPlanName);
 		} else {
-			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " already has a heath plan.");
+			throw new MySQLIntegrityConstraintViolationException(
+					"A patient with patient id " + patientID + " already has a heath plan.");
 		}
 	}
-	
+
 	/**
 	 * Checks whether PatientHealthPlan table contains a specified patientID.
-	 * @param patientID checks if the patient you supply has a health plan
+	 * 
+	 * @param patientID
+	 *            checks if the patient you supply has a health plan
 	 * @return True if a HealthPlan already exists.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
 	public static boolean hasPatientID(int patientID) throws CommunicationsException, SQLException {
 		Connection conn = Database.getConnection();
 		try {
 			int foundID = -1;
-			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE PatientID = " + patientID, conn);
-			if(rs.next()) {
+			ResultSet rs = DBQueries.execQuery("SELECT PatientID FROM PatientHealthPlan WHERE PatientID = " + patientID,
+					conn);
+			if (rs.next()) {
 				foundID = rs.getInt("PatientID");
 			}
 			return foundID == patientID;
@@ -90,166 +108,205 @@ public class Usage {
 			conn.close();
 		}
 	}
-	
+
 	/**
 	 * Returns a patientID of a particular patient.
+	 * 
 	 * @return patientID of a patient.
 	 */
-	public int getPatientID(){
+	public int getPatientID() {
 		return this.patientID;
 	}
-	
+
 	/**
 	 * Returns a Date which when the patient subscribed .
+	 * 
 	 * @return dateJoined The date of birth of a patient.
 	 */
 	public LocalDate getDateJoined() {
 		return dateJoined;
 	}
-	
+
 	/**
 	 * Updates the date joined of a patient health plan.
-	 * @param dateJoined The new date joined of a patients health plan.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @param dateJoined
+	 *            The new date joined of a patients health plan.
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
 	public void setDateJoined(LocalDate dateJoined) throws CommunicationsException, SQLException {
 		DBQueries.execUpdate("UPDATE PatientHealthPlan SET DateJoined = '" + dateJoined.toString() + "'"
-			+ " WHERE patientID = " + this.patientID);
+				+ " WHERE patientID = " + this.patientID);
 		this.dateJoined = dateJoined;
 	}
-	
+
 	/**
 	 * Returns a Number of appointments of checked up used of a patients HealthPlan.
+	 * 
 	 * @return checkUpUsed The number of check up appointments of a health plan.
 	 */
 	public int getCheckUpUsed() {
 		return checkUpUsed;
 	}
-	
+
 	/**
 	 * Updates the checkUpUsed of a HealthPlan to a given value.
-	 * @param checkUpUsed The new check up used of a health plan.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @param checkUpUsed
+	 *            The new check up used of a health plan.
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
 	public void setCheckUpUsed(int checkUpUsed) throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed
-			+ " WHERE patientID = " + this.patientID);
+		DBQueries.execUpdate(
+				"UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed + " WHERE patientID = " + this.patientID);
 		this.checkUpUsed = checkUpUsed;
 	}
 
 	/**
 	 * Returns a number of appointments of hygiene used of a patients HealthPlan.
+	 * 
 	 * @return hygieneUsed The number of hygiene appointments of a HealthPlan.
 	 */
 	public int getHygieneUsed() {
 		return hygieneUsed;
 	}
-	
+
 	/**
 	 * Updates the hygiene used of a HealthPlan to a given value.
-	 * @param hygieneUsed The new number of hygiene appointments of a health plan.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @param hygieneUsed
+	 *            The new number of hygiene appointments of a health plan.
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
 	public void setHygieneUsed(int hygieneUsed) throws CommunicationsException, SQLException {
-		DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed
-			+ " WHERE patientID = " + this.patientID);
+		DBQueries.execUpdate(
+				"UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed + " WHERE patientID = " + this.patientID);
 		this.hygieneUsed = hygieneUsed;
 	}
-	
+
 	/**
 	 * Returns a number of appointments of repair used of a patients HealthPlan.
+	 * 
 	 * @return hygieneUsed The number of repair appointments of a health plan.
 	 */
 	public int getRepairUsed() {
 		return repairUsed;
 	}
-	
+
 	/**
 	 * Updates the repair used of a health plan to a given value.
-	 * @param repairUsed The new number of repair appointments of a HealthPlan.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @param repairUsed
+	 *            The new number of repair appointments of a HealthPlan.
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
-	public void setRepairUsed(int repairUsed) throws CommunicationsException, SQLException{
-		DBQueries.execUpdate("UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed
-			+ " WHERE patientID = " + this.patientID);
+	public void setRepairUsed(int repairUsed) throws CommunicationsException, SQLException {
+		DBQueries.execUpdate(
+				"UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed + " WHERE patientID = " + this.patientID);
 		this.repairUsed = repairUsed;
 	}
-	
+
 	/**
 	 * Returns a HealthPlan.
+	 * 
 	 * @return healthPlan The health plan.
 	 */
 	public HealthPlan getHealthPlan() {
 		return healthPlan;
 	}
-	
+
 	/**
 	 * Increments the check up used of a HealthPlan by 1.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
-	public void incrementCheckUp() throws CommunicationsException, SQLException{
+	public void incrementCheckUp() throws CommunicationsException, SQLException {
 		if (this.checkUpUsed < this.healthPlan.getCheckUpLevel()) {
-			checkUpUsed =+ 1;
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed
-					+ " WHERE patientID = " + this.patientID);
+			checkUpUsed = +1;
+			DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = " + checkUpUsed + " WHERE patientID = "
+					+ this.patientID);
 		}
 	}
-	
+
 	/**
 	 * Increments the hygiene used of a HealthPlan by 1.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
-	public void incrementHygiene() throws CommunicationsException, SQLException{
+	public void incrementHygiene() throws CommunicationsException, SQLException {
 		if (this.hygieneUsed < this.healthPlan.getHygieneLevel()) {
-			hygieneUsed =+ 1;
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed
-				+ " WHERE patientID = " + this.patientID);
-		}	
+			hygieneUsed = +1;
+			DBQueries.execUpdate("UPDATE PatientHealthPlan SET HygieneUsed = " + hygieneUsed + " WHERE patientID = "
+					+ this.patientID);
+		}
 	}
 
 	/**
 	 * Increments the repair used of a HealthPlan by 1.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
-	public void incrementRepair() throws CommunicationsException, SQLException{
+	public void incrementRepair() throws CommunicationsException, SQLException {
 		if (this.repairUsed < this.healthPlan.getRepairLevel()) {
-			repairUsed =+ 1;
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed
-				+ " WHERE patientID = " + this.patientID);
+			repairUsed = +1;
+			DBQueries.execUpdate(
+					"UPDATE PatientHealthPlan SET RepairUsed = " + repairUsed + " WHERE patientID = " + this.patientID);
 		}
 	}
 
 	/**
 	 * Rests the HealthPlan if a year has passed from when they joined.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
-	public void resetHealthPlan() throws CommunicationsException, SQLException{
+	public void resetHealthPlan() throws CommunicationsException, SQLException {
 		LocalDate lastYear = LocalDate.now().plusYears(-1);
-		if(lastYear.isAfter(dateJoined)){
+		if (lastYear.isAfter(dateJoined)) {
 			this.dateJoined = dateJoined.plusYears(1);
 			this.checkUpUsed = 0;
 			this.hygieneUsed = 0;
 			this.repairUsed = 0;
-			DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = '" + this.checkUpUsed 
-				+ "', HygieneUsed = '" + this.hygieneUsed + "', RepairUsed = '" + this.repairUsed +"', DateJoined = '" + this.dateJoined + "'   WHERE PatientID = '" + this.patientID + "'");
+			DBQueries.execUpdate("UPDATE PatientHealthPlan SET CheckUpUsed = '" + this.checkUpUsed
+					+ "', HygieneUsed = '" + this.hygieneUsed + "', RepairUsed = '" + this.repairUsed
+					+ "', DateJoined = '" + this.dateJoined + "'   WHERE PatientID = '" + this.patientID + "'");
 		}
 	}
-	
+
 	/**
 	 * Rests the HealthPlan if a year has passed from when they joined.
-	 * @throws CommunicationsException when an error occurs whilst attempting connection
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	 * 
+	 * @throws CommunicationsException
+	 *             when an error occurs whilst attempting connection
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
-    public void unsubscribePatient() throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
-		if(Usage.hasPatientID(patientID)){
+	public void unsubscribePatient()
+			throws CommunicationsException, MySQLIntegrityConstraintViolationException, SQLException {
+		if (Usage.hasPatientID(patientID)) {
 			this.healthPlan = null;
 			this.dateJoined = null;
 			this.checkUpUsed = 0;
@@ -257,17 +314,20 @@ public class Usage {
 			this.repairUsed = 0;
 			DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID = " + patientID);
 		} else {
-			throw new MySQLIntegrityConstraintViolationException("A patient with patient id " + patientID + " is not subsrcribed anyway.");
+			throw new MySQLIntegrityConstraintViolationException(
+					"A patient with patient id " + patientID + " is not subsrcribed anyway.");
 		}
-    }
-	
-    /**
-	 * Delete the usage of a patient 
-	 * @param patientID to distinguish the patient to be deleted
-	 * @throws SQLException for any other error, could be incorrect parameters.
+	}
+
+	/**
+	 * Delete the usage of a patient
+	 * 
+	 * @param patientID
+	 *            to distinguish the patient to be deleted
+	 * @throws SQLException
+	 *             for any other error, could be incorrect parameters.
 	 */
 	public void deleteUsage(int patientID) throws SQLException {
-		DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID LIKE '%" + patientID + "%'"); 
-    }
+		DBQueries.execUpdate("DELETE FROM PatientHealthPlan WHERE PatientID LIKE '%" + patientID + "%'");
+	}
 }
-

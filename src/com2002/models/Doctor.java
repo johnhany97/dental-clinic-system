@@ -10,7 +10,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 import com2002.utils.Database;
 
 public class Doctor extends Staff {
-	
+
 	public Doctor(String username) throws SQLException {
 		super(username);
 	}
@@ -18,8 +18,9 @@ public class Doctor extends Staff {
 	public Doctor(String username, String password) throws SQLException {
 		super(username, password);
 	}
-	
-	public Doctor(String firstName, String lastName, String username, String password, Role role) throws MySQLIntegrityConstraintViolationException, SQLException {
+
+	public Doctor(String firstName, String lastName, String username, String password, Role role)
+			throws MySQLIntegrityConstraintViolationException, SQLException {
 		super(firstName, lastName, username, password, role);
 	}
 
@@ -35,7 +36,8 @@ public class Doctor extends Staff {
 				}
 			}
 		} finally {
-			if (conn != null) conn.close();
+			if (conn != null)
+				conn.close();
 		}
 		return list;
 	}
