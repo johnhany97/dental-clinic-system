@@ -264,7 +264,9 @@ public class DoctorView implements Screen {
 			leftSection.add(startT);
 			JLabel startD = new JLabel(startDayString, SwingConstants.CENTER);
 			startD.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 3));
-			leftSection.add(startD);
+			if (appointmentType.equals("Empty")) {
+				leftSection.add(startD);
+			}
 			JLabel end = new JLabel("End", SwingConstants.CENTER);
 			end.setFont(new Font("Sans Serif", Font.BOLD, DisplayFrame.FONT_SIZE / 3));
 			leftSection.add(end);

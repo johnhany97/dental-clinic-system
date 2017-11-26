@@ -9,7 +9,6 @@ package com2002.views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -1818,7 +1817,9 @@ public class SecretaryView implements Screen {
 			leftSection.add(startT);
 			JLabel startD = new JLabel(startDayString, SwingConstants.CENTER);
 			startD.setFont(new Font("Sans Serif", Font.PLAIN, DisplayFrame.FONT_SIZE / 3));
-			leftSection.add(startD);
+			if (appointmentType.equals("Empty")) {
+				leftSection.add(startD);
+			}
 			JLabel end = new JLabel("End", SwingConstants.CENTER);
 			end.setFont(new Font("Sans Serif", Font.BOLD, DisplayFrame.FONT_SIZE / 3));
 			leftSection.add(end);
