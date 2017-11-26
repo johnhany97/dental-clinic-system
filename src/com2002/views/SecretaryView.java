@@ -29,6 +29,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -251,6 +253,13 @@ public class SecretaryView implements Screen {
 								dentistAppointmentsList = Schedule.getAppointmentsByDocAndNameAndDate(
 										new Doctor(docUsername), partialPatientFirstName, partialPatientLastName,
 										new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
+								// sort them
+								Collections.sort(dentistAppointmentsList, new Comparator<Appointment>() {
+									@Override
+									public int compare(Appointment o1, Appointment o2) {
+										return o1.getStartTime().compareTo(o2.getStartTime());
+									}
+								});
 								// set time of calendar to obtain day name and day number
 								Calendar calendar = Calendar.getInstance();
 								calendar.setTime(new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
@@ -327,6 +336,13 @@ public class SecretaryView implements Screen {
 				Doctor doc = new Doctor(dentistName);
 				this.dentistAppointmentsList = Schedule.getAppointmentsByDoctorAndDay(doc,
 						new Date(dateGiven.getTime() + ((1000 * 60 * 60 * 24) * i)));
+				// sort them
+				Collections.sort(dentistAppointmentsList, new Comparator<Appointment>() {
+					@Override
+					public int compare(Appointment o1, Appointment o2) {
+						return o1.getStartTime().compareTo(o2.getStartTime());
+					}
+				});
 				// set time of calendar to obtain day name and day number
 				calendar.setTime(new Date(dateGiven.getTime() + ((1000 * 60 * 60 * 24) * i)));
 				// title of each day's column
@@ -439,6 +455,13 @@ public class SecretaryView implements Screen {
 								hygienistAppointmentsList = Schedule.getAppointmentsByDocAndNameAndDate(
 										new Doctor(docUsername), partialPatientFirstName, partialPatientLastName,
 										new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
+								// sort them
+								Collections.sort(hygienistAppointmentsList, new Comparator<Appointment>() {
+									@Override
+									public int compare(Appointment o1, Appointment o2) {
+										return o1.getStartTime().compareTo(o2.getStartTime());
+									}
+								});
 								// set time of calendar to obtain day name and day number
 								Calendar calendar = Calendar.getInstance();
 								calendar.setTime(new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
@@ -515,6 +538,13 @@ public class SecretaryView implements Screen {
 				// initialize appointments list
 				this.hygienistAppointmentsList = Schedule.getAppointmentsByDoctorAndDay(doc,
 						new Date(dateGiven.getTime() + ((1000 * 60 * 60 * 24) * i)));
+				// sort them
+				Collections.sort(hygienistAppointmentsList, new Comparator<Appointment>() {
+					@Override
+					public int compare(Appointment o1, Appointment o2) {
+						return o1.getStartTime().compareTo(o2.getStartTime());
+					}
+				});
 				// set time of calendar to obtain day name and day number
 				calendar.setTime(new Date(dateGiven.getTime() + ((1000 * 60 * 60 * 24) * i)));
 				// title of each day's column
@@ -1593,6 +1623,13 @@ public class SecretaryView implements Screen {
 				// initialize appointments list
 				hygienistAppointmentsList = Schedule.getAppointmentsByDoctorAndDay(doc,
 						new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
+				// sort them
+				Collections.sort(hygienistAppointmentsList, new Comparator<Appointment>() {
+					@Override
+					public int compare(Appointment o1, Appointment o2) {
+						return o1.getStartTime().compareTo(o2.getStartTime());
+					}
+				});
 				// set time of calendar to obtain day name and day number
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
@@ -1650,6 +1687,13 @@ public class SecretaryView implements Screen {
 				// initialize appointments list
 				dentistAppointmentsList = Schedule.getAppointmentsByDoctorAndDay(doc,
 						new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));
+				// sort them
+				Collections.sort(dentistAppointmentsList, new Comparator<Appointment>() {
+					@Override
+					public int compare(Appointment o1, Appointment o2) {
+						return o1.getStartTime().compareTo(o2.getStartTime());
+					}
+				});
 				// set time of calendar to obtain day name and day number
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(new Date(selectedDate.getTime() + ((1000 * 60 * 60 * 24) * i)));

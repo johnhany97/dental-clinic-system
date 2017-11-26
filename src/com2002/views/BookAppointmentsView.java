@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -261,49 +263,69 @@ public class BookAppointmentsView implements Screen {
 						totalAppointmentsNum = Integer.valueOf(totalAppointments.getText());
 					}
 					try {
-						// attempt booking
-						ArrayList<Doctor> listOfDoctors = Doctor.getAll();
-						for (int i = 0; i < listOfDoctors.size(); i++) {
-							String titleOfDoc = "Dr. " + listOfDoctors.get(i).getFirstName() + " "
-									+ listOfDoctors.get(i).getLastName();
-							if (titleOfDoc.equals(docName)) {
-								docUsername = listOfDoctors.get(i).getUsername();
+						Calendar newCal = Calendar.getInstance();
+						Calendar stTime = startTime.getCalendarWithTime(newCal);
+						Date t1 = new SimpleDateFormat("HH:mm:ss").parse("09:00:00");
+						Calendar startOfWork = Calendar.getInstance();
+						startOfWork.setTime(t1);
+						Calendar newCal2 = Calendar.getInstance();
+						Calendar edTime = endTime.getCalendarWithTime(newCal2);
+						Date t2;
+						t2 = new SimpleDateFormat("HH:mm:ss").parse("17:00:00");
+						Calendar endOfWork = Calendar.getInstance();
+						endOfWork.setTime(t2);
+						if (!(stTime.before(startOfWork) || stTime.after(endOfWork) || edTime.before(startOfWork)
+								|| edTime.after(endOfWork))) {
+							try {
+								// attempt booking
+								ArrayList<Doctor> listOfDoctors = Doctor.getAll();
+								for (int i = 0; i < listOfDoctors.size(); i++) {
+									String titleOfDoc = "Dr. " + listOfDoctors.get(i).getFirstName() + " "
+											+ listOfDoctors.get(i).getLastName();
+									if (titleOfDoc.equals(docName)) {
+										docUsername = listOfDoctors.get(i).getUsername();
+									}
+								}
+								LocalDate localDate = selectedStartDay.toInstant().atZone(ZoneId.systemDefault())
+										.toLocalDate();
+								String year = String.valueOf(localDate.getYear());
+								String month = String.valueOf(localDate.getMonthValue());
+								String day = String.valueOf(localDate.getDayOfMonth());
+								Timestamp ts1 = Timestamp
+										.valueOf(year + "-" + month + "-" + day + " " + timeStartString);
+								localDate = selectedEndDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+								year = String.valueOf(localDate.getYear());
+								month = String.valueOf(localDate.getMonthValue());
+								day = String.valueOf(localDate.getDayOfMonth());
+								Timestamp ts2 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeEndString);
+								switch (typeName) {
+								case "Checkup":
+									new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
+											AppointmentType.CHECKUP, totalAppointmentsNum, currentAppointmentNum);
+									break;
+								case "Remedial":
+									new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
+											AppointmentType.REMEDIAL, totalAppointmentsNum, currentAppointmentNum);
+									break;
+								case "Cleaning":
+									new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "",
+											AppointmentType.CLEANING, totalAppointmentsNum, currentAppointmentNum);
+									break;
+								}
+								// refresh parent frame
+								JOptionPane.showMessageDialog(null, "Successfully added appointment", "Success!",
+										JOptionPane.INFORMATION_MESSAGE);
+								frame.dispose();
+							} catch (CommunicationsException e) {
+								JOptionPane.showMessageDialog(frame, e.getMessage(), "Error connecting to internet",
+										JOptionPane.ERROR_MESSAGE);
+							} catch (SQLException e) {
+								JOptionPane.showMessageDialog(frame, e.getMessage(), "Error fetching data from db",
+										JOptionPane.ERROR_MESSAGE);
 							}
 						}
-						LocalDate localDate = selectedStartDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-						String year = String.valueOf(localDate.getYear());
-						String month = String.valueOf(localDate.getMonthValue());
-						String day = String.valueOf(localDate.getDayOfMonth());
-						Timestamp ts1 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeStartString);
-						localDate = selectedEndDay.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-						year = String.valueOf(localDate.getYear());
-						month = String.valueOf(localDate.getMonthValue());
-						day = String.valueOf(localDate.getDayOfMonth());
-						Timestamp ts2 = Timestamp.valueOf(year + "-" + month + "-" + day + " " + timeEndString);
-						System.out.println(patient.getPatientID());
-						switch (typeName) {
-						case "Checkup":
-							new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.CHECKUP,
-									totalAppointmentsNum, currentAppointmentNum);
-							break;
-						case "Remedial":
-							new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.REMEDIAL,
-									totalAppointmentsNum, currentAppointmentNum);
-							break;
-						case "Cleaning":
-							new Appointment(ts1, ts2, docUsername, patient.getPatientID(), "", AppointmentType.CLEANING,
-									totalAppointmentsNum, currentAppointmentNum);
-							break;
-						}
-						// refresh parent frame
-						JOptionPane.showMessageDialog(null, "Successfully added appointment", "Success!",
-								JOptionPane.INFORMATION_MESSAGE);
-						frame.dispose();
-					} catch (CommunicationsException e) {
-						JOptionPane.showMessageDialog(frame, e.getMessage(), "Error connecting to internet",
-								JOptionPane.ERROR_MESSAGE);
-					} catch (SQLException e) {
-						JOptionPane.showMessageDialog(frame, e.getMessage(), "Error fetching data from db",
+					} catch (ParseException e1) {
+						JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error fetching data from db",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -315,7 +337,6 @@ public class BookAppointmentsView implements Screen {
 			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error fetching data from db",
 					JOptionPane.ERROR_MESSAGE);
 		}
-
 	}
 
 	@Override

@@ -22,6 +22,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -79,6 +81,13 @@ public class DoctorView implements Screen {
 		Calendar calendar = Calendar.getInstance();
 		Date now = calendar.getTime();
 		this.appointments = Schedule.getAppointmentsByDoctorAndDay(this.doctor, now); // Initially only for day 1
+		// sort them
+		Collections.sort(this.appointments, new Comparator<Appointment>() {
+			@Override
+			public int compare(Appointment o1, Appointment o2) {
+				return o1.getStartTime().compareTo(o2.getStartTime());
+			}
+		});
 		initialize();
 	}
 
@@ -142,6 +151,13 @@ public class DoctorView implements Screen {
 						Date selectedDate = (Date) datePicker.getModel().getValue();
 						// change list of appointments
 						appointments = Schedule.getAppointmentsByDoctorAndDay(doctor, selectedDate);
+						// sort them
+						Collections.sort(appointments, new Comparator<Appointment>() {
+							@Override
+							public int compare(Appointment o1, Appointment o2) {
+								return o1.getStartTime().compareTo(o2.getStartTime());
+							}
+						});
 						// change title
 						LocalDate localDate = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 						int year = localDate.getYear();
