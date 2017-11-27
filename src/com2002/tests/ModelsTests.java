@@ -842,13 +842,17 @@ public class ModelsTests {
 			DBQueries.execUpdate(
 					"INSERT INTO Patients VALUES (1, 'Mr', 'Nur', 'Magid', '1997-05-18', '07543867024', '57', 'W5 1LF')");
 			DBQueries.execUpdate("INSERT INTO HealthPlans VALUES ('NHS free plan', 0.00, 2, 2, 6)");
-			Usage usage1 = new Usage(1, "NHS free plan");
+			Usage usage = new Usage(1, "NHS free plan");
+
+			Usage usage1 = new Usage(1);
 			assertTrue("Usage set to " + usage1.getPatientID() + ", should be 1.", usage1.getPatientID() == (1));
 			assertTrue("Usage set to " + usage1.getCheckUpUsed() + ", should be 0.", usage1.getCheckUpUsed() == (0));
 			assertTrue("Usage set to " + usage1.getHygieneUsed() + ", should be 0.", usage1.getHygieneUsed() == (0));
 			assertTrue("Usage set to " + usage1.getRepairUsed() + ", should be 0.", usage1.getRepairUsed() == (0));
 			assertTrue("Usage set to " + usage1.getDateJoined() + ", should be Todays date.",
 					usage1.getDateJoined().equals(LocalDate.now()));
+			assertTrue("Usage set to " + usage1.getPaymentsIssued() + ", should be 0.",
+					usage1.getPaymentsIssued() == (0));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
@@ -870,6 +874,8 @@ public class ModelsTests {
 			assertTrue("Usage set to " + usageD.getRepairUsed() + ", should be 0.", usageD.getRepairUsed() == (0));
 			assertTrue("Usage set to " + usageD.getDateJoined() + ", should be Todays date.",
 					usageD.getDateJoined().equals(LocalDate.now()));
+			assertTrue("Usage set to " + usageD.getPaymentsIssued() + ", should be 0.",
+					usageD.getPaymentsIssued() == (0));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
@@ -889,12 +895,15 @@ public class ModelsTests {
 			usageDS.setHygieneUsed(2);
 			usageDS.setRepairUsed(3);
 			usageDS.setDateJoined(LocalDate.of(2017, 10, 18));
+			usageDS.setPaymentsIssued(1);
 			assertTrue("Usage set to " + usageDS.getPatientID() + ", should be 1.", usageDS.getPatientID() == (1));
 			assertTrue("Usage set to " + usageDS.getCheckUpUsed() + ", should be 1.", usageDS.getCheckUpUsed() == (1));
 			assertTrue("Usage set to " + usageDS.getHygieneUsed() + ", should be 2.", usageDS.getHygieneUsed() == (2));
 			assertTrue("Usage set to " + usageDS.getRepairUsed() + ", should be 3.", usageDS.getRepairUsed() == (3));
 			assertTrue("Usage set to " + usageDS.getDateJoined() + ", should be 2017-10-18.",
 					usageDS.getDateJoined().equals(LocalDate.of(2017, 10, 18)));
+			assertTrue("Usage set to " + usageDS.getPaymentsIssued() + ", should be 1.",
+					usageDS.getPaymentsIssued() == (1));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			fail("Exception thrown: " + e.getMessage());
