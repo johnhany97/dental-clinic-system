@@ -125,11 +125,45 @@ public class Secretary extends Staff {
 		return DBQueries.getPatientsByAddress(houseNumber, postcode);
 	}
 
+	/**
+	 * Searches through all patients and returns arraylist of them (can return
+	 * partial matches)
+	 * 
+	 * @param firstName
+	 *            of patient
+	 * @param lastName
+	 *            of patient
+	 * @param houseNumber
+	 *            of patient
+	 * @param postcode
+	 *            of patient
+	 * @return ArrayList of potential patients
+	 * @throws Exception
+	 *             if error occurred while searching through db
+	 */
 	public ArrayList<Patient> searchPatients(String firstName, String lastName, String houseNumber, String postcode)
 			throws Exception {
 		return DBQueries.searchPatients(firstName, lastName, houseNumber, postcode);
 	}
 
+	/**
+	 * Searches through all addresses and returns arraylist of them (can return
+	 * partial matches)
+	 * 
+	 * @param houseNumber
+	 *            of address
+	 * @param streetName
+	 *            of address
+	 * @param district
+	 *            of address
+	 * @param city
+	 *            of address
+	 * @param postcode
+	 *            of address
+	 * @return ArrayList of potential Addresses
+	 * @throws SQLException
+	 *             if error occured while searching through db
+	 */
 	public ArrayList<Address> searchAddresses(String houseNumber, String streetName, String district, String city,
 			String postcode) throws SQLException {
 		return DBQueries.searchAddresses(houseNumber, streetName, district, city, postcode);
