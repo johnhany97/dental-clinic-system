@@ -98,12 +98,13 @@ RepairLevel : Int<y:LabelModel>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#B7C9E3" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="100.064453125" x="67.46777343750003" y="4.0">&lt;&lt;table&gt;&gt;
 PatientHealthPlan</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="92.20703125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="226.802734375" x="2.0" y="45.40234375">PatientID : Int &lt;&lt;FK&gt;&gt; &lt;&lt;PK&gt;&gt;
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="106.908203125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="226.802734375" x="2.0" y="45.40234375">PatientID : Int &lt;&lt;FK&gt;&gt; &lt;&lt;PK&gt;&gt;
 HealthPlanName: String &lt;&lt;FK&gt;&gt; &lt;&lt;PK&gt;&gt;
 CheckUpUsed : Int
 HygieneUsed : Int
 RepairUsed : Int
-DateJoined : Date<y:LabelModel>
+DateJoined : Date
+PaymentsIssued: Int<y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -241,7 +242,6 @@ Price: Money<y:LabelModel>
       </data>
     </node>
     <node id="n9">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
           <y:Geometry height="182.77169951242965" width="152.00000000000023" x="689.551934792482" y="64.23451689531261"/>
@@ -418,7 +418,6 @@ Username: String &lt;&lt;FK&gt;&gt;<y:LabelModel>
       </data>
     </edge>
     <edge id="e8" source="n4" target="n9">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="3.78520840624617" sy="-80.86826237265365" tx="-65.05193479248214" ty="81.37963334847257"/>
@@ -437,7 +436,6 @@ Username: String &lt;&lt;FK&gt;&gt;<y:LabelModel>
       </data>
     </edge>
     <edge id="e9" source="n1" target="n9">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-4.21479159375383" sy="68.28403798372986" tx="11.948065207517857" ty="-56.62036665152743"/>
