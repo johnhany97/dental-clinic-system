@@ -564,7 +564,7 @@ public class SecretaryView implements Screen {
 			viewAllButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					refreshDentistTab();
+					refreshHygienistTab();
 				}
 			});
 			JPanel searchPanel = new JPanel();
