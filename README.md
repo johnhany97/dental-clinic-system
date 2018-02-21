@@ -22,4 +22,4 @@ You need to be connected to the University of Sheffield's network to be able to 
 Assuming that's the case, simply run the file called Application.java
 
 ## Additional notes
-You could add the argument "dev" to the application when running it. This wilil re setup the database with dummy data.
+You could add the argument "dev" to the application when running it. This will re setup the database with dummy data.
